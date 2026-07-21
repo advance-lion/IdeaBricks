@@ -35,6 +35,24 @@ Get-Content -Encoding UTF8 .\runs\screenshot-to-app-recording-001\worker-progres
 .\scripts\python.cmd scripts\finalize_delivery.py --run-dir .\runs\screenshot-to-app-recording-001-malllite
 ```
 
+## 用一张新截图做真实试跑
+
+将图片拖到 PowerShell 窗口获取其绝对路径，再运行：
+
+```powershell
+.\scripts\intake_screenshot.ps1 `
+  -Screenshot "C:\path\to\your-reference.jpg" `
+  -AppName "SparkMVP" `
+  -Dispatch
+```
+
+它会创建独立的 `runs/trial-<时间戳>/`，启动 CCCC 的 `mvp-worker` 并下发契约。观察 CCCC 终端，或在第二个 PowerShell 窗口运行：
+
+```powershell
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new()
+Get-Content -Encoding UTF8 .\runs\live-trials\worker-progress.jsonl -Wait
+```
+
 ## 重新派发真实 Worker
 
 ```powershell

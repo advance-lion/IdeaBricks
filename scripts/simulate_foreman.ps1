@@ -11,8 +11,8 @@ $root = Split-Path -Parent $PSScriptRoot
 $source = (Resolve-Path -LiteralPath $Screenshot).Path
 $sample = Join-Path $root "contracts\mvp-contract.sample.json"
 $target = Join-Path $root "contracts\mvp-contract.json"
-$bundledPython = Join-Path $env:USERPROFILE ".cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
-$python = if ($env:MVP_WORKER_PYTHON) { $env:MVP_WORKER_PYTHON } elseif (Test-Path -LiteralPath $bundledPython) { $bundledPython } else { "python" }
+$python = Join-Path $root "scripts\python.cmd"
+if (-not (Test-Path -LiteralPath $python)) { throw "Worker Python launcher is missing: $python" }
 
 $contract = Get-Content -Raw -LiteralPath $sample | ConvertFrom-Json
 $contract.run_id = $RunId

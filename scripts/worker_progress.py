@@ -2,11 +2,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+# Keep the CCCC terminal and PowerShell recording readable on Windows.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 MESSAGE_KEYS = {
     "fastbite-visual-start": "开始理解餐饮点餐截图中的促销、菜单与取餐意图",
     "fastbite-visual-pass": "已完成布局与交互意图提取，未使用原品牌内容",
@@ -24,6 +29,14 @@ MESSAGE_KEYS = {
     "malllite-browser-pass": "浏览器验收通过：加载、筛选和加入购物袋均正常",
     "malllite-delivery-start": "正在封装源码、预览图与验收报告",
     "malllite-delivery-pass": "MallLite 交付回执已生成，GitHub 按契约跳过",
+    "generic-visual-start": "开始分析授权截图中的布局和交互意图",
+    "generic-visual-pass": "视觉理解完成，已写入界面规格",
+    "generic-scaffold-start": "开始生成虚构品牌的前端页面",
+    "generic-scaffold-pass": "前端源码和必要交互已生成",
+    "generic-browser-start": "正在启动 Edge 执行浏览器验收",
+    "generic-browser-pass": "浏览器验收通过",
+    "generic-delivery-start": "正在封装源码、预览图与验收报告",
+    "generic-delivery-pass": "交付回执已生成",
 }
 PHASE_CN = {"visual": "视觉理解", "scaffold": "前端脚手架", "browser": "浏览器验收", "delivery": "交付封装"}
 STATUS_CN = {"STARTED": "开始", "PASS": "通过", "FAIL": "失败"}

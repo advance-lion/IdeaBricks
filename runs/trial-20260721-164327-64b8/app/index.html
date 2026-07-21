@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#fff1ea" />
+    <title>Mango Mart</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" data-testid="app-shell" aria-label="Mango Mart discovery">
+      <header class="masthead">
+        <div class="status-strip" aria-label="System status">
+          <span class="time">10:08</span>
+          <span class="status-apps"><i></i><i></i><i></i><i></i><b></b></span>
+          <span class="status-right"><span>◕</span><span>◢</span><small>229<br />KB/S</small><span class="wifi"></span><span class="signal">5G<br />▮▮▮</span><em>60</em></span>
+        </div>
+        <nav class="tab-rail" aria-label="Discover categories">
+          <button>Following</button><button class="active" aria-pressed="true">For You</button><button>Quick Buy</button><button>Meal Drop</button><button>Perks</button><button>Style</button><button>Sky Deals</button><button>Mega Sale</button>
+        </nav>
+        <form class="search-bar" id="search-form">
+          <button class="scan-btn icon-button" type="button" aria-label="Scan visual code"><span></span></button>
+          <input data-testid="search-input" id="search-input" value="aurora controller" autocomplete="off" aria-label="Search Mango Mart" />
+          <button class="camera-btn icon-button" type="button" aria-label="Image search"><span></span></button>
+          <button class="search-submit" type="submit">Search</button>
+          <div class="suggestions" aria-live="polite"></div>
+        </form>
+        <section class="shortcut-grid" aria-label="Mango Mart shortcuts">
+          <button class="shortcut" data-destination="Daily Check-in"><span class="glyph ticket">¥</span><b>Daily Check-in</b></button>
+          <button class="shortcut" data-destination="Sample Pass"><span class="glyph flask"></span><b>Sample Pass</b></button>
+          <button class="shortcut" data-destination="Coin Vault"><span class="glyph coin">m<small>save</small></span><b>Coin Vault</b></button>
+          <button class="shortcut" data-destination="Maker Hall"><span class="glyph tote"></span><b>Maker Hall</b></button>
+          <button class="shortcut" data-destination="Parcel Stop"><span class="glyph kiosk"></span><b>Parcel Stop</b></button>
+          <button class="shortcut" data-destination="Tiny Grove"><span class="glyph grove"></span><b>Tiny Grove</b></button>
+          <button class="shortcut" data-destination="Leisure Fish"><span class="glyph fish">●</span><b>Leisure Fish</b></button>
+          <button class="shortcut" data-destination="Orbit Market"><span class="glyph orbit">✦</span><b>Orbit Market</b></button>
+          <button class="shortcut" data-destination="Quick Cart"><span class="glyph quick">↻<small>FAST</small></span><b>Quick Cart</b></button>
+          <button class="shortcut" data-destination="Event Book"><span class="glyph calendar">▣</span><b>Event Book</b></button>
+        </section>
+      </header>
+
+      <section class="deal-triptych" aria-label="Featured deals">
+        <button class="deal-card live" data-collection="Mango Live"><h2>Mango Live <i>▥</i></h2><div class="art sandwich"><span></span><b></b><em></em></div><p><strong>楼8</strong> <span>live deal</span></p></button>
+        <button class="deal-card rebate" data-collection="Member Rebate"><h2>Member Rebate <i>member</i></h2><div class="art controller"><span></span><b></b><i></i><em></em></div><p><strong>楼286</strong> <span>member deal</span></p></button>
+        <button class="deal-card flash" data-collection="Flash Lab"><h2>Flash Lab <i>rush</i></h2><div class="art bot"><div class="bot-head"><b></b><b></b></div><span></span><i></i><em></em></div><p><strong>楼142</strong> <span>rush deal</span></p></button>
+      </section>
+
+      <button class="coupon" id="coupon-claim" type="button"><span class="speaker">◀</span><strong>Summer Snack Week</strong><span>save up to 18%</span><b><i>楼12</i> Claim now</b></button>
+
+      <section class="product-grid" data-testid="recommendation-list" aria-label="For You recommendations">
+        <article class="product-card" data-name="modular desktop rover dock aurora controller"><button class="product-image rover" aria-label="View modular desktop rover dock"><span class="screen">• •</span><span class="rover-body"><b>▦<br />▦</b></span><span class="dock"></span><i></i></button><div class="product-copy"><h3><em>Mango Select</em> · modular desktop rover dock</h3><p><b>楼429</b> entry <span>2.3k ordered</span></p><button class="add-button" data-testid="add-to-cart" type="button">Add</button></div></article>
+        <article class="product-card" data-name="archway music mirror editor pick"><button class="product-image mirror" aria-label="View archway music mirror"><span class="arch"><i>JAY</i><b>━  ━  ━</b></span><span class="nook"></span></button><div class="product-copy"><h3><em>Mango Select</em> · archway music mirror</h3><p><b class="save">save 12%</b> <span>editor pick</span></p><button class="add-button" data-testid="add-to-cart" type="button">Add</button></div></article>
+        <article class="product-card extra" data-name="cloud reading lamp soft home"><button class="product-image lamp" aria-label="View cloud reading lamp"><span></span></button><div class="product-copy"><h3><em>Fresh Finds</em> · cloud reading lamp</h3><p><b>楼98</b> entry <span>new today</span></p><button class="add-button" data-testid="add-to-cart" type="button">Add</button></div></article>
+        <article class="product-card extra" data-name="coral carry case small travel"><button class="product-image case" aria-label="View coral carry case"><span>m</span></button><div class="product-copy"><h3><em>Travel Tiny</em> · coral carry case</h3><p><b>楼76</b> entry <span>1.1k ordered</span></p><button class="add-button" data-testid="add-to-cart" type="button">Add</button></div></article>
+      </section>
+      <div class="toast" role="status" aria-live="polite"></div>
+      <output id="qa-result" data-testid="qa-result" hidden></output>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Primary navigation">
+      <button class="active" data-nav="Mango Mart"><span class="mango-mark">m</span><b>Mango Mart</b></button>
+      <button data-nav="Clips"><span class="nav-icon clips">▶</span><b>Clips</b></button>
+      <button data-nav="Inbox"><span class="nav-icon inbox">◌</span><i>99+</i><b>Inbox</b></button>
+      <button data-nav="Bag"><span class="nav-icon bag">⌑</span><b>Bag</b></button>
+      <button data-nav="My Mango"><span class="nav-icon profile">⌣</span><b>My Mango</b></button>
+    </nav>
+    <div class="system-nav" aria-hidden="true"><span>☰</span><b>▢</b><i>◁</i></div>
+    <script src="app.js"></script>
+  </body>
+</html>

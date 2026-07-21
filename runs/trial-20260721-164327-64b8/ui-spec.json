@@ -1,0 +1,124 @@
+{
+  "run_id": "trial-20260721-164327-64b8",
+  "app_type": "fictional mobile marketplace discovery home screen",
+  "high_fidelity_structure": {
+    "canvas": "Portrait mobile viewport approximately 768 x 1664 px, with a light warm-peach status/header background flowing into a white commerce feed.",
+    "section_order": [
+      "system status strip",
+      "horizontally clipped category tab bar",
+      "orange outlined search field",
+      "two-row ten-item circular/illustrated shortcut grid",
+      "three equal promotional deal cards",
+      "full-width red coupon announcement strip",
+      "two-column product discovery masonry grid",
+      "fixed five-item bottom navigation",
+      "Android system navigation area"
+    ],
+    "geometry": "Top header occupies roughly 0-540 px and is densely packed. Tabs sit at y~88-151. The search bar spans 20-748 px at y~169-239, with scan icon on the left, query text in the middle, camera icon, and orange search button on the right. Shortcut icons are arranged five across in two rows from y~264-518. Three promo cards begin at y~541 with narrow gutters. The red announcement banner spans nearly the entire width at y~835-907. The product feed begins below it with two equal columns and 16 px outer margins. Bottom nav is fixed from y~1496-1606 above the OS navigation strip.",
+    "dominant_colour_blocks": "Warm pale peach (#FFF1EA) behind status, tabs, and search; white (#FFFFFF) shortcut and feed areas; saturated orange (#FF5A00) for search and selection; vivid red (#FF160D) coupon strip; very pale pink (#FFF7F7) promo-card panels; charcoal/near-black text; orange-red price accents.",
+    "visual_density": "Very high: compact Chinese labels, colourful shortcut glyphs, three promotional tiles, a banner, and image-led product cards all visible above a persistent navigation bar.",
+    "bottom_navigation_or_modal_drawer_state": "No modal or drawer is open. A fixed white five-item bottom navigation is visible; its leftmost marketplace/home tab is active with a large orange circular mark, the messages tab has an orange 99+ badge, and the remaining tabs are inactive black outline icons.",
+    "primary_interaction_entries": [
+      "Top category tabs",
+      "Search input, scan control, camera control, and search submit button",
+      "Ten shortcut entries",
+      "Three promotional deal cards",
+      "Red coupon claim banner",
+      "Individual product cards",
+      "Five bottom navigation items"
+    ]
+  },
+  "replaced_source_assets": {
+    "policy": "All recognizable source marketplace branding, third-party logos, product photography, price claims, and screenshot wording must be replaced with original fictional equivalents.",
+    "brand": {
+      "source_role": "orange marketplace wordmark and related labels",
+      "fictional_replacement": "Mango Mart, using a custom orange mango-shaped glyph with no copied lettering"
+    },
+    "search_term": {
+      "source_role": "game-console query",
+      "fictional_replacement": "aurora controller"
+    },
+    "shortcut_assets": "Replace each source icon with an original flat vector-style pictogram: ticket, flask, coin, tote, kiosk, garden hut, fish, planet, quick-cart, and calendar.",
+    "deal_assets": "Use fictional original illustrations: a fruit sandwich, a translucent violet gamepad, and a small teal delivery bot.",
+    "product_assets": "Use newly created fictional images rather than source product photos: a modular charcoal-and-coral desk robot set and a white arched music mirror with a dark reading nook.",
+    "copy_and_prices": "Use fictional labels and prices only, for example \"Mango Live\", \"Member Rebate\", \"Flash Lab\", \"¥8\", \"¥286\", \"¥142\", \"¥429\", and \"2.3k ordered\"."
+  },
+  "visible_state": {
+    "active_top_tab": "For You",
+    "search_query": "aurora controller",
+    "top_tabs": ["Following", "For You", "Quick Buy", "Meal Drop", "Perks", "Style", "Sky Deals", "Mega Sale"],
+    "shortcut_rows": [
+      ["Daily Check-in", "Sample Pass", "Coin Vault", "Maker Hall", "Parcel Stop"],
+      ["Tiny Grove", "Leisure Fish", "Orbit Market", "Quick Cart", "Event Book"]
+    ],
+    "promotion_cards": [
+      {"title": "Mango Live", "accent": "rose", "price": "¥8 live deal"},
+      {"title": "Member Rebate", "accent": "mint", "price": "¥286 member deal"},
+      {"title": "Flash Lab", "accent": "orange", "price": "¥142 rush deal"}
+    ],
+    "coupon_banner": "Summer Snack Week — save up to 18%; claim ¥12",
+    "visible_products": [
+      {"title": "Mango Select · modular desktop rover dock", "price": "¥429 entry", "sales": "2.3k ordered"},
+      {"title": "Mango Select · archway music mirror", "price": "save 12%", "sales": "editor pick"}
+    ],
+    "bottom_nav": {
+      "active": "Mango Mart",
+      "items": ["Mango Mart", "Clips", "Inbox", "Bag", "My Mango"],
+      "inbox_badge": "99+"
+    }
+  },
+  "components": [
+    {"name": "StatusBar", "details": "light header background, time and generic system indicators"},
+    {"name": "CategoryTabRail", "details": "single horizontal row, selected tab orange with short curved underline"},
+    {"name": "MarketplaceSearch", "details": "orange rounded outline, scan icon, query, camera icon, filled search action"},
+    {"name": "ShortcutGrid", "details": "five columns by two rows of illustrated shortcuts and compact labels"},
+    {"name": "DealTriptych", "details": "three pale-pink image tiles with title, small colour accent copy, and pill-like price area"},
+    {"name": "CouponTicker", "details": "bright-red rounded strip with speaker icon, campaign message, white claim capsule"},
+    {"name": "ProductMasonry", "details": "two-column white product cards with rounded-top imagery and multiline metadata"},
+    {"name": "BottomNav", "details": "fixed white bar, five evenly spaced destinations, active oversized orange mark, inbox count badge"},
+    {"name": "SystemNavPlaceholder", "details": "white OS navigation region beneath app chrome"}
+  ],
+  "inferred_interactions": [
+    {"entry": "category tab", "action": "switches the discovery feed and moves the orange selection underline"},
+    {"entry": "scan icon", "action": "opens a fictional visual-code scanner"},
+    {"entry": "search field", "action": "edits the query and shows typeahead suggestions"},
+    {"entry": "camera icon", "action": "starts fictional image search"},
+    {"entry": "Search button", "action": "opens results for the current query"},
+    {"entry": "shortcut tile", "action": "navigates to its named feature"},
+    {"entry": "promo card", "action": "opens the associated limited-time collection"},
+    {"entry": "coupon claim", "action": "adds the fictional ¥12 coupon and confirms success"},
+    {"entry": "product card", "action": "opens its product detail page"},
+    {"entry": "bottom navigation", "action": "changes the primary app section; Inbox exposes unread items"}
+  ],
+  "design_tokens": {
+    "colours": {
+      "header_peach": "#FFF1EA",
+      "surface": "#FFFFFF",
+      "orange_primary": "#FF5A00",
+      "red_promo": "#FF160D",
+      "ink": "#1E2230",
+      "muted_ink": "#6F7480",
+      "tile_blush": "#FFF7F7",
+      "price_orange": "#FF5A18",
+      "mint_accent": "#22B77A"
+    },
+    "typography": {
+      "family": "system sans-serif with CJK fallback",
+      "tab": "29px, 700",
+      "search": "30px, 700",
+      "shortcut_label": "24px, 650",
+      "promo_title": "28px, 750",
+      "product_title": "25px, 650",
+      "price": "31px, 800",
+      "nav_label": "22px, 500"
+    },
+    "layout": {
+      "page_gutter": "16-20px",
+      "grid_gap": "14px",
+      "search_height": "70px",
+      "corner_radius": "12px cards; 22px search/banner; 14px CTA",
+      "bottom_nav_height": "110px"
+    },
+    "icon_style": "friendly, saturated, rounded original vector illustrations with mostly white or pale backgrounds"
+  }
+}

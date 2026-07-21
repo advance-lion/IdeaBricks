@@ -1,9 +1,13 @@
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
-const showMode = location.pathname === '/show' || location.pathname.startsWith('/show/');
+const stageMode = location.pathname === '/stage' || location.pathname.startsWith('/stage/');
+const showMode = stageMode;
 const runQuery = new URLSearchParams(location.search).get('run');
 let activeRunId = runQuery;
 let pollTimer;
+let stageTimer;
+let stageSnapshot = { events: [] };
+let latestRunPayload;
 
 function toast(message) {
   const node = $('#toast');
@@ -25,10 +29,11 @@ function timeLabel(value) {
   return String(value).slice(11, 19) || 'NOW';
 }
 
-function setRuntime(runtime, actor) {
+function setRuntime(runtime, actor, backend) {
   const verified = runtime?.verified;
   const label = runtime?.label || '本地演示环境';
-  $('#runtimeBadge').innerHTML = `<span class="live-dot"></span> CCCC TEAM · ${verified ? 'DGX SPARK' : label.toUpperCase()}`;
+  const engine = backend?.label || (verified ? 'DGX SPARK' : label.toUpperCase());
+  $('#runtimeBadge').innerHTML = `<span class="live-dot"></span> CCCC TEAM · ${engine}`;
   $('#runtimeTag').textContent = verified ? 'DGX SPARK' : 'LOCAL DEMO';
   $('#runtimeTag').title = runtime?.hint || '';
   if (actor && !actor.running) $('#runtimeBadge').classList.add('is-idle');
@@ -243,7 +248,7 @@ function renderPhase(events, runStatus) {
   $('#runStageStatus').textContent = runStatus === 'PASS' ? 'RUNNING → PASS' : latest ? `${String(latest.phase).toUpperCase()} · ${latest.status}` : 'CONTRACT READY';
 }
 
-function renderEvents(events) {
+function renderEvents(events, ccccEvents = []) {
   const stream = $('#logStream');
   stream.replaceChildren();
   const roleByPhase = { visual: 'VISION', scaffold: 'MVP-WORKER', browser: 'QA', delivery: 'DELIVERY' };
@@ -253,13 +258,18 @@ function renderEvents(events) {
     const kind = event.status === 'PASS' ? 'success' : event.status === 'FAIL' ? 'failed' : '';
     appendAgentEvent(agent, event.message || `${event.phase} ${event.status}`, kind, timeLabel(event.timestamp));
   });
+  ccccEvents.forEach(event => {
+    const kind = event.status === '通过' ? 'success' : event.status === '失败' ? 'failed' : '';
+    appendAgentEvent('CCCC', `${event.phase} · ${event.status} · ${event.engine}`, kind, timeLabel(event.timestamp));
+  });
   stream.scrollTop = stream.scrollHeight;
-  $('#eventCount').textContent = `${events.length} REAL EVENTS`;
+  $('#eventCount').textContent = `${events.length} WORKER + ${ccccEvents.length} CCCC`;
 }
 
 function renderRun(payload) {
-  const { run, runtime, actor } = payload;
-  setRuntime(runtime, actor);
+  latestRunPayload = payload;
+  const { run, runtime, actor, backend } = payload;
+  setRuntime(runtime, actor, backend);
   const app = run.app || {};
   const isPass = run.status === 'PASS';
   const isRunning = !isPass && Boolean(run.dispatched);
@@ -281,7 +291,18 @@ function renderRun(payload) {
   resultMeta.textContent = isPass ? '真实产物 · preview.png · 验收报告' : run.dispatched ? '真实 Worker 正在处理 · 进度每 3 秒刷新' : '契约已就绪，尚未派发';
   taskState.textContent = isPass ? 'DELIVERY · PASS' : run.dispatched ? 'CCCC WORKER · RUNNING' : 'CONTRACT · READY';
   renderPhase(run.events || [], run.status);
-  renderEvents(run.events || []);
+  renderEvents(run.events || [], stageSnapshot.events || []);
+}
+
+function renderCcccStage(stage, runtime, actor, backend) {
+  stageSnapshot = stage || { events: [] };
+  setRuntime(runtime, actor, backend);
+  if (stage?.title) $('#runStageStatus').textContent = `${stage.title} · LIVE`;
+  if (latestRunPayload?.run?.run_id === activeRunId) {
+    renderEvents(latestRunPayload.run.events || [], stageSnapshot.events || []);
+  } else if (stageSnapshot.events?.length) {
+    renderEvents([], stageSnapshot.events);
+  }
 }
 
 async function loadRun() {
@@ -295,6 +316,24 @@ async function loadRun() {
     clearInterval(pollTimer);
     taskState.textContent = 'LOCAL DEMO MODE';
     toast(error.message || '运行台暂时无法连接');
+  }
+}
+
+async function loadStage() {
+  if (!stageMode) return;
+  try {
+    const suffix = activeRunId ? `?run=${encodeURIComponent(activeRunId)}` : '';
+    const response = await fetch(`/api/stage${suffix}`, { cache: 'no-store' });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '无法读取 CCCC 舞台状态');
+    if (!activeRunId && data.stage?.latest_run_id) {
+      activeRunId = data.stage.latest_run_id;
+      history.replaceState({}, '', `/stage?run=${encodeURIComponent(activeRunId)}`);
+      await loadRun();
+    }
+    renderCcccStage(data.stage, data.runtime, data.actor, data.backend);
+  } catch (error) {
+    $('#eventCount').textContent = 'CCCC 状态暂不可用';
   }
 }
 
@@ -322,7 +361,7 @@ async function createRealRun() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || '投递失败');
     activeRunId = data.run_id;
-    history.replaceState({}, '', data.show_url || `/show?run=${encodeURIComponent(activeRunId)}`);
+    history.replaceState({}, '', `/stage?run=${encodeURIComponent(activeRunId)}`);
     toast(`已创建 ${activeRunId}，左侧现在展示真实 Worker 日志。`);
     await loadRun();
     clearInterval(pollTimer);
@@ -372,10 +411,10 @@ setSource($('.source-chip.selected'));
 applyStageSplit();
 if (showMode && activeRunId) {
   loadRun();
+  loadStage();
   pollTimer = setInterval(loadRun, 3000);
+  stageTimer = setInterval(loadStage, 3000);
 } else if (showMode) {
-  fetch('/api/runs', { cache: 'no-store' })
-    .then(response => response.ok ? response.json() : Promise.reject())
-    .then(data => setRuntime(data.runtime, data.actor))
-    .catch(() => toast('投递台未连接：当前保留本地演示模式。'));
+  loadStage();
+  stageTimer = setInterval(loadStage, 3000);
 }

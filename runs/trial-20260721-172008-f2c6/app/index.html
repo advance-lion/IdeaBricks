@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NovaMart</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app-shell" data-testid="app-shell">
+        <!-- Header / Search -->
+        <header class="app-header">
+            <div class="logo">N</div>
+            <div class="search-container">
+                <div class="search-bar">
+                    <span class="icon-camera">📷</span>
+                    <input type="text" id="search-input" data-testid="search-input" placeholder="Search for gadgets...">
+                    <button class="search-btn">Search</button>
+                </div>
+            </div>
+            <div class="cart-icon">
+                🛒
+                <span id="cart-count" data-testid="cart-count" class="badge">0</span>
+            </div>
+        </header>
+
+        <!-- Tab Bar -->
+        <nav class="tab-bar">
+            <div class="tab-scroll">
+                <button class="tab-item">Follow</button>
+                <button class="tab-item active">Recommended</button>
+                <button class="tab-item">Flash Sale</button>
+                <button class="tab-item">Subsidy</button>
+                <button class="tab-item">Fashion</button>
+                <button class="tab-item">Travel</button>
+                <button class="tab-item">Super Value</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Icon Grid -->
+            <section class="icon-grid-section">
+                <div class="icon-grid">
+                    <div class="icon-item"><span class="icon">🧧</span><span>Red Packet</span></div>
+                    <div class="icon-item"><span class="icon">🎁</span><span>Free Trial</span></div>
+                    <div class="icon-item"><span class="icon">🪙</span><span>Gold Coins</span></div>
+                    <div class="icon-item"><span class="icon">🏭</span><span>Factory</span></div>
+                    <div class="icon-item"><span class="icon">🚚</span><span>Logistics</span></div>
+                    <div class="icon-item"><span class="icon">🌾</span><span>Farm</span></div>
+                    <div class="icon-item"><span class="icon">♻️</span><span>Second Hand</span></div>
+                    <div class="icon-item"><span class="icon">🌍</span><span>Global</span></div>
+                    <div class="icon-item"><span class="icon">⚡</span><span>Flash Deals</span></div>
+                    <div class="icon-item"><span class="icon">📅</span><span>Calendar</span></div>
+                </div>
+            </section>
+
+            <!-- Promo Carousel -->
+            <section class="promo-section">
+                <div class="promo-scroll">
+                    <div class="promo-card live">
+                        <div class="promo-content">
+                            <h3>Live Shopping</h3>
+                            <p>Watch & Win</p>
+                        </div>
+                    </div>
+                    <div class="promo-card subsidy">
+                        <div class="promo-content">
+                            <h3>Subsidy Deals</h3>
+                            <p>Direct from Source</p>
+                        </div>
+                    </div>
+                    <div class="promo-card flash">
+                        <div class="promo-content">
+                            <h3>Flash Sale</h3>
+                            <p>50% Off Ends Soon</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Banner -->
+            <section class="banner-section">
+                <div class="banner">
+                    <span>Summer Sale - Up to 20% Off</span>
+                    <button class="cta-btn">Claim Now</button>
+                </div>
+            </section>
+
+            <!-- Product Grid -->
+            <section class="product-section">
+                <div id="recommendation-list" data-testid="recommendation-list" class="product-grid">
+                    <!-- Products injected by JS -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active">
+                <span class="icon">🏠</span>
+                <span>Home</span>
+            </div>
+            <div class="nav-item">
+                <span class="icon">📹</span>
+                <span>Video</span>
+            </div>
+            <div class="nav-item">
+                <span class="icon">💬</span>
+                <span>Messages</span>
+                <span class="badge">99+</span>
+            </div>
+            <div class="nav-item">
+                <span class="icon">🛒</span>
+                <span>Cart</span>
+            </div>
+            <div class="nav-item">
+                <span class="icon">👤</span>
+                <span>Profile</span>
+            </div>
+        </nav>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

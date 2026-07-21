@@ -1,0 +1,159 @@
+{
+  "run_id": "trial-20260721-172008-f2c6",
+  "app_type": "ecommerce_home",
+  "high_fidelity_structure": "A high-density mobile e-commerce layout. Top section features a horizontal scrollable tab bar (Follow, Recommended, Flash Sale, etc.) with an active state indicator. Below is a prominent search bar with a camera icon and orange 'Search' button. The middle section contains a 2-row grid of 10 circular/rounded-square icons for quick navigation (Red Pack, Try & Get, Coins, Factory, etc.). Below that is a horizontal scrollable carousel of 3 promotional cards (Live, Subsidy, Flash Sale) featuring product images and prices. A full-width red banner ad follows. The bottom section is a 2-column masonry grid displaying product cards with images, titles, prices, and sales counts. A fixed bottom navigation bar contains 5 icons (Home, Video, Messages, Cart, Profile) with a notification badge on Messages.",
+  "replaced_source_assets": {
+    "branding": "NovaMart",
+    "logo": "Orange circle with white 'N'",
+    "search_placeholder": "Search for gadgets...",
+    "nav_icons": [
+      "Red Packet",
+      "Free Trial",
+      "Gold Coins",
+      "Direct Factory",
+      "Logistics",
+      "Farm Game",
+      "Second Hand",
+      "Global",
+      "Flash Deals",
+      "Calendar"
+    ],
+    "promo_cards": [
+      "Live Shopping",
+      "Subsidy Deals",
+      "Flash Sale"
+    ],
+    "products": [
+      {
+        "title": "Retro Robot Desk Lamp",
+        "price": "¥454",
+        "sales": "2000+"
+      },
+      {
+        "title": "Smart Vinyl Player",
+        "price": "¥899",
+        "sales": "500+"
+      }
+    ]
+  },
+  "visible_state": {
+    "active_tab": "Recommended",
+    "search_query": "steamdeck游戏机",
+    "bottom_nav_active": "Home",
+    "notification_badge": "99+",
+    "scroll_position": "top"
+  },
+  "components": [
+    {
+      "type": "tab_bar",
+      "position": "top",
+      "items": [
+        "Follow",
+        "Recommended",
+        "Flash Sale",
+        "Subsidy",
+        "Fashion",
+        "Travel",
+        "Super Value"
+      ]
+    },
+    {
+      "type": "search_bar",
+      "position": "top",
+      "elements": [
+        "scan_icon",
+        "input_field",
+        "camera_icon",
+        "search_button"
+      ]
+    },
+    {
+      "type": "icon_grid",
+      "position": "middle",
+      "rows": 2,
+      "cols": 5,
+      "items": [
+        "Red Packet",
+        "Free Trial",
+        "Gold Coins",
+        "Direct Factory",
+        "Logistics",
+        "Farm Game",
+        "Second Hand",
+        "Global",
+        "Flash Deals",
+        "Calendar"
+      ]
+    },
+    {
+      "type": "promo_carousel",
+      "position": "middle",
+      "items": [
+        "Live Shopping",
+        "Subsidy Deals",
+        "Flash Sale"
+      ]
+    },
+    {
+      "type": "banner",
+      "position": "middle",
+      "content": "Summer Sale - Up to 20% Off",
+      "cta": "Claim Now"
+    },
+    {
+      "type": "product_grid",
+      "position": "bottom",
+      "columns": 2,
+      "items": [
+        "Retro Robot Desk Lamp",
+        "Smart Vinyl Player"
+      ]
+    },
+    {
+      "type": "bottom_nav",
+      "position": "fixed_bottom",
+      "items": [
+        "Home",
+        "Video",
+        "Messages",
+        "Cart",
+        "Profile"
+      ]
+    }
+  ],
+  "inferred_interactions": [
+    "Tap tab bar item to switch feed category",
+    "Tap search bar to open search input",
+    "Tap icon grid item to navigate to service",
+    "Tap promo card to view deal details",
+    "Tap product card to view product details",
+    "Tap bottom nav items to switch main sections"
+  ],
+  "design_tokens": {
+    "colors": {
+      "primary": "#FF5000",
+      "secondary": "#FF9000",
+      "background": "#F5F5F5",
+      "text_primary": "#333333",
+      "text_secondary": "#666666",
+      "accent": "#FF0036"
+    },
+    "typography": {
+      "font_family": "PingFang SC, sans-serif",
+      "heading_size": "18px",
+      "body_size": "14px",
+      "caption_size": "12px"
+    },
+    "spacing": {
+      "section_gap": "10px",
+      "card_padding": "8px",
+      "icon_size": "48px"
+    },
+    "radius": {
+      "button": "20px",
+      "card": "8px",
+      "icon": "12px"
+    }
+  },
+  "generator": "local-vlm"
+}

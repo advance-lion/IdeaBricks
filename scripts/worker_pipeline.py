@@ -25,7 +25,7 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PYTHON = ROOT / "scripts" / "python.cmd"
+PYTHON = Path(sys.executable)
 CODEX = ROOT / ".tools" / "codex-cli" / "node_modules" / ".pnpm" / "@openai+codex@0.144.6" / "node_modules" / "@openai" / "codex" / "bin" / "codex.js"
 
 

@@ -19,7 +19,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PYTHON = ROOT / "scripts" / "python.cmd"
+PYTHON = Path(sys.executable)
 MAX_UPLOAD_BYTES = 16 * 1024 * 1024
 ALLOWED_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 DEFAULT_GROUP = "g_c3e3880e9f6c"
@@ -358,7 +358,7 @@ class IntakeHandler(SimpleHTTPRequestHandler):
             sample["app"]["kind"] = kind
             contract = contract_dir / f"{run_id}.json"
             contract.write_text(json.dumps(sample, ensure_ascii=False, indent=2), encoding="utf-8")
-            launcher = ROOT / "scripts" / "python.cmd"
+            launcher = PYTHON
             prepared = subprocess.run([str(launcher), str(ROOT / "scripts" / "prepare_run.py"), "--contract", str(contract)], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30)
             if prepared.returncode:
                 raise ValueError(f"创建独立 run 失败：{prepared.stderr or prepared.stdout}")

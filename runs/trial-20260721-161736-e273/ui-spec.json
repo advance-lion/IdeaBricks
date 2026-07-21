@@ -1,0 +1,38 @@
+{
+  "run_id": "trial-20260721-161736-e273",
+  "generator": "deterministic-template-baseline",
+  "note": "Pre-local-VLM stability mode. This baseline validates the worker pipeline; replace this visual-spec step with a VLM for screenshot-specific layout extraction.",
+  "high_fidelity_structure": {
+    "priority": "baseline",
+    "template": "fastbite",
+    "preserved": [
+      "红色促销 Hero",
+      "门店信息卡",
+      "左侧分类栏",
+      "菜品列表",
+      "固定餐袋栏",
+      "打开的取餐方式弹层"
+    ],
+    "dominant_palette": [
+      "高饱和红色 Hero",
+      "白色门店卡",
+      "浅灰菜单区",
+      "暗色遮罩",
+      "红色确认按钮"
+    ]
+  },
+  "replaced_source_assets": [
+    "brand",
+    "logo",
+    "product photography",
+    "product names",
+    "prices",
+    "source copy",
+    "user data"
+  ],
+  "interactions": [
+    "filter changes visible cards",
+    "primary action updates visible count",
+    "QA mode executes real functions"
+  ]
+}

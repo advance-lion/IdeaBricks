@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#19243c" />
+    <title>Lantern Lunch</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" data-testid="app-shell">
+      <header class="topbar"><button class="location" type="button"><span class="pin">●</span>Harbor Hall <i>⌄</i></button><button class="search-icon" type="button" aria-label="Search menu">⌕</button></header>
+      <section class="hero" aria-label="Promotion"><div class="hero-copy"><p class="ticket-label">Tonight's counter</p><h1>Bring a little<br />glow to lunch.</h1><p>Warm plates, bright pause.</p><button class="hero-button" type="button" id="hero-pickup">Choose a pickup</button></div><div class="steam-art" aria-hidden="true"><span class="bowl-rim"></span><span class="bowl-body"></span><span class="steam s1"></span><span class="steam s2"></span><span class="steam s3"></span></div></section>
+      <section class="store-summary"><div><p class="ticket-label dark">Open now · 4 minute walk</p><h2>Lantern Lunch Counter</h2><p id="pickup-summary">Counter collection</p></div><button type="button" id="open-sheet">Collect</button></section>
+      <section class="menu-section"><div class="menu-heading"><div><p class="ticket-label dark">Menu board</p><h2>Make a small meal of it</h2></div><label class="search-field"><span>⌕</span><input data-testid="search-input" id="search-input" type="search" placeholder="Find a plate" /></label></div><nav class="categories" aria-label="Menu categories"><button class="category active" data-category="All">All</button><button class="category" data-category="Bowls">Bowls</button><button class="category" data-category="Grill">From grill</button><button class="category" data-category="Sips">Sips</button></nav><div class="recommendation-list" data-testid="recommendation-list" id="menu-list"></div></section>
+      <button class="cart-ticket" type="button"><span class="bag">◫</span><span><strong data-testid="cart-count" id="cart-count">0</strong> plates in your bag</span><span>→</span></button>
+      <section class="pickup-sheet" id="pickup-sheet" aria-labelledby="sheet-title"><div class="sheet-notch" aria-hidden="true"></div><header><div><p class="ticket-label dark">One last detail</p><h2 id="sheet-title">How shall we hand it over?</h2></div><button class="close-sheet" id="close-sheet" type="button" aria-label="Close">×</button></header><div class="pickup-grid" role="radiogroup" aria-label="Collection method"><button class="pickup-option active" data-mode="Counter collection" type="button" role="radio" aria-checked="true"><span class="pickup-symbol">▣</span><strong>Counter</strong><small>Meet us inside</small></button><button class="pickup-option" data-mode="Window collection" type="button" role="radio" aria-checked="false"><span class="pickup-symbol">⌑</span><strong>Window</strong><small>We'll pass it out</small></button><button class="pickup-option" data-mode="Shelf collection" type="button" role="radio" aria-checked="false"><span class="pickup-symbol">▤</span><strong>Shelf</strong><small>Pick up and go</small></button></div><button class="confirm-button" id="confirm-pickup" type="button">Confirm collection</button></section>
+      <nav class="bottom-nav" aria-label="Main navigation"><button class="current" type="button"><span>⌂</span>Nearby</button><button type="button"><span>◇</span>Offers</button><button type="button"><span>◫</span>Bag</button><button type="button"><span>◌</span>Account</button></nav>
+      <output data-testid="qa-result" id="qa-result" class="qa-result" aria-live="polite"></output>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "run_id": "trial-20260721-144200-d105",
+  "subject": "A fictional neighborhood canteen for a mobile pickup order.",
+  "audience": "People choosing a quick, informal meal near their current location.",
+  "page_job": "Help a visitor search or browse a concise menu, add an item, and select a pickup method.",
+  "reference_observations": [
+    "The page uses a warm full-bleed promotion, a store/location summary, a menu category rail, and recommendation cards.",
+    "A pickup chooser appears as a calm bottom sheet with three collection methods and one decisive confirmation button.",
+    "A persistent cart state keeps a selected item count visible during browsing."
+  ],
+  "design_plan": {
+    "direction": "Night-market receipt: an ink-blue mobile canteen with tangerine ticket stubs, hand-stamped food markers, and a soft paper order sheet.",
+    "tokens": {
+      "night": "#19243c",
+      "tangerine": "#ef6d3f",
+      "rice": "#fffaf0",
+      "jade": "#79b8a1",
+      "stone": "#e6e3dc"
+    },
+    "type": {
+      "display": "Georgia, serif",
+      "body": "Arial, Microsoft YaHei, sans-serif",
+      "utility": "ui-monospace, SFMono-Regular, Consolas, monospace"
+    },
+    "layout": "Location and search sit above a paper-ticket promotion; a compact category row filters a two-column menu while a bottom cart ticket and pickup sheet carry the action flow.",
+    "signature": "A CSS-only steam-ticket illustration gives the promotion a recognizable canteen identity without borrowing any food photography or protected assets.",
+    "self_critique": "The reference's ordering rhythm is used as an interaction model, but the original restaurant identity, assets, prices, copy, and pickup labels are all replaced with fictional content and geometric CSS art."
+  },
+  "interactions": {
+    "filter": "Search and category choices recompute the visible menu cards.",
+    "cart": "Add-to-cart buttons call one shared add function and update the persistent count.",
+    "pickup": "A local selection updates the pickup label and a confirm action closes the sheet.",
+    "qa": "The QA query invokes actual filtering, cart, and selection functions, then writes their outcome into qa-result."
+  }
+}

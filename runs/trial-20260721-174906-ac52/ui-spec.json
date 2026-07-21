@@ -1,0 +1,236 @@
+{
+  "run_id": "trial-20260721-174906-ac52",
+  "app_type": "ecommerce_marketplace",
+  "high_fidelity_structure": "The layout follows a dense, vertical scrolling mobile commerce structure. Top section: System status bar, followed by a horizontal scrollable tab bar (Categories) with an active indicator. Below that, a prominent search bar with a camera icon and action button. Middle section: A 2-row grid of 10 circular/rounded-square icon shortcuts. Below the grid, a horizontal scrollable carousel of 3 promotional cards (Live, Subsidy, Flash Sale). A full-width red promotional banner. Bottom section: A 2-column masonry grid of product cards with images, titles, and price tags. A fixed bottom navigation bar with 5 tabs, the first one being a large circular icon. Visual density is high with heavy use of orange and red accent colors against a white background.",
+  "replaced_source_assets": {
+    "brand_name": "ShopSphere",
+    "logo": "Orange circle with a white 'S' shape",
+    "search_placeholder": "Search for gadgets...",
+    "shortcut_icons": [
+      "Daily Rewards",
+      "Free Trial",
+      "Coin Rewards",
+      "Direct Factory",
+      "Logistics",
+      "Virtual Farm",
+      "Second Hand",
+      "Global Import",
+      "Quick Buy",
+      "Event Calendar"
+    ],
+    "promo_cards": [
+      "Live Shopping",
+      "Subsidy Deals",
+      "Flash Sale"
+    ],
+    "product_1": {
+      "title": "Retro Robot Desk Toy",
+      "price": "¥454",
+      "sales": "2000+ sold"
+    },
+    "product_2": {
+      "title": "Smart Vinyl Display",
+      "price": "¥1299",
+      "discount": "10% off"
+    },
+    "bottom_nav": [
+      "Home",
+      "Video",
+      "Messages",
+      "Cart",
+      "Profile"
+    ]
+  },
+  "visible_state": {
+    "active_tab": "Recommend",
+    "search_query": "steamdeck游戏机",
+    "bottom_nav_active": "Home",
+    "notification_badge": "99+"
+  },
+  "components": [
+    {
+      "id": "app-shell",
+      "type": "container",
+      "children": [
+        {
+          "id": "status-bar",
+          "type": "status_bar",
+          "content": "10:08 | 5G | 60%"
+        },
+        {
+          "id": "category-tabs",
+          "type": "horizontal_scroll",
+          "items": [
+            "Follow",
+            "Recommend",
+            "Flash Sale",
+            "Subsidy",
+            "Fashion",
+            "Travel",
+            "Super Deal"
+          ]
+        },
+        {
+          "id": "search-bar",
+          "type": "search_input",
+          "placeholder": "steamdeck游戏机",
+          "actions": [
+            "scan",
+            "camera",
+            "search_btn"
+          ]
+        },
+        {
+          "id": "shortcut-grid",
+          "type": "grid_2x5",
+          "items": [
+            "红包签到",
+            "试用领取",
+            "领淘金币",
+            "淘工厂",
+            "菜鸟驿站",
+            "芭芭农场",
+            "闲鱼",
+            "天猫国际",
+            "淘宝闪购",
+            "活动日历"
+          ]
+        },
+        {
+          "id": "promo-carousel",
+          "type": "horizontal_scroll",
+          "items": [
+            {
+              "title": "淘宝直播",
+              "image": "burger.jpg",
+              "price": "¥5"
+            },
+            {
+              "title": "百亿补贴",
+              "image": "controller.jpg",
+              "price": "¥303"
+            },
+            {
+              "title": "淘宝秒杀",
+              "image": "robot.jpg",
+              "price": "¥169"
+            }
+          ]
+        },
+        {
+          "id": "promo-banner",
+          "type": "banner",
+          "content": "超级立减 夏日嗨吃节低至8.1折 | ¥10 立即领取"
+        },
+        {
+          "id": "recommendation-list",
+          "type": "masonry_grid",
+          "columns": 2,
+          "items": [
+            {
+              "id": "product-card-1",
+              "image": "robot_desk.jpg",
+              "title": "天猫 绝区零官方 嗯呢桌搭系",
+              "tag": "热销爆款",
+              "price": "¥454",
+              "sales": "已售2000+"
+            },
+            {
+              "id": "product-card-2",
+              "image": "vinyl_display.jpg",
+              "title": "天猫 【小红书达人推荐】隐",
+              "tag": "超级立减10%",
+              "price": "¥1299"
+            }
+          ]
+        },
+        {
+          "id": "bottom-nav",
+          "type": "fixed_bottom_nav",
+          "items": [
+            {
+              "id": "nav-home",
+              "icon": "home_icon",
+              "label": "首页",
+              "active": true
+            },
+            {
+              "id": "nav-video",
+              "icon": "video_icon",
+              "label": "视频"
+            },
+            {
+              "id": "nav-messages",
+              "icon": "chat_icon",
+              "label": "消息",
+              "badge": "99+"
+            },
+            {
+              "id": "nav-cart",
+              "icon": "cart_icon",
+              "label": "购物车"
+            },
+            {
+              "id": "nav-profile",
+              "icon": "user_icon",
+              "label": "我的淘宝"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "inferred_interactions": [
+    {
+      "type": "search",
+      "target": "search-input",
+      "description": "User types in search bar and taps 'Search' button to filter products."
+    },
+    {
+      "type": "tab_switch",
+      "target": "category-tabs",
+      "description": "User taps a category tab (e.g., 'Flash Sale') to change the visible content feed."
+    },
+    {
+      "type": "primary_action",
+      "target": "add-to-cart",
+      "description": "User taps a product card to view details or adds item to cart."
+    },
+    {
+      "type": "nav_click",
+      "target": "bottom-nav",
+      "description": "User switches between main app sections via bottom navigation."
+    }
+  ],
+  "design_tokens": {
+    "colors": {
+      "primary": "#FF5000",
+      "secondary": "#FF9900",
+      "accent": "#FF0033",
+      "background": "#FFFFFF",
+      "text_primary": "#333333",
+      "text_secondary": "#666666",
+      "border": "#E0E0E0"
+    },
+    "typography": {
+      "font_family": "PingFang SC, Helvetica Neue, Arial, sans-serif",
+      "sizes": {
+        "h1": "20px",
+        "h2": "16px",
+        "body": "14px",
+        "caption": "12px"
+      }
+    },
+    "spacing": {
+      "unit": "8px",
+      "padding_horizontal": "16px",
+      "card_gap": "8px"
+    },
+    "radius": {
+      "button": "24px",
+      "card": "8px",
+      "input": "24px"
+    }
+  },
+  "generator": "local-vlm"
+}

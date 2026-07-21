@@ -34,7 +34,7 @@ Contract (absolute path): $contract
 Run ID: $RunId
 Progress batch ID: live-trials
 
-Use the screenshot only as a layout and interaction reference. Generate a fictional brand with local assets. For every phase, write a progress event using this exact pattern: .\scripts\python.cmd scripts\worker_progress.py --batch live-trials --run $RunId --phase <visual|scaffold|browser|delivery> --status <STARTED|PASS|FAIL> --message-key <generic-phase-status>. Run browser acceptance and finalize delivery. Reply only with PASS/FAIL and the absolute delivery artifact paths.
+Use the screenshot only as a layout and interaction reference. Generate a fictional brand with local assets. For every phase, write a progress event using .\scripts\python.cmd scripts\worker_progress.py --batch live-trials --run $RunId. Use these exact message keys: visual STARTED/PASS = generic-visual-start/generic-visual-pass; scaffold = generic-scaffold-start/generic-scaffold-pass; browser = generic-browser-start/generic-browser-pass; delivery = generic-delivery-start/generic-delivery-pass. Run browser acceptance and finalize delivery. Reply only with PASS/FAIL and the absolute delivery artifact paths.
 "@
 cccc tracked-send $task --group $GroupId --to mvp-worker --title "Screenshot-to-App trial: $RunId" --outcome "worker-delivery.json is PASS and preview.png plus acceptance-report.json exist" --idempotency-key "intake-$RunId" | Out-Host
 Write-Host "[Worker Intake] Dispatched to CCCC actor mvp-worker. Open http://127.0.0.1:8848/ui/ to watch the terminal."

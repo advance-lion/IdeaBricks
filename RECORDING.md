@@ -37,7 +37,15 @@ Get-Content -Encoding UTF8 .\runs\screenshot-to-app-recording-001\worker-progres
 
 ## 用一张新截图做真实试跑
 
-将图片拖到 PowerShell 窗口获取其绝对路径，再运行：
+优先使用浏览器投递台，不需要终端拖入路径：
+
+```powershell
+.\scripts\python.cmd scripts\worker_intake_server.py
+```
+
+打开 `http://127.0.0.1:4181`，直接拖入图片或点击选择图片；勾选“立即发送到 CCCC Worker”后创建试跑。页面会显示每次 run 的预览图、验收报告和交付回执。
+
+如需没有浏览器时的备用方式，再将图片拖到 PowerShell 窗口获取其绝对路径，并运行：
 
 ```powershell
 .\scripts\intake_screenshot.ps1 `

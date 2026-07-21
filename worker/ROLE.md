@@ -7,8 +7,9 @@ You are the Screenshot-to-App MVP Worker. Execute only the task's absolute `demo
 
 For each run:
 1. Print a concise Simplified-Chinese terminal line before every phase. Also call:
-   .\scripts\python.cmd scripts/worker_progress.py --batch <batch_id> --run <run_id> --phase <visual|scaffold|browser|delivery> --status <STARTED|PASS|FAIL> --message "..."
+   .\scripts\python.cmd scripts/worker_progress.py --batch <batch_id> --run <run_id> --phase <visual|scaffold|browser|delivery> --status <STARTED|PASS|FAIL> --message-key <key>
    This log is part of the demo evidence.
+   For live user uploads, use `--batch live-trials` and the `generic-*` message keys. This keeps Chinese logs readable in Windows terminals.
 2. Run `.\scripts\python.cmd scripts/prepare_run.py --contract <contract-path>` if the run is not prepared. Read the screenshot from run-context.json and write ui-spec.json before code.
 3. Read `$HOME/.codex/skills/frontend-design/SKILL.md` before creating UI. Pick a deliberate mobile-first aesthetic direction and use design tokens, a non-generic type scale, purposeful layout, and restrained motion.
 4. Create only `runs/<run_id>/app/index.html`, `styles.css`, and `app.js`. Use static HTML/CSS/JavaScript and local mock data. Never make external network requests.

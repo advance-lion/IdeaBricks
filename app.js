@@ -1,0 +1,381 @@
+const $ = (selector, scope = document) => scope.querySelector(selector);
+const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
+const showMode = location.pathname === '/show' || location.pathname.startsWith('/show/');
+const runQuery = new URLSearchParams(location.search).get('run');
+let activeRunId = runQuery;
+let pollTimer;
+
+function toast(message) {
+  const node = $('#toast');
+  node.textContent = message;
+  node.classList.add('show');
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => node.classList.remove('show'), 3000);
+}
+
+function asset(path) {
+  if (!showMode || !path || path.startsWith('/') || /^https?:/.test(path) || path.startsWith('blob:')) return path;
+  return `/assets/${path}`;
+}
+
+function timeLabel(value) {
+  if (!value) return 'NOW';
+  const date = new Date(value);
+  if (!Number.isNaN(date.valueOf())) return date.toLocaleTimeString('zh-CN', { hour12: false });
+  return String(value).slice(11, 19) || 'NOW';
+}
+
+function setRuntime(runtime, actor) {
+  const verified = runtime?.verified;
+  const label = runtime?.label || '本地演示环境';
+  $('#runtimeBadge').innerHTML = `<span class="live-dot"></span> CCCC TEAM · ${verified ? 'DGX SPARK' : label.toUpperCase()}`;
+  $('#runtimeTag').textContent = verified ? 'DGX SPARK' : 'LOCAL DEMO';
+  $('#runtimeTag').title = runtime?.hint || '';
+  if (actor && !actor.running) $('#runtimeBadge').classList.add('is-idle');
+  else $('#runtimeBadge').classList.remove('is-idle');
+}
+
+$$('.chip').forEach(chip => chip.addEventListener('click', () => chip.classList.toggle('selected')));
+
+$('#cliToggle').addEventListener('click', () => {
+  const extras = $$('.cli-extra');
+  const expanded = $('#cliToggle').getAttribute('aria-expanded') === 'true';
+  extras.forEach(item => item.hidden = expanded);
+  $('#cliToggle').setAttribute('aria-expanded', String(!expanded));
+  $('#cliToggle').textContent = expanded ? '展开清单 +' : '收起清单 −';
+  $('#cliCount').textContent = expanded ? '已展示 6 / 12 个 CLI' : '已展示 12 / 12 个 CLI';
+  toast(expanded ? '已收起扩展 CLI 清单' : '已展开完整 CLI 能力清单');
+});
+
+function selectIdea(card) {
+  $$('.idea-card').forEach(item => {
+    item.classList.remove('selected');
+    $('.card-title span', item).textContent = '待验证';
+    $('.select-idea', item).innerHTML = '选择方向 <span>→</span>';
+  });
+  card.classList.add('selected');
+  $('.card-title span', card).textContent = '已选中';
+  $('.select-idea', card).innerHTML = '查看 MVP <span>→</span>';
+  const name = $('h3', card).textContent;
+  $('.execution h2').textContent = `${name} 已开始营业。`;
+  $('#taskState').textContent = card.dataset.idea === 'screenshot-app' ? 'READY TO FORGE' : 'DEMO MODE';
+  toast(card.dataset.idea === 'screenshot-app' ? '已切换到截图生成 App 的演示操作台' : `已选中「${name}」；当前展示仍使用截图生成 Worker 链路`);
+  $('#mvp').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+$$('.select-idea').forEach(button => button.addEventListener('click', event => selectIdea(event.currentTarget.closest('.idea-card'))));
+
+$('#mineBtn').addEventListener('click', () => {
+  const button = $('#mineBtn');
+  button.innerHTML = '正在组合 CLI... <span>···</span>';
+  button.disabled = true;
+  setTimeout(() => {
+    button.innerHTML = '重新挖掘创意 <span>↗</span>';
+    button.disabled = false;
+    $('#ideaStack').animate([{ opacity: .45, transform: 'translateY(7px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 430 });
+    toast('已基于新的输入，重新生成 3 个可行方向');
+  }, 850);
+});
+
+function typeCommand() {
+  const command = 'cccc discover --intent "周末想吃得快一点"';
+  const target = $('#typedCommand');
+  target.textContent = '';
+  [...command].forEach((char, index) => setTimeout(() => { target.textContent += char; }, index * 18));
+}
+
+$('#replayBtn').addEventListener('click', () => { typeCommand(); $('#top').scrollIntoView({ behavior: 'smooth' }); toast('正在重放本次 CCCC 协作流程'); });
+$('#footerRun').addEventListener('click', () => { $('#ideas').scrollIntoView({ behavior: 'smooth' }); $('#briefInput').focus(); });
+$('#showLogBtn').addEventListener('click', () => $('#teamLog').scrollIntoView({ behavior: 'smooth', block: 'center' }));
+
+const sourcePreview = $('#sourcePreview');
+const resultPreview = $('#resultPreview');
+const sourceName = $('#sourceName');
+const outputName = $('#outputName');
+const taskState = $('#taskState');
+const resultStatus = $('#resultStatus');
+const resultMeta = $('#resultMeta');
+const generateBtn = $('#generateBtn');
+const resultCard = $('#resultCard');
+const workingState = $('#workingState');
+const resultFrame = $('#resultFrame');
+const openApp = $('#openApp');
+const mvpStage = $('#mvpStage');
+const stageDivider = $('#stageDivider');
+let selectedSource = {
+  source: 'inputs/screenshot-to-app-recording-001/fastbite-reference.jpg',
+  name: 'KFC 点餐截图',
+  app: 'FastBite',
+  output: 'runs/fastbite-kfc-001/artifacts/preview.png',
+  runId: 'fastbite-kfc-001',
+  custom: false,
+};
+
+function demoAppUrl(runId) {
+  if (!runId) return null;
+  return showMode ? `/apps/${encodeURIComponent(runId)}/index.html` : `runs/${runId}/app/index.html`;
+}
+
+function setLiveApp(url) {
+  if (!url) {
+    resultFrame.removeAttribute('src');
+    resultFrame.hidden = true;
+    openApp.hidden = true;
+    resultPreview.hidden = false;
+    return;
+  }
+  resultFrame.src = url;
+  resultFrame.hidden = false;
+  openApp.href = url;
+  openApp.hidden = false;
+  resultPreview.hidden = true;
+}
+
+let stageRatio = .38;
+function applyStageSplit() {
+  if (window.innerWidth <= 900) {
+    mvpStage.style.removeProperty('--stage-left');
+    return;
+  }
+  const total = mvpStage.clientWidth - 18;
+  const minLeft = Math.min(360, total * .42);
+  const minRight = Math.min(460, total * .53);
+  const left = Math.max(minLeft, Math.min(total - minRight, total * stageRatio));
+  stageRatio = left / total;
+  mvpStage.style.setProperty('--stage-left', `${Math.round(left)}px`);
+}
+
+function updateStageSplit(pointerX) {
+  const rect = mvpStage.getBoundingClientRect();
+  const total = rect.width - 18;
+  stageRatio = (pointerX - rect.left) / total;
+  applyStageSplit();
+}
+
+stageDivider.addEventListener('pointerdown', event => {
+  if (window.innerWidth <= 900) return;
+  event.preventDefault();
+  stageDivider.setPointerCapture(event.pointerId);
+  mvpStage.classList.add('is-resizing');
+  updateStageSplit(event.clientX);
+});
+stageDivider.addEventListener('pointermove', event => {
+  if (mvpStage.classList.contains('is-resizing')) updateStageSplit(event.clientX);
+});
+stageDivider.addEventListener('pointerup', event => {
+  if (!mvpStage.classList.contains('is-resizing')) return;
+  stageDivider.releasePointerCapture(event.pointerId);
+  mvpStage.classList.remove('is-resizing');
+});
+stageDivider.addEventListener('keydown', event => {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  event.preventDefault();
+  if (event.key === 'ArrowLeft') stageRatio -= .03;
+  if (event.key === 'ArrowRight') stageRatio += .03;
+  if (event.key === 'Home') stageRatio = .34;
+  if (event.key === 'End') stageRatio = .58;
+  applyStageSplit();
+});
+window.addEventListener('resize', applyStageSplit);
+
+function appendAgentEvent(agent, message, kind = '', timestamp = 'DEMO') {
+  const line = document.createElement('p');
+  if (kind) line.classList.add(kind);
+  const time = document.createElement('time');
+  time.textContent = timestamp;
+  const label = document.createElement('b');
+  label.className = agent.toLowerCase().replace(/[^a-z]/g, '') || 'worker';
+  label.textContent = agent;
+  line.append(time, label, document.createTextNode(` ${message}`));
+  $('#logStream').append(line);
+}
+
+function setSource(button) {
+  $$('.source-chip').forEach(chip => chip.classList.remove('selected'));
+  button.classList.add('selected');
+  selectedSource = {
+    source: button.dataset.source,
+    name: button.dataset.name,
+    app: button.dataset.app,
+    output: button.dataset.output,
+    runId: button.dataset.runId,
+    custom: false,
+  };
+  sourcePreview.src = asset(selectedSource.source);
+  sourcePreview.alt = `待解析的${selectedSource.name}`;
+  sourceName.textContent = selectedSource.name;
+  outputName.textContent = selectedSource.app;
+  resultPreview.src = asset(selectedSource.output);
+  resultPreview.alt = `生成的${selectedSource.app} MVP 预览`;
+  setLiveApp(demoAppUrl(selectedSource.runId));
+  resultStatus.textContent = 'READY';
+  resultMeta.textContent = showMode ? '点击生成，创建真实 Worker run' : '点击生成以启动演示流程';
+  taskState.textContent = 'READY TO FORGE';
+}
+
+$$('.source-chip').forEach(button => button.addEventListener('click', () => setSource(button)));
+
+$('#screenshotUpload').addEventListener('change', event => {
+  const [file] = event.target.files;
+  if (!file) return;
+  const localUrl = URL.createObjectURL(file);
+  $$('.source-chip').forEach(chip => chip.classList.remove('selected'));
+  selectedSource = { source: localUrl, file, name: file.name, app: 'SparkMVP', output: selectedSource.output, runId: null, custom: true };
+  sourcePreview.src = localUrl;
+  sourcePreview.alt = `本地上传的${file.name}`;
+  sourceName.textContent = file.name;
+  outputName.textContent = '等待 Worker 交付';
+  setLiveApp(null);
+  resultStatus.textContent = 'QUEUED';
+  resultMeta.textContent = showMode ? '点击生成后会投递给真实 Worker' : '截图已在当前浏览器本地预览';
+  taskState.textContent = 'SCREENSHOT ATTACHED';
+  toast(showMode ? '截图已就绪，下一步会创建独立契约并派发。' : '截图已添加到演示任务；尚未上传至投递台');
+});
+
+function renderPhase(events, runStatus) {
+  const phases = ['visual', 'scaffold', 'browser', 'delivery'];
+  const latest = events.at(-1);
+  const activeIndex = latest ? Math.max(0, phases.indexOf(latest.phase)) : 0;
+  $$('#phaseProgress [data-phase]').forEach((node, index) => {
+    node.classList.toggle('done', index < activeIndex || (index === activeIndex && latest?.status === 'PASS'));
+    node.classList.toggle('active', index === activeIndex && runStatus !== 'PASS');
+  });
+  $('#runStageStatus').textContent = runStatus === 'PASS' ? 'RUNNING → PASS' : latest ? `${String(latest.phase).toUpperCase()} · ${latest.status}` : 'CONTRACT READY';
+}
+
+function renderEvents(events) {
+  const stream = $('#logStream');
+  stream.replaceChildren();
+  const roleByPhase = { visual: 'VISION', scaffold: 'MVP-WORKER', browser: 'QA', delivery: 'DELIVERY' };
+  if (!events.length) appendAgentEvent('FOREMAN', '契约已创建，等待 mvp-worker 写入第一条真实进度。', '', 'WAIT');
+  events.forEach(event => {
+    const agent = roleByPhase[event.phase] || 'MVP-WORKER';
+    const kind = event.status === 'PASS' ? 'success' : event.status === 'FAIL' ? 'failed' : '';
+    appendAgentEvent(agent, event.message || `${event.phase} ${event.status}`, kind, timeLabel(event.timestamp));
+  });
+  stream.scrollTop = stream.scrollHeight;
+  $('#eventCount').textContent = `${events.length} REAL EVENTS`;
+}
+
+function renderRun(payload) {
+  const { run, runtime, actor } = payload;
+  setRuntime(runtime, actor);
+  const app = run.app || {};
+  const isPass = run.status === 'PASS';
+  const isRunning = !isPass && Boolean(run.dispatched);
+  $('#signalRunId').textContent = run.run_id;
+  $('#deliveryRunId').textContent = run.run_id;
+  $('#signalStatus').textContent = run.status;
+  $('#signalDate').textContent = `本次运行 / ${timeLabel(run.created_at)}`;
+  $('#deliveryStatus').textContent = run.status;
+  $('#deliveryFiles').textContent = run.preview ? 'preview.png · acceptance-report.json · worker-delivery.json' : '正在等待 Worker 交付证据';
+  sourceName.textContent = `${app.name || 'SparkMVP'} / 授权截图`;
+  outputName.textContent = app.name || '等待 Worker 交付';
+  if (run.source) sourcePreview.src = run.source;
+  if (run.preview) resultPreview.src = run.preview;
+  resultPreview.alt = `${app.name || 'MVP'} 的真实 Worker 预览`;
+  setLiveApp(run.app_url || null);
+  resultCard.classList.toggle('is-running', isRunning);
+  workingState.hidden = !isRunning;
+  resultStatus.textContent = run.status;
+  resultMeta.textContent = isPass ? '真实产物 · preview.png · 验收报告' : run.dispatched ? '真实 Worker 正在处理 · 进度每 3 秒刷新' : '契约已就绪，尚未派发';
+  taskState.textContent = isPass ? 'DELIVERY · PASS' : run.dispatched ? 'CCCC WORKER · RUNNING' : 'CONTRACT · READY';
+  renderPhase(run.events || [], run.status);
+  renderEvents(run.events || []);
+}
+
+async function loadRun() {
+  if (!showMode || !activeRunId) return;
+  try {
+    const response = await fetch(`/api/runs/${encodeURIComponent(activeRunId)}`, { cache: 'no-store' });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '无法读取该试跑');
+    renderRun(data);
+  } catch (error) {
+    clearInterval(pollTimer);
+    taskState.textContent = 'LOCAL DEMO MODE';
+    toast(error.message || '运行台暂时无法连接');
+  }
+}
+
+async function createRealRun() {
+  generateBtn.disabled = true;
+  resultCard.classList.add('is-running');
+  workingState.hidden = false;
+  taskState.textContent = 'FOREMAN · CREATING CONTRACT';
+  resultStatus.textContent = 'QUEUED';
+  resultMeta.textContent = '保存截图 → 创建契约 → 派发 Worker';
+  try {
+    let screenshot = selectedSource.file;
+    if (!screenshot) {
+      const response = await fetch(asset(selectedSource.source));
+      if (!response.ok) throw new Error('演示截图未能读取');
+      const blob = await response.blob();
+      screenshot = new File([blob], `${selectedSource.app}.jpg`, { type: blob.type || 'image/jpeg' });
+    }
+    const form = new FormData();
+    form.set('screenshot', screenshot);
+    form.set('app_name', selectedSource.app);
+    form.set('kind', 'mobile app');
+    form.set('dispatch', 'true');
+    const response = await fetch('/api/intake', { method: 'POST', body: form });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '投递失败');
+    activeRunId = data.run_id;
+    history.replaceState({}, '', data.show_url || `/show?run=${encodeURIComponent(activeRunId)}`);
+    toast(`已创建 ${activeRunId}，左侧现在展示真实 Worker 日志。`);
+    await loadRun();
+    clearInterval(pollTimer);
+    pollTimer = setInterval(loadRun, 3000);
+  } catch (error) {
+    resultCard.classList.remove('is-running');
+    workingState.hidden = true;
+    resultStatus.textContent = 'ERROR';
+    resultMeta.textContent = '请到 Worker 投递台确认服务与 CCCC 状态';
+    taskState.textContent = 'SUBMIT FAILED';
+    toast(error.message || '投递失败');
+  } finally {
+    generateBtn.disabled = false;
+  }
+}
+
+function simulateBuild() {
+  const instruction = $('#buildPrompt').value.trim() || '按截图的布局与交互意图生成可运行的前端 MVP。';
+  generateBtn.disabled = true;
+  resultCard.classList.add('is-running');
+  workingState.hidden = false;
+  taskState.textContent = 'FOREMAN · ANALYSING';
+  resultStatus.textContent = 'RUNNING';
+  resultMeta.textContent = 'vision → scaffold → browser';
+  appendAgentEvent('FOREMAN', `接收截图「${selectedSource.name}」与生成指令`);
+  setTimeout(() => { taskState.textContent = 'MVP-WORKER · BUILDING'; appendAgentEvent('MVP-WORKER', '正在提取布局结构并生成静态前端…'); }, 650);
+  setTimeout(() => { taskState.textContent = 'QA · CHECKING'; appendAgentEvent('QA', '正在执行浏览器验收与交付封装…'); }, 1350);
+  setTimeout(() => {
+    resultCard.classList.remove('is-running');
+    workingState.hidden = true;
+    generateBtn.disabled = false;
+    taskState.textContent = 'DEMO RUN · PASS';
+    outputName.textContent = selectedSource.custom ? 'Demo MVP 预览' : selectedSource.app;
+    resultPreview.src = asset(selectedSource.output);
+    setLiveApp(demoAppUrl(selectedSource.runId));
+    resultStatus.textContent = 'PASS';
+    resultMeta.textContent = 'preview.png · acceptance-report.json';
+    appendAgentEvent('QA', `演示流程完成：${instruction.slice(0, 24)}${instruction.length > 24 ? '…' : ''}`, 'success');
+    toast('演示生成完成；投递台服务启动后会切换为真实交付物。');
+  }, 2150);
+}
+
+generateBtn.addEventListener('click', () => showMode ? createRealRun() : simulateBuild());
+
+typeCommand();
+setSource($('.source-chip.selected'));
+applyStageSplit();
+if (showMode && activeRunId) {
+  loadRun();
+  pollTimer = setInterval(loadRun, 3000);
+} else if (showMode) {
+  fetch('/api/runs', { cache: 'no-store' })
+    .then(response => response.ok ? response.json() : Promise.reject())
+    .then(data => setRuntime(data.runtime, data.actor))
+    .catch(() => toast('投递台未连接：当前保留本地演示模式。'));
+}

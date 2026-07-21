@@ -81,11 +81,12 @@ def run_data(run_dir: Path) -> dict[str, Any]:
     delivery = read_json(run_dir / "worker-delivery.json") or {}
     context = read_json(run_dir / "run-context.json") or {}
     artifacts = delivery.get("artifacts", {}) if isinstance(delivery, dict) else {}
+    dispatched = (ROOT / "contracts" / "live-trials" / f"{run_id}.dispatch.json").is_file()
     return {
         "run_id": run_id,
         "created_at": delivery.get("created_at") or context.get("prepared_at"),
-        "status": delivery.get("status") or "处理中",
-        "dispatched": (ROOT / "contracts" / "live-trials" / f"{run_id}.dispatch.json").is_file(),
+        "status": delivery.get("status") or ("处理中" if dispatched else "已准备"),
+        "dispatched": dispatched,
         "preview": f"/files/{run_id}/artifacts/preview.png" if (run_dir / "artifacts" / "preview.png").is_file() else None,
         "report": f"/files/{run_id}/artifacts/acceptance-report.json" if (run_dir / "artifacts" / "acceptance-report.json").is_file() else None,
         "delivery": f"/files/{run_id}/worker-delivery.json" if (run_dir / "worker-delivery.json").is_file() else None,

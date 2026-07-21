@@ -23,6 +23,7 @@ PYTHON = Path(sys.executable)
 MAX_UPLOAD_BYTES = 16 * 1024 * 1024
 ALLOWED_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 DEFAULT_GROUP = "g_c3e3880e9f6c"
+CCCC_GROUP = os.environ.get("MVP_WORKER_CCCC_GROUP", DEFAULT_GROUP)
 
 
 PAGE = r"""<!doctype html>
@@ -152,6 +153,55 @@ def runtime_info() -> dict[str, Any]:
     }
 
 
+def cccc_stage_events(run_id: str | None = None) -> dict[str, Any]:
+    """Read only the structured Worker status mirrors needed by the stage UI."""
+    preferred_home = Path.home() / ".cccc"
+    roaming_home = Path(os.environ.get("APPDATA", str(Path.home() / "AppData" / "Roaming"))) / "cccc"
+    cccc_home = preferred_home if preferred_home.is_dir() else roaming_home
+    group_root = cccc_home / "groups" / CCCC_GROUP
+    ledger_path = group_root / "ledger.jsonl"
+    pattern = re.compile(r"^\[Worker 状态同步\] run=([^｜]+)｜阶段=([^｜]+)｜状态=([^｜]+)｜执行引擎=(.+)$")
+    events: list[dict[str, str]] = []
+    latest_run_id: str | None = None
+    try:
+        for line in ledger_path.read_text(encoding="utf-8-sig").splitlines():
+            event = json.loads(line)
+            if event.get("kind") != "chat.message":
+                continue
+            text = str(event.get("data", {}).get("text", ""))
+            match = pattern.match(text)
+            if not match:
+                continue
+            found_run, phase, status, engine = match.groups()
+            latest_run_id = found_run
+            if run_id and found_run != run_id:
+                continue
+            events.append({
+                "timestamp": str(event.get("ts", "")),
+                "run_id": found_run,
+                "phase": phase,
+                "status": status,
+                "engine": engine,
+                "actor": str(event.get("by", "mvp-worker")),
+            })
+    except (OSError, json.JSONDecodeError):
+        pass
+    events.sort(key=lambda item: item["timestamp"])
+
+    title = "CCCC Team"
+    actors: list[dict[str, str]] = []
+    try:
+        group_yaml = (group_root / "group.yaml").read_text(encoding="utf-8-sig")
+        title_match = re.search(r"^title:\s*(.+)$", group_yaml, flags=re.MULTILINE)
+        if title_match:
+            title = title_match.group(1).strip(" '\"")
+        for match in re.finditer(r"^\s{2}id:\s*([^\n]+)\n\s{2}title:\s*([^\n]+)", group_yaml, flags=re.MULTILINE):
+            actors.append({"id": match.group(1).strip(), "title": match.group(2).strip(" '\"")})
+    except OSError:
+        pass
+    return {"group_id": CCCC_GROUP, "title": title, "actors": actors, "events": events[-16:], "latest_run_id": latest_run_id}
+
+
 def worker_backend_info() -> dict[str, str]:
     """Expose the execution engine without exposing model credentials."""
     backend = os.environ.get("MVP_WORKER_BACKEND", "local-openai").strip().lower() or "local-openai"
@@ -246,6 +296,9 @@ class IntakeHandler(SimpleHTTPRequestHandler):
         if parsed.path in {"/show", "/show/"}:
             self.send_error(HTTPStatus.GONE, "The incubator showcase is disabled for worker verification.")
             return
+        if parsed.path in {"/stage", "/stage/"}:
+            send_static_file(self, ROOT / "index.html")
+            return
         if parsed.path == "/repo":
             body = repository_page()
             self.send_response(HTTPStatus.OK)
@@ -255,6 +308,8 @@ class IntakeHandler(SimpleHTTPRequestHandler):
             self.wfile.write(body)
             return
         show_assets = {
+            "/stage/styles.css": ROOT / "styles.css",
+            "/stage/app.js": ROOT / "app.js",
             "/show/styles.css": ROOT / "styles.css",
             "/show/app.js": ROOT / "app.js",
             # /show?run=... treats relative URLs as root-relative in browsers.
@@ -292,6 +347,16 @@ class IntakeHandler(SimpleHTTPRequestHandler):
             runs = [run_data(path) for path in runs_root.glob("trial-*") if path.is_dir()]
             runs.sort(key=lambda item: item.get("created_at") or "", reverse=True)
             json_response(self, HTTPStatus.OK, {"actor": actor_status(), "backend": worker_backend_info(), "runtime": runtime_info(), "runs": runs[:12]})
+            return
+        if parsed.path == "/api/stage":
+            requested_run = parse_qs(parsed.query).get("run", [None])[0]
+            stage = cccc_stage_events(requested_run)
+            json_response(self, HTTPStatus.OK, {
+                "stage": stage,
+                "actor": actor_status(),
+                "backend": worker_backend_info(),
+                "runtime": runtime_info(),
+            })
             return
         if parsed.path == "/api/project":
             json_response(self, HTTPStatus.OK, {"repository": repository_info(), "cccc_gui": "http://127.0.0.1:8848/ui/"})

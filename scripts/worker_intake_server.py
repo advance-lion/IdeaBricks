@@ -49,7 +49,7 @@ const $=s=>document.querySelector(s);const zone=$('#drop-zone'),input=$('#screen
 function say(message,error=false){const el=$('#statusline');el.textContent=message;el.className='statusline'+(error?' error':'');el.style.display='block';toast.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3600)}
 function renderFile(file){if(!file)return;$('#file-name').textContent=file.name;$('#file-meta').textContent=`${Math.ceil(file.size/1024)} KB · ${file.type||'image'}`;preview.src=URL.createObjectURL(file);zone.classList.add('has-file')}
 input.addEventListener('change',()=>renderFile(input.files[0]));['dragenter','dragover'].forEach(type=>zone.addEventListener(type,e=>{e.preventDefault();zone.classList.add('drag')}));['dragleave','drop'].forEach(type=>zone.addEventListener(type,e=>{e.preventDefault();zone.classList.remove('drag')}));zone.addEventListener('drop',e=>{const file=e.dataTransfer.files[0];if(!file)return;const dt=new DataTransfer();dt.items.add(file);input.files=dt.files;renderFile(file)});
-async function refresh(){try{const data=await fetch('/api/runs').then(r=>r.json());const actor=$('#actor-state');actor.className='state '+(data.actor.running?'ready':'');actor.innerHTML=`<b></b><span>${data.actor.running?'CCCC Worker 已运行':'CCCC Worker 当前停止；投递时会自动启动'}</span>`;const host=$('#runs');if(!data.runs.length){host.innerHTML='<p class="empty">还没有新的试跑。投递一张截图后，证据会出现在这里。</p>';return}host.innerHTML=data.runs.map(run=>`<article class="run"><div><b>${run.run_id}</b><small>${run.created_at||'已创建，等待 Worker'}</small></div><span class="pill ${run.status==='PASS'?'pass':run.status==='处理中'?'working':''}">${run.status}</span><span class="pill ${run.dispatched?'working':''}">${run.dispatched?'已派发':'仅已准备'}</span><div class="links">${run.ui_spec?`<a target="_blank" href="${run.ui_spec}">视觉规格</a>`:''}${run.app_url?`<a class="live" target="_blank" href="${run.app_url}">运行网页</a>`:''}${run.pipeline_log?`<a target="_blank" href="${run.pipeline_log}">流水线日志</a>`:''}${run.preview?`<a target="_blank" href="${run.preview}">预览图</a>`:''}${run.report?`<a target="_blank" href="${run.report}">验收</a>`:''}${run.delivery?`<a target="_blank" href="${run.delivery}">回执</a>`:''}<a target="_blank" href="http://127.0.0.1:8848/ui/">CCCC</a><a target="_blank" href="/repo">仓库</a></div></article>`).join('')}catch(e){$('#runs').innerHTML='<p class="empty">无法读取本地状态，请确认投递台仍在运行。</p>'}}
+async function refresh(){try{const data=await fetch('/api/runs').then(r=>r.json());const actor=$('#actor-state'),engine=data.backend||{label:'未识别',detail:'请检查 Worker 配置'};actor.className='state '+(data.actor.running?'ready':'');actor.innerHTML=`<b></b><span>${data.actor.running?'CCCC Worker 已运行':'CCCC Worker 当前停止；投递时会自动启动'} · 执行引擎：${engine.label}（${engine.detail}）</span>`;const host=$('#runs');if(!data.runs.length){host.innerHTML='<p class="empty">还没有新的试跑。投递一张截图后，证据会出现在这里。</p>';return}host.innerHTML=data.runs.map(run=>`<article class="run"><div><b>${run.run_id}</b><small>${run.created_at||'已创建，等待 Worker'}</small></div><span class="pill ${run.status==='PASS'?'pass':run.status==='处理中'?'working':''}">${run.status}</span><span class="pill ${run.dispatched?'working':''}">${run.dispatched?'已派发':'仅已准备'}</span><div class="links">${run.ui_spec?`<a target="_blank" href="${run.ui_spec}">视觉规格</a>`:''}${run.app_url?`<a class="live" target="_blank" href="${run.app_url}">运行网页</a>`:''}${run.pipeline_log?`<a target="_blank" href="${run.pipeline_log}">流水线日志</a>`:''}${run.preview?`<a target="_blank" href="${run.preview}">预览图</a>`:''}${run.report?`<a target="_blank" href="${run.report}">验收</a>`:''}${run.delivery?`<a target="_blank" href="${run.delivery}">回执</a>`:''}<a target="_blank" href="http://127.0.0.1:8848/ui/">CCCC</a><a target="_blank" href="/repo">仓库</a></div></article>`).join('')}catch(e){$('#runs').innerHTML='<p class="empty">无法读取本地状态，请确认投递台仍在运行。</p>'}}
 $('#refresh').addEventListener('click',refresh);setInterval(refresh,5000);refresh();
 $('#intake-form').addEventListener('submit',async e=>{e.preventDefault();if(!input.files[0])return say('请先选择一张截图。',true);const btn=$('#submit');btn.disabled=true;btn.innerHTML='正在创建… <span>⋯</span>';try{const fd=new FormData(e.currentTarget);fd.set('dispatch',$('#dispatch').checked?'true':'false');const result=await fetch('/api/intake',{method:'POST',body:fd}).then(async r=>{const json=await r.json();if(!r.ok)throw new Error(json.error||'创建失败');return json});say(result.message);await refresh()}catch(err){say(err.message,true)}finally{btn.disabled=false;btn.innerHTML='创建本次试跑 <span>→</span>'}});
 </script></body></html>"""
@@ -150,6 +150,24 @@ def runtime_info() -> dict[str, Any]:
         "verified": platform == "dgx-spark",
         "hint": "在 DGX Spark 上启动时设置 FORGE_RUNTIME_LABEL=DGX Spark；未设置时绝不冒充平台运行。",
     }
+
+
+def worker_backend_info() -> dict[str, str]:
+    """Expose the execution engine without exposing model credentials."""
+    backend = os.environ.get("MVP_WORKER_BACKEND", "local-openai").strip().lower() or "local-openai"
+    if backend == "local-openai":
+        config = read_json(ROOT / "config" / "local-model.local.json") or {}
+        model = os.environ.get("LOCAL_MODEL_NAME") or str(config.get("model") or "未配置模型")
+        return {
+            "id": backend,
+            "label": "本地 LLM / VLM",
+            "detail": f"{model} · 本地视觉理解 + 本地前端生成",
+        }
+    if backend == "codex":
+        return {"id": backend, "label": "Codex", "detail": "Codex 视觉理解 + 前端生成"}
+    if backend == "cccc-codex":
+        return {"id": backend, "label": "CCCC + Codex", "detail": "CCCC 调度的 Codex Worker"}
+    return {"id": backend, "label": "未知后端", "detail": backend}
 
 
 def run_data(run_dir: Path) -> dict[str, Any]:
@@ -273,7 +291,7 @@ class IntakeHandler(SimpleHTTPRequestHandler):
             runs_root = ROOT / "runs"
             runs = [run_data(path) for path in runs_root.glob("trial-*") if path.is_dir()]
             runs.sort(key=lambda item: item.get("created_at") or "", reverse=True)
-            json_response(self, HTTPStatus.OK, {"actor": actor_status(), "runtime": runtime_info(), "runs": runs[:12]})
+            json_response(self, HTTPStatus.OK, {"actor": actor_status(), "backend": worker_backend_info(), "runtime": runtime_info(), "runs": runs[:12]})
             return
         if parsed.path == "/api/project":
             json_response(self, HTTPStatus.OK, {"repository": repository_info(), "cccc_gui": "http://127.0.0.1:8848/ui/"})
@@ -287,7 +305,7 @@ class IntakeHandler(SimpleHTTPRequestHandler):
             if not run_dir.is_dir():
                 json_response(self, HTTPStatus.NOT_FOUND, {"error": "找不到这个试跑"})
                 return
-            json_response(self, HTTPStatus.OK, {"runtime": runtime_info(), "actor": actor_status(), "run": run_data(run_dir)})
+            json_response(self, HTTPStatus.OK, {"runtime": runtime_info(), "actor": actor_status(), "backend": worker_backend_info(), "run": run_data(run_dir)})
             return
         if parsed.path.startswith("/files/"):
             parts = [unquote(part) for part in parsed.path.split("/") if part]

@@ -3,5 +3,6 @@
   "api_key": "replace-with-local-key",
   "model": "local-agent",
   "timeout_seconds": 60,
-  "code_timeout_seconds": 180
+  "vision_timeout_seconds": 90,
+  "code_timeout_seconds": 300
 }

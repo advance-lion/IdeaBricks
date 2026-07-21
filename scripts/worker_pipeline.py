@@ -257,7 +257,8 @@ def model_settings() -> dict[str, Any]:
         "api_key": os.environ.get("LOCAL_MODEL_API_KEY") or os.environ.get("LOCAL_LLM_API_KEY") or from_file.get("api_key", ""),
         "model": os.environ.get("LOCAL_MODEL_NAME") or os.environ.get("LOCAL_LLM_MODEL") or from_file.get("model", ""),
         "timeout": int(os.environ.get("LOCAL_MODEL_TIMEOUT") or from_file.get("timeout_seconds", 60)),
-        "code_timeout": int(os.environ.get("LOCAL_MODEL_CODE_TIMEOUT") or from_file.get("code_timeout_seconds", 180)),
+        "vision_timeout": int(os.environ.get("LOCAL_MODEL_VISION_TIMEOUT") or from_file.get("vision_timeout_seconds", 90)),
+        "code_timeout": int(os.environ.get("LOCAL_MODEL_CODE_TIMEOUT") or from_file.get("code_timeout_seconds", 300)),
     }
 
 
@@ -370,7 +371,7 @@ def run_local_visual(contract: dict[str, Any], run_dir: Path, image_path: Path) 
             {"type": "text", "text": local_visual_prompt(contract, str(contract["run_id"]))},
             {"type": "image_url", "image_url": {"url": image_url}},
         ],
-    }], max_tokens=2800)
+    }], max_tokens=2800, timeout_seconds=max(30, int(settings["vision_timeout"])))
     spec = parse_json_object(content)
     spec["run_id"] = str(contract["run_id"])
     spec["generator"] = "local-vlm"
@@ -394,6 +395,48 @@ def run_local_openai(contract: dict[str, Any], run_dir: Path) -> None:
     (run_dir / "app" / "app.js").write_text(sections["APP_JS"], encoding="utf-8")
 
 
+def strip_code_fence(text: str) -> str:
+    cleaned = text.strip()
+    if cleaned.startswith("```"):
+        cleaned = cleaned.split("\n", 1)[-1]
+        if cleaned.rstrip().endswith("```"):
+            cleaned = cleaned.rstrip()[:-3]
+    return cleaned.strip()
+
+
+def repair_local_javascript_if_needed(contract: dict[str, Any], run_dir: Path) -> None:
+    """Ask the local model for one bounded repair only when JS is invalid."""
+    js_path = run_dir / "app" / "app.js"
+    node = shutil.which("node")
+    if not node or not js_path.is_file():
+        return
+    syntax = subprocess.run([node, "--check", str(js_path)], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
+    if syntax.returncode == 0:
+        return
+    settings = model_settings()
+    html = (run_dir / "app" / "index.html").read_text(encoding="utf-8")[-8000:]
+    ui_spec = load_contract(run_dir / "ui-spec.json")
+    prompt = f"""Rewrite ONLY a complete, syntactically valid app.js for this screenshot-to-app frontend.
+The previous app.js was truncated and cannot be parsed. Return plain JavaScript only: no markdown, no explanation.
+Use the existing HTML below. On DOMContentLoaded, render fictional products into #recommendation-list, make the search control filter visible product cards, and make the primary product button increment #cart-count. Keep it under 2,400 tokens.
+
+Visual spec:
+{json.dumps(ui_spec, ensure_ascii=False)}
+
+Existing HTML:
+{html}
+"""
+    emit(f"MODEL local-llm: 检测到 JS 语法错误，执行一次受限修复")
+    repaired = strip_code_fence(local_chat(settings, [
+        {"role": "system", "content": "You repair frontend JavaScript. Output only complete JavaScript."},
+        {"role": "user", "content": prompt},
+    ], max_tokens=2800, timeout_seconds=max(30, int(settings["code_timeout"]))))
+    js_path.write_text(repaired, encoding="utf-8")
+    checked = subprocess.run([node, "--check", str(js_path)], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
+    if checked.returncode:
+        raise RuntimeError("本地 LLM 的 JS 修复后仍无法通过语法检查：" + checked.stderr[-800:])
+
+
 def ensure_acceptance_contract(run_dir: Path) -> None:
     """Add the small, deterministic test bridge around model-authored UI.
 
@@ -415,7 +458,7 @@ def ensure_acceptance_contract(run_dir: Path) -> None:
         if f'data-testid="{testid}"' not in html:
             html = re.sub(f"({pattern})", rf'\1 data-testid="{testid}"', html, count=1)
     if 'data-testid="add-to-cart"' not in html:
-        html = re.sub(r'(<button\b[^>]*class=["\'][^"\']*add-btn[^"\']*["\'])', r'\1 data-testid="add-to-cart"', html, count=1, flags=re.IGNORECASE)
+        html = re.sub(r'(<button\b[^>]*class=["\'][^"\']*(?:add-btn|add-to-cart)[^"\']*["\'])', r'\1 data-testid="add-to-cart"', html, count=1, flags=re.IGNORECASE)
     html_path.write_text(html, encoding="utf-8")
 
     script = r'''
@@ -459,7 +502,7 @@ def ensure_acceptance_contract(run_dir: Path) -> None:
 '''
     js = js_path.read_text(encoding="utf-8")
     if 'data-testid="add-to-cart"' not in js:
-        js = re.sub(r'(<button\b[^>]*class=["\'][^"\']*add-btn[^"\']*["\'])', r'\1 data-testid="add-to-cart"', js, count=1, flags=re.IGNORECASE)
+        js = re.sub(r'(<button\b[^>]*class=["\'][^"\']*(?:add-btn|add-to-cart)[^"\']*["\'])', r'\1 data-testid="add-to-cart"', js, count=1, flags=re.IGNORECASE)
     if "Worker acceptance bridge" not in js:
         js_path.write_text(js.rstrip() + script, encoding="utf-8")
     elif js_path.read_text(encoding="utf-8") != js:
@@ -487,6 +530,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Deterministic Screenshot-to-App Worker pipeline.")
     parser.add_argument("--contract", required=True)
     parser.add_argument("--batch", default="live-trials")
+    parser.add_argument("--resume", action="store_true", help="Resume from an existing, validated ui-spec.json after an interrupted scaffold stage.")
     parser.add_argument(
         "--backend",
         choices=("codex", "cccc-codex", "local-openai"),
@@ -503,15 +547,19 @@ def main() -> int:
         raise SystemExit("契约或已准备的 run 不存在")
 
     try:
-        progress(args.batch, run_id, "visual", "STARTED", "generic-visual-start")
-        if args.backend == "cccc-codex":
-            cccc_visual(contract_path, run_dir, source, run_id)
-        elif args.backend == "codex":
-            run_codex_visual(contract_path, run_dir, source)
+        if args.resume:
+            validate_ui_spec(run_dir / "ui-spec.json", run_id)
+            emit("RESUME: 复用已验证的 ui-spec.json，继续前端脚手架")
         else:
-            run_local_visual(contract, run_dir, source)
-        validate_ui_spec(run_dir / "ui-spec.json", run_id)
-        progress(args.batch, run_id, "visual", "PASS", "generic-visual-pass")
+            progress(args.batch, run_id, "visual", "STARTED", "generic-visual-start")
+            if args.backend == "cccc-codex":
+                cccc_visual(contract_path, run_dir, source, run_id)
+            elif args.backend == "codex":
+                run_codex_visual(contract_path, run_dir, source)
+            else:
+                run_local_visual(contract, run_dir, source)
+            validate_ui_spec(run_dir / "ui-spec.json", run_id)
+            progress(args.batch, run_id, "visual", "PASS", "generic-visual-pass")
         progress(args.batch, run_id, "scaffold", "STARTED", "generic-scaffold-start")
         if args.backend == "cccc-codex":
             cccc_scaffold(contract_path, run_dir, source, run_id)
@@ -519,6 +567,7 @@ def main() -> int:
             run_codex_scaffold(contract_path, run_dir, source)
         else:
             run_local_openai(contract, run_dir)
+            repair_local_javascript_if_needed(contract, run_dir)
         ensure_acceptance_contract(run_dir)
         missing = [str(path) for path in required_paths(run_dir) if not path.is_file()]
         if missing:

@@ -221,6 +221,9 @@ class IntakeHandler(SimpleHTTPRequestHandler):
         show_assets = {
             "/show/styles.css": ROOT / "styles.css",
             "/show/app.js": ROOT / "app.js",
+            # /show?run=... treats relative URLs as root-relative in browsers.
+            "/styles.css": ROOT / "styles.css",
+            "/app.js": ROOT / "app.js",
         }
         if parsed.path in show_assets:
             send_static_file(self, show_assets[parsed.path])

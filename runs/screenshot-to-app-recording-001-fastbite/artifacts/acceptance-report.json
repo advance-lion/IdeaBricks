@@ -1,7 +1,7 @@
 {
   "status": "PASS",
-  "url": "http://127.0.0.1:57966/index.html",
-  "qa_url": "http://127.0.0.1:57966/index.html?qa=1",
+  "url": "http://127.0.0.1:54297/index.html",
+  "qa_url": "http://127.0.0.1:54297/index.html?qa=1",
   "browser": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
   "viewport": {
     "width": 390,
@@ -55,7 +55,7 @@
     }
   ],
   "browser_stderr": {
-    "screenshot": "[29436:28256:0721/115332.035:ERROR:components\\edge_auth\\edge_auth_errors.cc:540] EDGE_IDENTITY: Get Default OS Account failed: Error: Primary Error: kImplicitSignInFailure, Secondary Error: kAccountProviderFetchError, Platform error: 0, Error string: [empty]\n\n[29436:3516:0721/115332.240:ERROR:chrome\\browser\\importer\\edge_china_browsers\\edge_qqbrowser_importer_utils_win.cc:163] QQBrowser user data path not found.\n100204 bytes written to file C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\screenshot-to-app-recording-001-fastbite\\artifacts\\preview.png\n",
-    "dump_dom": "[29804:29808:0721/115333.571:ERROR:components\\edge_auth\\edge_auth_errors.cc:540] EDGE_IDENTITY: Get Default OS Account failed: Error: Primary Error: kImplicitSignInFailure, Secondary Error: kAccountProviderFetchError, Platform error: 0, Error string: [empty]\n\n[29804:29908:0721/115333.764:ERROR:chrome\\browser\\importer\\edge_china_browsers\\edge_qqbrowser_importer_utils_win.cc:163] QQBrowser user data path not found.\n"
+    "screenshot": "[33372:32808:0721/151247.188:ERROR:components\\edge_auth\\edge_auth_errors.cc:540] EDGE_IDENTITY: Get Default OS Account failed: Error: Primary Error: kImplicitSignInFailure, Secondary Error: kAccountProviderFetchError, Platform error: 0, Error string: [empty]\n\n[33372:36712:0721/151247.339:ERROR:chrome\\browser\\importer\\edge_china_browsers\\edge_qqbrowser_importer_utils_win.cc:163] QQBrowser user data path not found.\n75464 bytes written to file C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\screenshot-to-app-recording-001-fastbite\\artifacts\\preview.png\n",
+    "dump_dom": "[36768:37096:0721/151248.278:ERROR:components\\edge_auth\\edge_auth_errors.cc:540] EDGE_IDENTITY: Get Default OS Account failed: Error: Primary Error: kImplicitSignInFailure, Secondary Error: kAccountProviderFetchError, Platform error: 0, Error string: [empty]\n\n[36768:36996:0721/151248.368:ERROR:chrome\\browser\\importer\\edge_china_browsers\\edge_qqbrowser_importer_utils_win.cc:163] QQBrowser user data path not found.\n"
   }
 }

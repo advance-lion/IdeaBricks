@@ -13,7 +13,12 @@
   "app": {
     "name": "FastBite",
     "kind": "mobile food-ordering frontend",
-    "goal": "Generate a new runnable ordering interface that follows the visual structure of the reference without reproducing its branding or assets.",
+    "goal": "Generate a new runnable ordering interface that closely reconstructs the reference screenshot's layout, component hierarchy, dominant visual rhythm and visible UI state without reproducing its branding or protected assets.",
+    "reference_fidelity": {
+      "priority": "high",
+      "preserve": ["viewport rhythm", "section order", "component geometry", "dominant colour blocks", "navigation placement", "visible modal or drawer state", "interaction entry points"],
+      "replace": ["brand", "logo", "product photography", "product names", "prices", "source wording", "user data"]
+    },
     "visual_requirements": [
       "location and search area",
       "promotional hero area",

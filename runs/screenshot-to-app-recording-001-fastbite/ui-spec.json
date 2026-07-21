@@ -1,35 +1,28 @@
 {
-  "run_id": "screenshot-to-app-recording-001-fastbite",
-  "subject": "Fictional mobile cafe ordering experience for a nearby campus counter.",
-  "audience": "People choosing a quick pickup meal on a phone.",
-  "page_job": "Let a visitor pick a collection, add an item, and choose a collection method.",
-  "reference_observations": [
-    "A warm, full-width promotion sits above a compact store summary.",
-    "Food categories use a narrow vertical rail while the menu remains the visual focus.",
-    "A bottom-sheet pickup choice interrupts the menu with three clear choices and one confirmation action."
-  ],
-  "design_plan": {
-    "direction": "Sunset kiosk: a restrained coral-and-ink interface with a paper-like order sheet and a theatrical round stamp for the pickup selection.",
-    "tokens": {
-      "ember": "#d9543f",
-      "mango": "#f7b75b",
-      "ink": "#20232a",
-      "paper": "#fff9f0",
-      "mist": "#f0eee8"
-    },
-    "type": {
-      "display": "Georgia, serif",
-      "body": "Arial, Microsoft YaHei, sans-serif",
-      "utility": "ui-monospace, SFMono-Regular, Consolas, monospace"
-    },
-    "layout": "A mobile-first hero leads into a two-column menu board; a fixed cart chip keeps the primary state visible, while a full-width pickup sheet provides the conversion moment.",
-    "signature": "An abstract steam-and-sun illustration made solely from CSS shapes creates the warm promotion rather than borrowing food photography.",
-    "self_critique": "The reference's saturated restaurant promotion is retained as a warm editorial cue, but proprietary food imagery, wording, prices, and branding are replaced with a fictional cafe, invented menu labels, and CSS/SVG-style illustrations."
+  "app": "FastBite / 好食街",
+  "source_policy": "参考图仅用于高保真复刻非品牌界面结构与交互状态；所有品牌、Logo、商品图、价格与原文案均已替换。",
+  "high_fidelity_structure": {
+    "viewport": "390 × 844 移动端首屏",
+    "preserved": [
+      "顶端状态栏、红色全宽促销 Hero、左返回与右侧操作区的空间关系",
+      "Hero 下方白色门店信息卡、双标签页与右侧预约按钮",
+      "窄左侧分类栏配右侧菜品列表的菜单骨架",
+      "固定底部餐袋栏",
+      "初始打开的底部取餐方式弹层：标题、关闭键、三张方式卡和全宽确认键"
+    ],
+    "dominant_palette": ["品牌红", "白色界面卡", "浅灰菜单底", "暗色遮罩", "暖黄行动点缀"]
   },
-  "interactions": {
-    "filter": "Category rail and search input recompute the rendered menu cards.",
-    "cart": "Each add control increments the visible cart count and updates the order summary.",
-    "pickup": "Choosing a pickup card updates the active mode; confirming closes the sheet and updates the summary.",
-    "qa": "The qa query calls the same filter, add-to-cart, and pickup functions before rendering an evidence JSON result."
-  }
+  "replaced_source_assets": [
+    "原品牌名称与商标替换为好食街",
+    "原商品摄影替换为 CSS 绘制的卷饼、谷物碗和茶饮插画",
+    "原菜品名称、价格与营销文案替换为虚构内容",
+    "取餐方式图标改为自绘符号"
+  ],
+  "interactions": [
+    "分类栏筛选菜品",
+    "加入餐袋实时更新计数",
+    "取餐方式弹层可选择、确认、关闭和重新打开",
+    "QA 模式调用真实筛选、加购、选取餐方式和确认函数"
+  ],
+  "testids": ["app-shell", "search-input", "recommendation-list", "cart-count", "add-to-cart", "qa-result"]
 }

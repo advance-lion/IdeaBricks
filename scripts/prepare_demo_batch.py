@@ -29,7 +29,12 @@ def build_contract(
         "app": {
             "name": name,
             "kind": kind,
-            "goal": "Create a new runnable frontend inspired by visual structure and interaction intent without reproducing source branding or protected assets.",
+            "goal": "Create a runnable frontend that closely reconstructs the screenshot's layout, hierarchy, dominant visual rhythm and visible interaction state without reproducing source branding or protected assets.",
+            "reference_fidelity": {
+                "priority": "high",
+                "preserve": ["viewport rhythm", "section order", "component geometry", "dominant colour blocks", "navigation placement", "visible modal or drawer state", "interaction entry points"],
+                "replace": ["brand", "logo", "product photography", "product names", "prices", "source wording", "user data"],
+            },
             "visual_requirements": visual_requirements,
             "required_interactions": interactions,
             "out_of_scope": ["accounts", "payments", "orders", "backend", "remote API", "external image loading"],

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#d80439">
+  <title>下单MVP · 点餐</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell" data-testid="app-shell">
+    <input data-testid="search-input" id="search-input" type="search" hidden aria-hidden="true">
+    <section class="promotion" aria-label="今日推荐">
+      <div class="system-bar"><b>10:08</b><span>◉　◌　▣</span><span>⌁ 5G ▰</span></div>
+      <div class="promo-actions"><button class="round" aria-label="返回">‹</button><div><button class="round" aria-label="搜索">⌕</button><button class="score" aria-label="收藏评分">☆ 4.6　◉</button></div></div>
+      <div class="promo-copy"><small>GOOD FOOD LAB · SUMMER DROP</small><h1>桂花乌龙<br>轻甜冰淇淋</h1><p>茶香慢一点，午后刚刚好</p><button type="button" data-testid="hero-order">立即点单</button></div>
+      <div class="dessert-art" aria-hidden="true"><div class="cone"><i></i></div><div class="cup"><i></i><b></b></div><span class="fruit a"></span><span class="fruit b"></span><span class="leaf"></span></div>
+    </section>
+
+    <section class="store-card">
+      <div class="store-line"><span class="store-mark">▥</span><strong>下单MVP·南湾店</strong><span class="down">⌄</span><button class="booking" type="button">预约</button></div>
+      <div class="store-meta"><b id="pickup-summary">自取</b><span>｜ 创意园南门 185m</span><button data-testid="pickup-mode" type="button">取餐方式 ⇄</button></div>
+      <div class="tabs"><button class="active" type="button">经典菜单</button><button type="button">会员小食 <i>专享</i></button></div>
+    </section>
+
+    <section class="menu-zone">
+      <p class="menu-title"><span></span> · 珍惜粮食 按需点餐 · <span></span></p>
+      <div class="menu-grid">
+        <aside class="categories" data-testid="category-filter">
+          <button class="category active" data-filter="all" type="button"><b>HOT</b>人气<br>热卖</button>
+          <button class="category" data-filter="west" type="button">轻食<br>早餐</button>
+          <button class="category" data-filter="local" type="button">暖胃<br>午餐</button>
+          <button class="category" data-filter="drink" type="button">冰爽<br>茶饮</button>
+        </aside>
+        <div class="products" data-testid="recommendation-list">
+          <article class="food-card" data-category="west" data-testid="food-card-sunrise"><div class="food-art toast-art"><i></i><b></b></div><div><em>今日新作</em><h2>滑蛋芝士暖卷</h2><p>松软谷物卷，配低脂芝士酱</p><strong>精选组合</strong></div><button data-testid="add-to-cart" data-item="滑蛋芝士暖卷" type="button">+ 加入餐袋</button></article>
+          <article class="food-card" data-category="local"><div class="food-art bowl-art"><i></i><b></b></div><div><em>门店推荐</em><h2>南瓜谷物小碗</h2><p>新鲜蔬菜与香草鸡肉</p><strong>每日限量</strong></div><button data-testid="add-to-cart-bowl" data-item="南瓜谷物小碗" type="button">+ 加入餐袋</button></article>
+          <article class="food-card" data-category="drink"><div class="food-art tea-art"><i></i><b></b></div><div><em>冰爽限定</em><h2>云朵桂花茶</h2><p>清甜回甘，轻盈少糖</p><strong>冷萃风味</strong></div><button data-testid="add-to-cart-tea" data-item="云朵桂花茶" type="button">+ 加入餐袋</button></article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="cart-bar"><div class="cart-bag">▱<b data-testid="cart-count">0</b></div><div><strong id="cart-label">餐袋还是空的</strong><small>挑一份喜欢的吧</small></div><button data-testid="checkout" type="button">去确认</button></footer>
+
+    <div class="modal-layer" id="modal-layer" aria-hidden="false">
+      <section class="pickup-sheet" data-testid="pickup-dialog" aria-label="选择取餐方式">
+        <header><h2>请选择取餐方式</h2><button id="close-sheet" type="button" aria-label="关闭">×</button></header>
+        <div class="mode-grid" role="radiogroup">
+          <button class="mode-card selected" type="button" data-mode="堂食" data-detail="店内就餐" role="radio" aria-checked="true"><span class="dine-icon">♨<i>▰</i></span><b>堂食</b><small>店内就餐</small></button>
+          <button class="mode-card" type="button" data-mode="外带" data-detail="到店自提" role="radio" aria-checked="false"><span class="take-icon">▯</span><b>外带</b><small>到店自提</small></button>
+          <button class="mode-card" type="button" data-mode="快速取餐" data-detail="无须下车" role="radio" aria-checked="false"><span class="drive-icon">▱<i>➜</i></span><b>快速取餐</b><small>无须下车</small></button>
+        </div>
+        <button data-testid="confirm-mode" id="confirm-mode" type="button">确认</button>
+      </section>
+    </div>
+    <output data-testid="qa-result" hidden></output><div class="toast" id="toast" role="status"></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

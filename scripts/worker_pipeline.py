@@ -26,7 +26,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON = ROOT / "scripts" / "python.cmd"
-CODEX = ROOT / ".tools" / "codex-cli" / "node_modules" / ".bin" / "codex.CMD"
+CODEX = ROOT / ".tools" / "codex-cli" / "node_modules" / ".pnpm" / "@openai+codex@0.144.6" / "node_modules" / "@openai" / "codex" / "bin" / "codex.js"
 
 
 def emit(line: str) -> None:
@@ -54,6 +54,23 @@ def run_dir_from(contract: dict[str, Any]) -> Path:
 
 def required_paths(run_dir: Path) -> list[Path]:
     return [run_dir / "ui-spec.json", run_dir / "app" / "index.html", run_dir / "app" / "styles.css", run_dir / "app" / "app.js"]
+
+
+def validate_ui_spec(path: Path, run_id: str) -> dict[str, Any]:
+    """Fail closed when the visual stage did not produce an actual spec."""
+    spec = load_contract(path)
+    required = (
+        "app_type", "high_fidelity_structure", "replaced_source_assets",
+        "visible_state", "components", "inferred_interactions", "design_tokens",
+    )
+    missing = [key for key in required if not spec.get(key)]
+    if missing:
+        raise RuntimeError("视觉规格不完整，缺少：" + ", ".join(missing))
+    if spec.get("generator") == "deterministic-template-baseline":
+        raise RuntimeError("检测到固定模板视觉规格；真实截图工作流拒绝继续执行")
+    if spec.get("run_id") not in (None, run_id):
+        raise RuntimeError("视觉规格的 run_id 与当前试跑不一致")
+    return spec
 
 
 def template_kind(contract: dict[str, Any]) -> str:
@@ -98,57 +115,75 @@ def write_template_app(contract: dict[str, Any], run_dir: Path) -> None:
         (destination / name).write_text(text, encoding="utf-8")
 
 
-def codex_prompt(contract_path: Path, run_dir: Path, image_path: Path) -> str:
-    return f"""You are the content-generation step of a deterministic Screenshot-to-App Worker pipeline.
-
-Read this contract: {contract_path}
-Reference screenshot (authorized, layout reference only): {image_path}
-
-You have workspace write access. Use apply_patch NOW to create exactly these files, and no files outside this run directory:
-{run_dir / 'ui-spec.json'}
-{run_dir / 'app' / 'index.html'}
-{run_dir / 'app' / 'styles.css'}
-{run_dir / 'app' / 'app.js'}
-
-The controller will run browser acceptance afterwards. This task must finish in one pass. Do not reply with a plan, an acknowledgement, or “understood”. Keep using tools until all four paths exist, then verify them with a file listing before replying.
-
-Critical fidelity rule: closely reproduce the screenshot's viewport rhythm, section order, component geometry, dominant colour blocks, information density, visible modal/drawer state, navigation placement, and interaction entry points. Do NOT turn it into a loosely inspired redesign.
-
-Safety/content rule: use a fictional app name and self-authored CSS/SVG illustrations. Do not copy logos, brands, product photos, prices, source wording, or user data.
-
-Implement all contract test IDs, including data-testid=app-shell, search-input, recommendation-list, cart-count, add-to-cart, and qa-result. Under ?qa=1, invoke real filter/search and primary-action functions then write PASS/FAIL JSON to qa-result; do not hardcode success.
-
-ui-spec.json must contain high_fidelity_structure and replaced_source_assets. Use no external network requests or external image URLs. Reply briefly only after the four files exist."""
-
-
-def run_codex(contract_path: Path, run_dir: Path, image_path: Path) -> None:
-    if not CODEX.is_file():
-        raise RuntimeError(f"Codex CLI 未找到：{CODEX}")
-    prompt = codex_prompt(contract_path, run_dir, image_path)
-    final_message = run_dir / "codex-last-message.md"
-    emit("MODEL codex: 单次生成视觉规格与前端源码")
-    # `--image=<path> -` plus stdin is the reliable Codex CLI form on Windows.
-    # Putting a positional prompt immediately after `-i` makes the variadic
-    # image option consume it, leaving Codex with no task.
-    result = subprocess.run(
+def codex_exec(prompt: str, image_path: Path, output: Path) -> None:
+    node = shutil.which("node")
+    if not CODEX.is_file() or not node:
+        raise RuntimeError(f"Codex CLI 或 Node 未找到：{CODEX}")
+    # Run Node directly.  A .CMD shim can leave a child process behind on
+    # Windows when it times out, making a failed run appear to be stuck.
+    process = subprocess.Popen(
         [
-            str(CODEX), "exec", "--ephemeral", "--dangerously-bypass-approvals-and-sandbox",
-            "-C", str(ROOT), "-o", str(final_message), f"--image={image_path}", "-",
+            node, str(CODEX), "exec", "--ephemeral", "--dangerously-bypass-approvals-and-sandbox",
+            "-C", str(ROOT), "-o", str(output), f"--image={image_path}", "-",
         ],
         cwd=ROOT,
-        input=prompt,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
         text=True,
         encoding="utf-8",
         errors="replace",
-        capture_output=True,
-        timeout=420,
+        creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),
     )
-    if result.returncode:
-        raise RuntimeError((result.stderr or result.stdout or "Codex 生成失败")[-2400:])
-    missing = [str(path) for path in required_paths(run_dir) if not path.is_file()]
+    try:
+        stdout, stderr = process.communicate(prompt, timeout=240)
+    except subprocess.TimeoutExpired as exc:
+        subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"], capture_output=True, text=True, encoding="utf-8", errors="replace")
+        process.communicate()
+        # Codex can finish writing with apply_patch before its CLI process has
+        # returned.  Callers verify their required files immediately after
+        # this function, so let a complete on-disk result proceed to browser
+        # acceptance; an incomplete result still fails closed there.
+        emit("MODEL codex: 超过 240 秒，已终止残留进程；正在核验已写入的文件")
+        return
+    if process.returncode:
+        raise RuntimeError((stderr or stdout or "Codex 生成失败")[-2400:])
+
+
+def run_codex_visual(contract_path: Path, run_dir: Path, image_path: Path) -> None:
+    output = run_dir / "codex-visual-message.md"
+    prompt = f"""You are the VISUAL UNDERSTANDING step of a screenshot-to-app Worker.
+Use the attached authorized screenshot. Read contract: {contract_path}
+Use apply_patch NOW to create exactly {run_dir / 'ui-spec.json'} and do not create app files yet.
+The JSON must include \"run_id\": \"{run_dir.name}\" and these non-empty keys: app_type, high_fidelity_structure, replaced_source_assets, visible_state, components, inferred_interactions, design_tokens.
+high_fidelity_structure must explicitly describe the actual screenshot's section order, geometry, dominant colour blocks, visual density, bottom navigation or modal/drawer state, and primary interaction entries. Do not use a generic food or shopping template unless the screenshot actually shows it.
+Replace all source brand/logo/product photos/prices/source wording with fictional counterparts. Do not reply or acknowledge until ui-spec.json exists and valid JSON has been written."""
+    emit("MODEL codex: 视觉理解 → ui-spec.json")
+    codex_exec(prompt, image_path, output)
+    path = run_dir / "ui-spec.json"
+    if not path.is_file():
+        message = output.read_text(encoding="utf-8", errors="replace")[-1000:] if output.is_file() else ""
+        raise RuntimeError("视觉模型未写入 ui-spec.json" + (f"；模型回复：{message}" if message else ""))
+    validate_ui_spec(path, run_dir.name)
+
+
+def run_codex_scaffold(contract_path: Path, run_dir: Path, image_path: Path) -> None:
+    output = run_dir / "codex-scaffold-message.md"
+    prompt = f"""You are the FRONTEND SCAFFOLD step of a screenshot-to-app Worker.
+Read contract: {contract_path}
+Read the screenshot-derived visual specification: {run_dir / 'ui-spec.json'}
+Use the attached screenshot only to cross-check fidelity. Use apply_patch NOW to create exactly:
+{run_dir / 'app' / 'index.html'}
+{run_dir / 'app' / 'styles.css'}
+{run_dir / 'app' / 'app.js'}
+Do not create any other files. Follow ui-spec.json literally: closely reproduce the screenshot's actual layout rhythm, component geometry, colour blocks, density, visible modal/drawer state and interaction entries. Do not fall back to a generic food ordering page if the ui spec describes something else.
+Replace brand/logo/product photography/prices/source wording with fictional content and self-authored CSS/SVG shapes. Include data-testid=app-shell, search-input, recommendation-list, cart-count, add-to-cart and qa-result. In ?qa=1 run actual content filtering and a primary-action function, then write JSON to qa-result. No external URLs. Do not reply until all three files exist."""
+    emit("MODEL codex: ui-spec.json → 前端脚手架")
+    codex_exec(prompt, image_path, output)
+    missing = [str(path) for path in required_paths(run_dir)[1:] if not path.is_file()]
     if missing:
-        message = final_message.read_text(encoding="utf-8", errors="replace")[-1200:] if final_message.is_file() else ""
-        raise RuntimeError("模型没有完成所需文件：" + ", ".join(missing) + (f"；模型回复：{message}" if message else ""))
+        message = output.read_text(encoding="utf-8", errors="replace")[-1000:] if output.is_file() else ""
+        raise RuntimeError("脚手架模型未写入必需文件：" + ", ".join(missing) + (f"；模型回复：{message}" if message else ""))
 
 
 def cccc_command() -> str | None:
@@ -313,7 +348,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Deterministic Screenshot-to-App Worker pipeline.")
     parser.add_argument("--contract", required=True)
     parser.add_argument("--batch", default="live-trials")
-    parser.add_argument("--backend", choices=("template", "cccc-codex", "codex", "local-openai"), default=os.environ.get("MVP_WORKER_BACKEND", "template"))
+    parser.add_argument(
+        "--backend",
+        choices=("codex", "cccc-codex", "local-openai"),
+        default=os.environ.get("MVP_WORKER_BACKEND", "codex"),
+        help="codex is the default real screenshot workflow; local-openai needs a VLM visual spec.",
+    )
     args = parser.parse_args()
     contract_path = Path(args.contract).resolve()
     contract = load_contract(contract_path)
@@ -325,20 +365,22 @@ def main() -> int:
 
     try:
         progress(args.batch, run_id, "visual", "STARTED", "generic-visual-start")
-        if args.backend == "template":
-            write_template_ui_spec(contract, run_dir)
-        elif args.backend in {"cccc-codex", "local-openai"}:
+        if args.backend == "cccc-codex":
             cccc_visual(contract_path, run_dir, source, run_id)
         elif args.backend == "codex":
-            run_codex(contract_path, run_dir, source)
+            run_codex_visual(contract_path, run_dir, source)
         else:
-            run_local_openai(contract, run_dir)
+            raise RuntimeError(
+                "当前 local-openai 仅是文本模型，不能执行截图视觉理解。"
+                "请接入支持图片输入的 VLM，再由它写入 ui-spec.json 后运行代码阶段。"
+            )
+        validate_ui_spec(run_dir / "ui-spec.json", run_id)
         progress(args.batch, run_id, "visual", "PASS", "generic-visual-pass")
         progress(args.batch, run_id, "scaffold", "STARTED", "generic-scaffold-start")
-        if args.backend == "template":
-            write_template_app(contract, run_dir)
-        elif args.backend == "cccc-codex":
+        if args.backend == "cccc-codex":
             cccc_scaffold(contract_path, run_dir, source, run_id)
+        elif args.backend == "codex":
+            run_codex_scaffold(contract_path, run_dir, source)
         missing = [str(path) for path in required_paths(run_dir) if not path.is_file()]
         if missing:
             raise RuntimeError("脚手架文件缺失：" + ", ".join(missing))

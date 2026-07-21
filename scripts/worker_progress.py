@@ -37,6 +37,7 @@ MESSAGE_KEYS = {
     "generic-browser-pass": "浏览器验收通过",
     "generic-delivery-start": "正在封装源码、预览图与验收报告",
     "generic-delivery-pass": "交付回执已生成",
+    "generic-delivery-fail": "流水线失败，已保留日志供排查",
 }
 PHASE_CN = {"visual": "视觉理解", "scaffold": "前端脚手架", "browser": "浏览器验收", "delivery": "交付封装"}
 STATUS_CN = {"STARTED": "开始", "PASS": "通过", "FAIL": "失败"}

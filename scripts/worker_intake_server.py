@@ -19,6 +19,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PYTHON = ROOT / "scripts" / "python.cmd"
 MAX_UPLOAD_BYTES = 16 * 1024 * 1024
 ALLOWED_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 DEFAULT_GROUP = "g_c3e3880e9f6c"
@@ -48,7 +49,7 @@ const $=s=>document.querySelector(s);const zone=$('#drop-zone'),input=$('#screen
 function say(message,error=false){const el=$('#statusline');el.textContent=message;el.className='statusline'+(error?' error':'');el.style.display='block';toast.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3600)}
 function renderFile(file){if(!file)return;$('#file-name').textContent=file.name;$('#file-meta').textContent=`${Math.ceil(file.size/1024)} KB · ${file.type||'image'}`;preview.src=URL.createObjectURL(file);zone.classList.add('has-file')}
 input.addEventListener('change',()=>renderFile(input.files[0]));['dragenter','dragover'].forEach(type=>zone.addEventListener(type,e=>{e.preventDefault();zone.classList.add('drag')}));['dragleave','drop'].forEach(type=>zone.addEventListener(type,e=>{e.preventDefault();zone.classList.remove('drag')}));zone.addEventListener('drop',e=>{const file=e.dataTransfer.files[0];if(!file)return;const dt=new DataTransfer();dt.items.add(file);input.files=dt.files;renderFile(file)});
-async function refresh(){try{const data=await fetch('/api/runs').then(r=>r.json());const actor=$('#actor-state');actor.className='state '+(data.actor.running?'ready':'');actor.innerHTML=`<b></b><span>${data.actor.running?'CCCC Worker 已运行':'CCCC Worker 当前停止；投递时会自动启动'}</span>`;const host=$('#runs');if(!data.runs.length){host.innerHTML='<p class="empty">还没有新的试跑。投递一张截图后，证据会出现在这里。</p>';return}host.innerHTML=data.runs.map(run=>`<article class="run"><div><b>${run.run_id}</b><small>${run.created_at||'已创建，等待 Worker'}</small></div><span class="pill ${run.status==='PASS'?'pass':run.status==='处理中'?'working':''}">${run.status}</span><span class="pill ${run.dispatched?'working':''}">${run.dispatched?'已派发':'仅已准备'}</span><div class="links">${run.app_url?`<a class="live" target="_blank" href="${run.app_url}">运行网页</a>`:''}${run.preview?`<a target="_blank" href="${run.preview}">预览图</a>`:''}${run.report?`<a target="_blank" href="${run.report}">验收</a>`:''}${run.delivery?`<a target="_blank" href="${run.delivery}">回执</a>`:''}<a target="_blank" href="http://127.0.0.1:8848/ui/">CCCC</a><a target="_blank" href="/repo">仓库</a></div></article>`).join('')}catch(e){$('#runs').innerHTML='<p class="empty">无法读取本地状态，请确认投递台仍在运行。</p>'}}
+async function refresh(){try{const data=await fetch('/api/runs').then(r=>r.json());const actor=$('#actor-state');actor.className='state '+(data.actor.running?'ready':'');actor.innerHTML=`<b></b><span>${data.actor.running?'CCCC Worker 已运行':'CCCC Worker 当前停止；投递时会自动启动'}</span>`;const host=$('#runs');if(!data.runs.length){host.innerHTML='<p class="empty">还没有新的试跑。投递一张截图后，证据会出现在这里。</p>';return}host.innerHTML=data.runs.map(run=>`<article class="run"><div><b>${run.run_id}</b><small>${run.created_at||'已创建，等待 Worker'}</small></div><span class="pill ${run.status==='PASS'?'pass':run.status==='处理中'?'working':''}">${run.status}</span><span class="pill ${run.dispatched?'working':''}">${run.dispatched?'已派发':'仅已准备'}</span><div class="links">${run.app_url?`<a class="live" target="_blank" href="${run.app_url}">运行网页</a>`:''}${run.pipeline_log?`<a target="_blank" href="${run.pipeline_log}">流水线日志</a>`:''}${run.preview?`<a target="_blank" href="${run.preview}">预览图</a>`:''}${run.report?`<a target="_blank" href="${run.report}">验收</a>`:''}${run.delivery?`<a target="_blank" href="${run.delivery}">回执</a>`:''}<a target="_blank" href="http://127.0.0.1:8848/ui/">CCCC</a><a target="_blank" href="/repo">仓库</a></div></article>`).join('')}catch(e){$('#runs').innerHTML='<p class="empty">无法读取本地状态，请确认投递台仍在运行。</p>'}}
 $('#refresh').addEventListener('click',refresh);setInterval(refresh,5000);refresh();
 $('#intake-form').addEventListener('submit',async e=>{e.preventDefault();if(!input.files[0])return say('请先选择一张截图。',true);const btn=$('#submit');btn.disabled=true;btn.innerHTML='正在创建… <span>⋯</span>';try{const fd=new FormData(e.currentTarget);fd.set('dispatch',$('#dispatch').checked?'true':'false');const result=await fetch('/api/intake',{method:'POST',body:fd}).then(async r=>{const json=await r.json();if(!r.ok)throw new Error(json.error||'创建失败');return json});say(result.message);await refresh();if(result.show_url)window.location.assign(result.show_url)}catch(err){say(err.message,true)}finally{btn.disabled=false;btn.innerHTML='创建本次试跑 <span>→</span>'}});
 </script></body></html>"""
@@ -172,6 +173,7 @@ def run_data(run_dir: Path) -> dict[str, Any]:
         "report": f"/files/{run_id}/artifacts/acceptance-report.json" if (run_dir / "artifacts" / "acceptance-report.json").is_file() else None,
         "delivery": f"/files/{run_id}/worker-delivery.json" if (run_dir / "worker-delivery.json").is_file() else None,
         "app_url": f"/apps/{run_id}/index.html" if (run_dir / "app" / "index.html").is_file() else None,
+        "pipeline_log": f"/files/{run_id}/worker-pipeline.log" if (run_dir / "worker-pipeline.log").is_file() else None,
         "artifact_summary": artifacts,
         "show_url": f"/show?run={run_id}",
     }
@@ -189,6 +191,19 @@ def actor_status() -> dict[str, bool]:
         return {"running": bool(actor.get("running"))}
     except (OSError, subprocess.SubprocessError, json.JSONDecodeError):
         return {"running": False}
+
+
+def launch_pipeline(contract: Path, run_dir: Path, run_id: str) -> Path:
+    """Start a single controller process; phase progression is not delegated to chat."""
+    log_path = run_dir / "worker-pipeline.log"
+    command = [str(PYTHON), "scripts/worker_pipeline.py", "--contract", str(contract), "--batch", "live-trials"]
+    creationflags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+    with log_path.open("w", encoding="utf-8") as log:
+        subprocess.Popen(
+            command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, text=True,
+            encoding="utf-8", errors="replace", creationflags=creationflags,
+        )
+    return log_path
 
 
 class IntakeHandler(SimpleHTTPRequestHandler):
@@ -354,18 +369,9 @@ class IntakeHandler(SimpleHTTPRequestHandler):
                 start = subprocess.run([command, "actor", "start", "mvp-worker", "--group", DEFAULT_GROUP], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
                 if start.returncode:
                     raise ValueError(f"无法启动 mvp-worker：{start.stderr or start.stdout}")
-                task = "\n".join([
-                    "执行 Screenshot-to-App MVP Worker。",
-                    f"契约绝对路径：{contract.resolve()}",
-                    f"Run ID：{run_id}",
-                    "进度批次：live-trials。",
-                    "截图只用于布局和交互理解。使用虚构品牌与本地素材。每阶段必须用 .\\scripts\\python.cmd scripts\\worker_progress.py 写入 live-trials。message-key 映射固定为：visual STARTED/PASS = generic-visual-start/generic-visual-pass；scaffold = generic-scaffold-start/generic-scaffold-pass；browser = generic-browser-start/generic-browser-pass；delivery = generic-delivery-start/generic-delivery-pass。完成后执行浏览器验收和交付封装。只在 worker-delivery.json.status=PASS 时回报成功。",
-                ])
-                sent = subprocess.run([command, "tracked-send", task, "--group", DEFAULT_GROUP, "--to", "mvp-worker", "--title", f"Screenshot trial: {run_id}", "--outcome", "worker-delivery.json is PASS with preview and browser report", "--idempotency-key", f"intake-{run_id}"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
-                if sent.returncode:
-                    raise ValueError(f"任务未能派发：{sent.stderr or sent.stdout}")
-                (contract_dir / f"{run_id}.dispatch.json").write_text(json.dumps({"run_id": run_id, "sent_at": datetime.now().astimezone().isoformat(timespec="seconds")}, ensure_ascii=False, indent=2), encoding="utf-8")
-                message = "已创建契约并派发给 CCCC Worker；可在 CCCC 终端或下方证据区查看进度。"
+                pipeline_log = launch_pipeline(contract, ROOT / "runs" / run_id, run_id)
+                (contract_dir / f"{run_id}.dispatch.json").write_text(json.dumps({"run_id": run_id, "sent_at": datetime.now().astimezone().isoformat(timespec="seconds"), "controller": "deterministic-pipeline", "pipeline_log": str(pipeline_log)}, ensure_ascii=False, indent=2), encoding="utf-8")
+                message = "确定性 Pipeline 已启动；它会连续完成视觉理解、脚手架、验收和交付，CCCC GUI 可用于查看 Worker 与任务状态。"
             json_response(self, HTTPStatus.CREATED, {"run_id": run_id, "message": message, "contract": str(contract.resolve()), "run_dir": str((ROOT / "runs" / run_id).resolve()), "dispatched": dispatch, "show_url": f"/show?run={run_id}"})
         except (ValueError, KeyError, subprocess.TimeoutExpired) as exc:
             json_response(self, HTTPStatus.BAD_REQUEST, {"error": str(exc)})

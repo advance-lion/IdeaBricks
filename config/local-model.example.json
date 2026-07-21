@@ -1,0 +1,6 @@
+{
+  "base_url": "http://DGX_SPARK_HOST:8000/v1",
+  "api_key": "replace-with-local-key",
+  "model": "local-agent",
+  "timeout_seconds": 60
+}

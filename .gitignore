@@ -4,3 +4,4 @@ runs/
 .tools/
 inputs/
 contracts/live-trials/
+config/local-model.local.json

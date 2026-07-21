@@ -200,9 +200,11 @@ def launch_pipeline(contract: Path, run_dir: Path, run_id: str) -> Path:
     command = [str(PYTHON), "scripts/worker_pipeline.py", "--contract", str(contract), "--batch", "live-trials"]
     creationflags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
     with log_path.open("w", encoding="utf-8") as log:
+        child_env = os.environ.copy()
+        child_env["PYTHONUTF8"] = "1"
         subprocess.Popen(
             command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, text=True,
-            encoding="utf-8", errors="replace", creationflags=creationflags,
+            encoding="utf-8", errors="replace", creationflags=creationflags, env=child_env,
         )
     return log_path
 

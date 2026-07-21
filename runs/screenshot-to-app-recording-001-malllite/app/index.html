@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#2440b3" />
+    <title>Field Notes Market</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" data-testid="app-shell">
+      <header class="topbar"><a class="brand" href="#top" aria-label="Field Notes Market home">FIELD<br /><em>NOTES</em></a><button class="profile" type="button" aria-label="Open profile">FN</button></header>
+      <nav class="tabs" aria-label="Discovery collections"><button class="tab" data-tab="All">For you</button><button class="tab active" data-tab="Fresh">Fresh finds</button><button class="tab" data-tab="Home">At home</button><button class="tab" data-tab="Desk">Desk set</button><button class="tab" data-tab="Play">Small joy</button></nav>
+      <section class="search-section"><label class="search-box"><span>⌕</span><input id="search" data-testid="search-input" type="search" placeholder="Search the card file" /></label><button class="scan-button" type="button" aria-label="Scan a note">⌗</button></section>
+      <section class="shortcut-section" aria-labelledby="shortcuts-title"><div class="section-top"><p class="section-kicker" id="shortcuts-title">Choose a trail</p><span>06 markers</span></div><div class="shortcut-grid"><button class="shortcut coral" data-tab="Fresh"><i>✳</i><strong>New table</strong></button><button class="shortcut lilac" data-tab="Desk"><i>⌘</i><strong>Workbench</strong></button><button class="shortcut lemon" data-tab="Home"><i>⌂</i><strong>Room notes</strong></button><button class="shortcut blue" data-tab="Play"><i>○</i><strong>Weekend</strong></button><button class="shortcut peach" data-tab="Fresh"><i>↗</i><strong>Under radar</strong></button><button class="shortcut mint" data-tab="All"><i>⌁</i><strong>All cards</strong></button></div></section>
+      <section class="signal-strip"><span class="signal-icon">✦</span><p><strong>Studio signal</strong> — new maker cards arrive every Friday.</p><button type="button">Read note</button></section>
+      <section class="discovery" aria-labelledby="discover-title"><div class="section-top"><h1 id="discover-title">Objects with a point of view</h1><span id="filter-label">Fresh finds</span></div><div class="recommendation-list" data-testid="recommendation-list" id="product-list"></div></section>
+      <nav class="bottom-nav" aria-label="Primary navigation"><button class="nav-active" type="button"><span>✦</span>Explore</button><button type="button"><span>▻</span>Stories</button><button type="button"><span>☷</span>Lists</button><button type="button"><span>▢<b id="cart-count" data-testid="cart-count">0</b></span>Bag</button><button type="button"><span>◌</span>Me</button></nav>
+      <output data-testid="qa-result" id="qa-result" class="qa-result" aria-live="polite"></output>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

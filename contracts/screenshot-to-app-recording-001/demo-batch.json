@@ -1,0 +1,21 @@
+{
+  "batch_id": "screenshot-to-app-recording-001",
+  "prepared_at": "2026-07-21T11:37:32+08:00",
+  "worker": "mvp-worker",
+  "runs": [
+    {
+      "run_id": "screenshot-to-app-recording-001-fastbite",
+      "contract": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\contracts\\screenshot-to-app-recording-001\\screenshot-to-app-recording-001-fastbite.json",
+      "app_name": "FastBite"
+    },
+    {
+      "run_id": "screenshot-to-app-recording-001-malllite",
+      "contract": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\contracts\\screenshot-to-app-recording-001\\screenshot-to-app-recording-001-malllite.json",
+      "app_name": "MallLite"
+    }
+  ],
+  "github": {
+    "enabled": false,
+    "rule": "Create a local Git commit after PASS. A remote GitHub push needs explicit repository and approval."
+  }
+}

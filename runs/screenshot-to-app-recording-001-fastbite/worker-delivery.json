@@ -1,0 +1,15 @@
+{
+  "run_id": "screenshot-to-app-recording-001-fastbite",
+  "worker": "mvp-worker",
+  "created_at": "2026-07-21T11:54:11+08:00",
+  "status": "PASS",
+  "artifacts": {
+    "source_dir": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\screenshot-to-app-recording-001-fastbite\\app",
+    "ui_spec": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\screenshot-to-app-recording-001-fastbite\\ui-spec.json",
+    "preview": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\screenshot-to-app-recording-001-fastbite\\artifacts\\preview.png",
+    "acceptance_report": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\screenshot-to-app-recording-001-fastbite\\artifacts\\acceptance-report.json"
+  },
+  "acceptance_status": "PASS",
+  "missing_required_files": [],
+  "github": "SKIPPED_BY_CONTRACT"
+}

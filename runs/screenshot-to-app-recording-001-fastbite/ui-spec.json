@@ -1,0 +1,35 @@
+{
+  "run_id": "screenshot-to-app-recording-001-fastbite",
+  "subject": "Fictional mobile cafe ordering experience for a nearby campus counter.",
+  "audience": "People choosing a quick pickup meal on a phone.",
+  "page_job": "Let a visitor pick a collection, add an item, and choose a collection method.",
+  "reference_observations": [
+    "A warm, full-width promotion sits above a compact store summary.",
+    "Food categories use a narrow vertical rail while the menu remains the visual focus.",
+    "A bottom-sheet pickup choice interrupts the menu with three clear choices and one confirmation action."
+  ],
+  "design_plan": {
+    "direction": "Sunset kiosk: a restrained coral-and-ink interface with a paper-like order sheet and a theatrical round stamp for the pickup selection.",
+    "tokens": {
+      "ember": "#d9543f",
+      "mango": "#f7b75b",
+      "ink": "#20232a",
+      "paper": "#fff9f0",
+      "mist": "#f0eee8"
+    },
+    "type": {
+      "display": "Georgia, serif",
+      "body": "Arial, Microsoft YaHei, sans-serif",
+      "utility": "ui-monospace, SFMono-Regular, Consolas, monospace"
+    },
+    "layout": "A mobile-first hero leads into a two-column menu board; a fixed cart chip keeps the primary state visible, while a full-width pickup sheet provides the conversion moment.",
+    "signature": "An abstract steam-and-sun illustration made solely from CSS shapes creates the warm promotion rather than borrowing food photography.",
+    "self_critique": "The reference's saturated restaurant promotion is retained as a warm editorial cue, but proprietary food imagery, wording, prices, and branding are replaced with a fictional cafe, invented menu labels, and CSS/SVG-style illustrations."
+  },
+  "interactions": {
+    "filter": "Category rail and search input recompute the rendered menu cards.",
+    "cart": "Each add control increments the visible cart count and updates the order summary.",
+    "pickup": "Choosing a pickup card updates the active mode; confirming closes the sheet and updates the summary.",
+    "qa": "The qa query calls the same filter, add-to-cart, and pickup functions before rendering an evidence JSON result."
+  }
+}

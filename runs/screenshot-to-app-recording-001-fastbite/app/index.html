@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#d9543f" />
+    <title>Ember &amp; Grain</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" data-testid="app-shell">
+      <header class="hero">
+        <div class="hero-top"><span class="wordmark">EMBER<br />&amp; GRAIN</span><button class="round-button" aria-label="Open search">⌕</button></div>
+        <div class="sun" aria-hidden="true"></div><div class="steam steam-one" aria-hidden="true"></div><div class="steam steam-two" aria-hidden="true"></div>
+        <p class="eyebrow">Today at the counter</p>
+        <h1>A little heat.<br />A lot of glow.</h1>
+        <p class="hero-copy">Warm bowls, bright sodas, and a break that feels like yours.</p>
+      </header>
+
+      <section class="store-card" aria-label="Store summary">
+        <div><p class="eyebrow dark">Campus counter · 3 min away</p><h2>Ember &amp; Grain</h2><p class="store-note" id="pickup-summary">Pick up at the counter</p></div>
+        <button class="mode-button" id="open-mode" type="button">Choose pickup</button>
+      </section>
+
+      <section class="menu-area" aria-label="Menu">
+        <div class="menu-heading"><div><p class="eyebrow dark">Freshly made</p><h2>Small plates, big pause</h2></div><label class="search-wrap"><span>⌕</span><input data-testid="search-input" id="search" type="search" placeholder="Find a bite" /></label></div>
+        <div class="menu-board"><nav class="category-rail" aria-label="Menu categories"><button class="category active" data-category="All">All</button><button class="category" data-category="Bowls">Bowls</button><button class="category" data-category="Bakes">Bakes</button><button class="category" data-category="Sips">Sips</button></nav><div class="recommendation-list" data-testid="recommendation-list" id="menu-list"></div></div>
+      </section>
+
+      <button class="cart-chip" type="button" id="cart-chip" aria-label="Cart"><span class="cart-mark">◒</span><span><strong id="cart-count" data-testid="cart-count">0</strong> in your tray</span><span class="arrow">→</span></button>
+
+      <section class="pickup-sheet" id="pickup-sheet" aria-labelledby="pickup-title">
+        <div class="sheet-handle" aria-hidden="true"></div>
+        <div class="sheet-header"><div><p class="eyebrow dark">Your order, your way</p><h2 id="pickup-title">How will you collect?</h2></div><button class="close-sheet" id="close-mode" type="button" aria-label="Close pickup choices">×</button></div>
+        <div class="pickup-options" role="radiogroup" aria-label="Pickup method"><button class="pickup-option selected" type="button" data-mode="Counter pickup" role="radio" aria-checked="true"><span class="option-art counter">▰</span><strong>Counter</strong><small>I'll meet you inside</small></button><button class="pickup-option" type="button" data-mode="Curbside collection" role="radio" aria-checked="false"><span class="option-art curb">⌁</span><strong>Curbside</strong><small>Bring it out to me</small></button><button class="pickup-option" type="button" data-mode="Take-away shelf" role="radio" aria-checked="false"><span class="option-art shelf">□</span><strong>Take-away</strong><small>I'll grab and go</small></button></div>
+        <button class="confirm-mode" id="confirm-mode" type="button">Confirm collection</button>
+      </section>
+      <output data-testid="qa-result" id="qa-result" class="qa-result" aria-live="polite"></output>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

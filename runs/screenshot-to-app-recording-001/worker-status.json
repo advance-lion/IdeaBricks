@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-07-21T11:57:51+08:00",
+  "batch_id": "screenshot-to-app-recording-001",
+  "run_id": "screenshot-to-app-recording-001-malllite",
+  "phase": "delivery",
+  "status": "PASS",
+  "message": "MallLite 交付回执已生成，GitHub 按契约跳过"
+}

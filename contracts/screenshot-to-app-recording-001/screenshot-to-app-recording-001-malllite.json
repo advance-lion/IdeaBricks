@@ -1,0 +1,71 @@
+{
+  "contract_version": "1.0",
+  "run_id": "screenshot-to-app-recording-001-malllite",
+  "handoff": {
+    "from": "demo-foreman-simulator",
+    "to": "mvp-worker"
+  },
+  "source_screenshot": {
+    "path": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\inputs\\screenshot-to-app-recording-001\\malllite-reference.jpg",
+    "authorized_for_demo": true,
+    "reference_only": true
+  },
+  "app": {
+    "name": "MallLite",
+    "kind": "mobile product-discovery frontend",
+    "goal": "Create a new runnable frontend inspired by visual structure and interaction intent without reproducing source branding or protected assets.",
+    "visual_requirements": [
+      "recommendation tabs",
+      "search bar",
+      "shortcut grid",
+      "promotion strip",
+      "two-column product discovery cards",
+      "bottom navigation"
+    ],
+    "required_interactions": [
+      "search or category filter changes cards",
+      "add-to-cart updates visible count"
+    ],
+    "out_of_scope": [
+      "accounts",
+      "payments",
+      "orders",
+      "backend",
+      "remote API",
+      "external image loading"
+    ]
+  },
+  "acceptance": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "required_testids": [
+      "app-shell",
+      "search-input",
+      "recommendation-list",
+      "cart-count",
+      "add-to-cart",
+      "qa-result"
+    ],
+    "required_checks": [
+      "page-load",
+      "required-sections",
+      "search-or-filter",
+      "primary-action"
+    ],
+    "maximum_repair_attempts": 1
+  },
+  "delivery": {
+    "github_enabled": false,
+    "required_files": [
+      "ui-spec.json",
+      "app/index.html",
+      "app/styles.css",
+      "app/app.js",
+      "artifacts/preview.png",
+      "artifacts/acceptance-report.json",
+      "worker-delivery.json"
+    ]
+  }
+}

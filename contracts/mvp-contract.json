@@ -1,0 +1,70 @@
+﻿{
+    "contract_version":  "1.0",
+    "run_id":  "fastbite-kfc-001",
+    "handoff":  {
+                    "from":  "idea-foreman",
+                    "to":  "mvp-worker"
+                },
+    "source_screenshot":  {
+                              "path":  "C:\\Users\\wanganxin\\Documents\\xwechat_files\\wxid_r8e67e6az1u022_1d14\\temp\\RWTemp\\2026-07\\9e20f478899dc29eb19741386f9343c8\\70ba1d502985677e6d609a187eb5cccc.jpg",
+                              "authorized_for_demo":  true,
+                              "reference_only":  true
+                          },
+    "app":  {
+                "name":  "FastBite",
+                "kind":  "mobile food-ordering frontend",
+                "goal":  "Generate a new runnable ordering interface that follows the visual structure of the reference without reproducing its branding or assets.",
+                "visual_requirements":  [
+                                            "location and search area",
+                                            "promotional hero area",
+                                            "category navigation",
+                                            "food or restaurant recommendation cards",
+                                            "bottom navigation"
+                                        ],
+                "required_interactions":  [
+                                              "search or category filter changes the visible recommendation cards",
+                                              "add-to-cart changes a visible cart count"
+                                          ],
+                "out_of_scope":  [
+                                     "account",
+                                     "payment",
+                                     "order",
+                                     "backend",
+                                     "remote API",
+                                     "external images"
+                                 ]
+            },
+    "acceptance":  {
+                       "viewport":  {
+                                        "width":  390,
+                                        "height":  844
+                                    },
+                       "required_testids":  [
+                                                "app-shell",
+                                                "search-input",
+                                                "recommendation-list",
+                                                "cart-count",
+                                                "add-to-cart",
+                                                "qa-result"
+                                            ],
+                       "required_checks":  [
+                                               "page-load",
+                                               "required-sections",
+                                               "search-or-filter",
+                                               "primary-action"
+                                           ],
+                       "maximum_repair_attempts":  1
+                   },
+    "delivery":  {
+                     "github_enabled":  false,
+                     "required_files":  [
+                                            "ui-spec.json",
+                                            "app/index.html",
+                                            "app/styles.css",
+                                            "app/app.js",
+                                            "artifacts/preview.png",
+                                            "artifacts/acceptance-report.json",
+                                            "worker-delivery.json"
+                                        ]
+                 }
+}

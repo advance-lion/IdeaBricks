@@ -28,6 +28,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON = Path(sys.executable)
 CODEX = ROOT / ".tools" / "codex-cli" / "node_modules" / ".pnpm" / "@openai+codex@0.144.6" / "node_modules" / "@openai" / "codex" / "bin" / "codex.js"
+CCCC_GROUP = os.environ.get("MVP_WORKER_CCCC_GROUP", "g_c3e3880e9f6c")
 
 
 def emit(line: str) -> None:
@@ -43,6 +44,30 @@ def progress(batch: str, run_id: str, phase: str, status: str, key: str) -> None
     if result.returncode:
         raise RuntimeError(result.stderr or result.stdout or "无法写入 Worker 进度")
     emit(result.stdout.strip())
+    sync_cccc_status(run_id, phase, status)
+
+
+def sync_cccc_status(run_id: str, phase: str, status: str) -> None:
+    """Mirror real controller events to CCCC without creating fake tasks.
+
+    `tracked-send` creates an actor-owned task and therefore leaves external
+    local-model work stuck as "pending".  Plain CCCC messages carry the same
+    evidence for the GUI/stage while preserving truthful task state.
+    """
+    if os.environ.get("MVP_WORKER_CCCC_SYNC", "1").strip().lower() in {"0", "false", "off"}:
+        return
+    command = cccc_command()
+    if not command:
+        return
+    phases = {"visual": "视觉理解", "scaffold": "前端脚手架", "browser": "浏览器验收", "delivery": "交付封装"}
+    states = {"STARTED": "进行中", "PASS": "通过", "FAIL": "失败"}
+    backend = os.environ.get("MVP_WORKER_BACKEND", "local-openai").strip().lower() or "local-openai"
+    engine = {"local-openai": "本地 LLM / VLM · local-agent", "codex": "Codex", "cccc-codex": "CCCC + Codex"}.get(backend, backend)
+    text = f"[Worker 状态同步] run={run_id}｜阶段={phases.get(phase, phase)}｜状态={states.get(status, status)}｜执行引擎={engine}"
+    priority = "attention" if status == "FAIL" else "normal"
+    result = call(command, "send", text, "--group", CCCC_GROUP, "--by", "mvp-worker", "--to", "user", "--priority", priority, timeout=20)
+    if result.returncode:
+        emit("CCCC status sync skipped: " + (result.stderr or result.stdout).strip()[-300:])
 
 
 def load_contract(path: Path) -> dict[str, Any]:

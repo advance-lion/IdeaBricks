@@ -235,8 +235,8 @@ function selectIdea(card) {
   $('.select-idea', card).innerHTML = '查看 MVP <span>→</span>';
   const name = $('h3', card).textContent;
   $('.execution h2').textContent = `${name} 已开始营业。`;
-  const isSnapForge = card.dataset.idea === 'screenshot-app';
-  if (isSnapForge) resetDemoShell();
+  const isSnapForge = card.dataset.demo === 'snapforge';
+  if (isSnapForge) activateSnapForgeDemo(card);
   $('#taskState').textContent = isSnapForge ? 'READY TO FORGE' : 'DEMO · READY TO SIMULATE';
   toast(isSnapForge ? '已切换到截图生成 App 的演示操作台' : `已选中「${name}」，即将进入 MVP 生成演示。`);
   $('#mvp').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -342,7 +342,9 @@ function renderIncubation(payload) {
     const description = idea.solution || idea.summary || idea.problem || '等待 Idea Agent 补充方案说明。';
     const tags = firstArray(idea.tags, idea.mvp_features, idea.capability_chain_ids, idea.capability_chain?.tool_ids).slice(0, 3);
     const score = scoreOf(idea);
-    return `<article class="idea-card ${selected ? 'selected' : ''}" data-idea="${escapeHtml(id)}"><div class="idea-no">${String(index + 1).padStart(2, '0')}</div><div class="idea-main"><div class="card-title"><h3>${escapeHtml(title)}</h3><span>${selected ? '已冻结' : 'A2 已评估'}</span></div><p>${escapeHtml(description)}</p><div class="tag-row">${tags.map(tag => `<i>${escapeHtml(typeof tag === 'string' ? tag : tag.name || tag.id)}</i>`).join('')}</div></div><div class="score"><b>${score || '—'}</b><span>综合匹配</span>${score ? scoreBreakdownMarkup(idea, score) : ''}</div><button class="select-idea">${selected ? '查看 MVP' : '选择方向'} <span>→</span></button></article>`;
+    const isSnapForge = id === 'screenshot-app' || /截图生成/i.test(title);
+    const demoBinding = isSnapForge ? ' data-demo="snapforge" data-demo-source="fastbite-reference"' : '';
+    return `<article class="idea-card ${selected ? 'selected' : ''}" data-idea="${escapeHtml(id)}"${demoBinding}><div class="idea-no">${String(index + 1).padStart(2, '0')}</div><div class="idea-main"><div class="card-title"><h3>${escapeHtml(title)}</h3><span>${selected ? '已冻结' : 'A2 已评估'}</span></div><p>${escapeHtml(description)}</p><div class="tag-row">${tags.map(tag => `<i>${escapeHtml(typeof tag === 'string' ? tag : tag.name || tag.id)}</i>`).join('')}</div></div><div class="score"><b>${score || '—'}</b><span>综合匹配</span>${score ? scoreBreakdownMarkup(idea, score) : ''}</div><button class="select-idea">${selected ? '查看 MVP' : '选择方向'} <span>→</span></button></article>`;
   }).join('');
   bindIdeaButtons();
   stack.animate([{ opacity: .45, transform: 'translateY(7px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 430 });
@@ -528,6 +530,19 @@ function setSource(button) {
   resultStatus.textContent = 'READY';
   resultMeta.textContent = showMode ? '点击生成，创建真实 Worker run' : '点击生成以启动演示流程';
   taskState.textContent = 'READY TO FORGE';
+}
+
+function activateSnapForgeDemo(card) {
+  const sourceKey = card?.dataset.demoSource;
+  const sourceButton = sourceKey
+    ? $(`.source-chip[data-source*="${sourceKey}"]`)
+    : $('.source-chip.selected') || $('.source-chip');
+  if (sourceButton) setSource(sourceButton);
+  resetDemoShell();
+  demoBrandName.textContent = 'SnapForge';
+  demoBrandType.textContent = 'SCREENSHOT-TO-APP';
+  $('#runtimeTag').textContent = 'LOCAL DEMO';
+  $('#buildPrompt').value = '把这张授权界面截图生成可本地运行的前端 MVP，保留布局与交互意图。';
 }
 
 function resetDemoShell() {

@@ -16,7 +16,7 @@
         <span class="brand-mark"><i></i><i></i><i></i></span>
         <span>开拓者<em>FORGE</em></span>
       </a>
-      <div class="run-status" id="runtimeBadge"><span class="live-dot"></span> CCCC TEAM · DEMO MODE</div>
+      <div class="run-status" id="runtimeBadge"><span class="live-dot"></span> CCCC TEAM · 正在连接</div>
       <nav>
         <a href="/">投递台</a>
         <a href="#discover">发现</a>
@@ -101,7 +101,7 @@
         <div class="section-heading"><div><p class="eyebrow"><span></span> IDEA MINING / 03</p><h2>一句需求，拆出<br />值得做的答案。</h2></div><p>Foreman 汇总用户意图与能力地图，分派给不同角色各自验证，再将可行方向带回你的面前。</p></div>
         <div class="idea-layout">
           <aside class="brief-form">
-            <div class="form-top"><span>INPUT BRIEF</span><span class="form-state">已分析</span></div>
+            <div class="form-top"><span>INPUT BRIEF</span><span class="form-state" id="ideaAgentState">连接 Idea Agent…</span></div>
             <label>你想解决的事
               <textarea id="briefInput" rows="3">周末和朋友想吃得快一点，但总是挑不出吃什么。</textarea>
             </label>
@@ -109,12 +109,12 @@
               <div class="chip-row"><button class="chip selected">位置</button><button class="chip selected">偏好</button><button class="chip">预算</button><button class="chip selected">时间</button></div>
             </label>
             <div class="form-divider"></div>
-            <div class="match-row"><span>匹配能力</span><b>6 / 12</b></div>
-            <ul class="capability-list"><li><i>✓</i> 场景拆解</li><li><i>✓</i> 市场商户检索</li><li><i>✓</i> 移动端界面生成</li></ul>
-            <button class="form-submit" id="mineBtn">重新挖掘创意 <span>↗</span></button>
+            <div class="match-row"><span>匹配能力</span><b id="ideaMatch">等待 CLI 表单</b></div>
+            <ul class="capability-list" id="ideaCapabilities"><li><i>·</i> 等待 Foreman 交接能力表单</li></ul>
+            <button class="form-submit" id="mineBtn">用 Team 重新挖掘 <span>↗</span></button>
           </aside>
           <div class="idea-results">
-            <div class="results-head"><span>生成 3 个可行方向</span><small>置信度由高到低</small></div>
+            <div class="results-head"><span id="ideaResultsTitle">等待 Idea Agent 的真实结果</span><small id="ideaEvidence">A2 · CCCC</small></div>
             <div class="idea-stack" id="ideaStack">
               <article class="idea-card" data-idea="fastbite">
                 <div class="idea-no">01</div><div class="idea-main"><div class="card-title"><h3>FastBite</h3><span>待验证</span></div><p>把「今晚吃什么」收敛成一份可即时下单的附近精选餐单。</p><div class="tag-row"><i>决策疲劳</i><i>快餐</i><i>移动端</i></div></div><div class="score"><b>92</b><span>匹配度</span></div><button class="select-idea">选择方向 <span>→</span></button>
@@ -137,8 +137,13 @@
             <div class="stage-kicker"><span>AGENT RUN STAGE</span><b id="runStageStatus">DEMO READY</b></div>
             <div class="stage-progress" id="phaseProgress"><span class="done" data-phase="visual">01 视觉理解</span><i></i><span data-phase="scaffold">02 前端构建</span><i></i><span data-phase="browser">03 浏览器验收</span><i></i><span data-phase="delivery">04 交付封装</span></div>
             <div class="team-log">
-            <div class="log-head"><div><span class="live-dot"></span> CCCC AGENT TEAM</div><small id="eventCount">DEMO FEED</small></div>
-            <div class="agents"><span class="agent active">F<br /><i>FOREMAN</i></span><span class="agent">R<br /><i>RESEARCH</i></span><span class="agent">D<br /><i>DESIGN</i></span><span class="agent">W<br /><i>WORKER</i></span><span class="agent">Q<br /><i>QA</i></span></div>
+            <div class="log-head"><div><span class="live-dot"></span> CCCC AGENT TEAM</div><small id="eventCount">正在连接真实状态</small></div>
+            <div class="agents team-roster"><span class="agent" data-agent="foreman">F<br /><i>FOREMAN</i></span><span class="agent" data-agent="cli">C<br /><i>CLI</i></span><span class="agent" data-agent="idea">I<br /><i>IDEA</i></span><span class="agent" data-agent="worker">W<br /><i>WORKER</i></span><span class="agent" data-agent="qa">Q<br /><i>QA</i></span></div>
+            <div class="team-summary" id="teamSummary">
+              <article data-summary="cli"><span>CLI AGENT</span><b>等待能力表单</b><small>catalog validation</small></article>
+              <article data-summary="idea"><span>IDEA AGENT</span><b>等待创意排序</b><small>视觉 · 通用 · 痛点 · 创新</small></article>
+              <article data-summary="foreman"><span>FOREMAN</span><b>等待冻结契约</b><small>handoff → mvp-worker</small></article>
+            </div>
             <div class="log-stream" id="logStream">
               <p><time>10:42:01</time><b class="foreman">FOREMAN</b> 选择方向：<em>Screenshot-to-App</em></p>
               <p><time>10:42:03</time><b class="research">RESEARCH</b> 发现可用链路：视觉理解 → 前端生成 → 验收</p>
@@ -154,15 +159,16 @@
           <button class="stage-divider" id="stageDivider" type="button" role="separator" aria-orientation="vertical" aria-label="调整运行日志和 MVP 展示区域宽度" title="拖动调整左右区域宽度"><span></span><span></span><span></span></button>
           <div class="mvp-preview">
             <section class="screenshot-app-shell" aria-label="截图生成 App 操作台">
-              <div class="screenshot-app-head"><div class="snap-brand"><span class="snap-mark">⌁</span><div><b>SnapForge</b><small>SCREENSHOT-TO-APP</small></div></div><span class="safe-tag" id="runtimeTag">LOCAL DEMO</span></div>
+              <div class="screenshot-app-head"><div class="snap-brand"><span class="snap-mark">⌁</span><div><b id="demoBrandName">SnapForge</b><small id="demoBrandType">SCREENSHOT-TO-APP</small></div></div><span class="safe-tag" id="runtimeTag">LOCAL DEMO</span></div>
               <div class="prompt-composer"><span class="prompt-sigil">✦</span><textarea id="buildPrompt" rows="1" aria-label="生成指令">把这个界面做成可运行的前端 MVP，保留布局与交互意图。</textarea><button id="generateBtn" class="generate-btn">生成 <span>↗</span></button></div>
               <div class="source-rail" aria-label="演示截图选择"><button class="source-chip selected" data-source="inputs/screenshot-to-app-recording-001/fastbite-reference.jpg" data-output="runs/fastbite-kfc-001/artifacts/preview.png" data-run-id="fastbite-kfc-001" data-name="KFC 点餐截图" data-app="FastBite"><span class="source-dot"></span>KFC 点餐</button><button class="source-chip" data-source="inputs/screenshot-to-app-recording-001/malllite-reference.jpg" data-output="runs/screenshot-to-app-recording-001-malllite/artifacts/preview.png" data-run-id="screenshot-to-app-recording-001-malllite" data-name="淘宝首页截图" data-app="MallLite"><span class="source-dot"></span>淘宝首页</button><label class="upload-chip" for="screenshotUpload">+ 上传截图<input id="screenshotUpload" type="file" accept="image/png,image/jpeg,image/webp" /></label><a class="intake-link" href="/">打开投递台 ↗</a></div>
               <div class="generation-canvas" id="generationCanvas">
                 <article class="input-card"><div class="card-caption"><span>INPUT / AUTHORIZED SCREENSHOT</span><b id="sourceName">KFC 点餐截图</b></div><img id="sourcePreview" src="inputs/screenshot-to-app-recording-001/fastbite-reference.jpg" alt="待解析的授权参考截图" /><label class="drop-hint" for="screenshotUpload"><span>＋</span> 更换截图</label></article>
                 <div class="transform-rail"><span class="rail-pulse"></span><i></i><span>VISION<br />MAP</span><i></i><span>UI<br />BUILD</span></div>
-                <article class="result-card live-result" id="resultCard"><div class="card-caption"><span>LIVE MVP / 可交互</span><div><b id="outputName">FastBite</b><a class="open-app" id="openApp" href="runs/fastbite-kfc-001/app/index.html" target="_blank" title="在新窗口打开交付的 MVP">新窗口 ↗</a></div></div><div class="live-mvp-layout"><div class="result-visual"><iframe id="resultFrame" title="Worker 交付的可交互 MVP" src="runs/fastbite-kfc-001/app/index.html"></iframe><img id="resultPreview" src="runs/fastbite-kfc-001/artifacts/preview.png" alt="生成的 FastBite MVP 预览" hidden /><div class="working-state" id="workingState" hidden><span class="scan-line"></span><b>正在生成界面…</b><small>mvp-worker / visual → scaffold → browser</small></div></div><aside class="live-notes"><div class="note-arrow">↘</div><p><b>从需求到可跑页面</b><br />Worker 只接收 Idea Foreman 的契约；它不替团队决定方向，只负责完成并自检这个 MVP。</p><div class="checklist"><span>✓ Local runnable</span><span>✓ Browser checked</span><span>✓ No remote API</span></div></aside></div><div class="result-footer"><span class="mini-status" id="resultStatus">PASS</span><span id="resultMeta">可操作交付物 · 本地运行中</span></div></article>
+                <article class="result-card live-result" id="resultCard"><div class="card-caption"><span>LIVE MVP / 可交互</span><div><b id="outputName">FastBite</b><a class="open-app" id="openApp" href="runs/fastbite-kfc-001/app/index.html" target="_blank" title="在新窗口打开交付的 MVP">新窗口 ↗</a></div></div><div class="live-mvp-layout"><div class="result-visual"><iframe id="resultFrame" title="Worker 交付的可交互 MVP" src="runs/fastbite-kfc-001/app/index.html"></iframe><img id="resultPreview" src="runs/fastbite-kfc-001/artifacts/preview.png" alt="生成的 FastBite MVP 预览" hidden /><div class="working-state" id="workingState" hidden><span class="scan-line"></span><span class="simulation-tag">演示模拟 · 已准备案例</span><div class="build-blueprint"><i></i><i></i><i></i><i></i><i></i><i></i></div><b id="generationTitle">正在规划 MVP…</b><small id="generationStep">Foreman / 读取所选 Idea 的交付契约</small></div></div><aside class="live-notes"><div class="note-arrow">↘</div><p><b>从需求到可跑页面</b><br />Worker 只接收 Idea Foreman 的契约；它不替团队决定方向，只负责完成并自检这个 MVP。</p><div class="checklist"><span>✓ Local runnable</span><span>✓ Browser checked</span><span>✓ No remote API</span></div></aside></div><div class="result-footer"><span class="mini-status" id="resultStatus">PASS</span><span id="resultMeta">可操作交付物 · 本地运行中</span></div></article>
               </div>
               <div class="app-footnote"><span>你的截图仅用于本次任务的布局与交互理解</span><b id="taskState">READY TO FORGE</b></div>
+              <div class="whole-demo-overlay" id="wholeDemoOverlay" hidden aria-live="polite"><div class="worker-spinner"><i></i><i></i><i></i></div><p class="overlay-idea" id="overlayIdea">FastBite</p><b id="overlayTitle">正在等待 MVP Worker 启动…</b><small id="overlayStep">CCCC TEAM / 已接收 Idea 契约，正在分配构建任务</small><div class="overlay-progress"><i></i></div></div>
             </section>
           </div>
         </div>

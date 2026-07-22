@@ -1,9 +1,14 @@
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
-const showMode = location.pathname === '/show' || location.pathname.startsWith('/show/');
+const stageMode = location.pathname === '/stage' || location.pathname.startsWith('/stage/');
+const showMode = stageMode;
 const runQuery = new URLSearchParams(location.search).get('run');
 let activeRunId = runQuery;
 let pollTimer;
+let stageTimer;
+let stageSnapshot = { events: [] };
+let latestRunPayload;
+let activeIncubationRunId = '';
 
 function toast(message) {
   const node = $('#toast');
@@ -25,10 +30,11 @@ function timeLabel(value) {
   return String(value).slice(11, 19) || 'NOW';
 }
 
-function setRuntime(runtime, actor) {
+function setRuntime(runtime, actor, backend) {
   const verified = runtime?.verified;
   const label = runtime?.label || '本地演示环境';
-  $('#runtimeBadge').innerHTML = `<span class="live-dot"></span> CCCC TEAM · ${verified ? 'DGX SPARK' : label.toUpperCase()}`;
+  const engine = backend?.label || (verified ? 'DGX SPARK' : label.toUpperCase());
+  $('#runtimeBadge').innerHTML = `<span class="live-dot"></span> CCCC TEAM · ${engine}`;
   $('#runtimeTag').textContent = verified ? 'DGX SPARK' : 'LOCAL DEMO';
   $('#runtimeTag').title = runtime?.hint || '';
   if (actor && !actor.running) $('#runtimeBadge').classList.add('is-idle');
@@ -58,24 +64,123 @@ function selectIdea(card) {
   $('.select-idea', card).innerHTML = '查看 MVP <span>→</span>';
   const name = $('h3', card).textContent;
   $('.execution h2').textContent = `${name} 已开始营业。`;
-  $('#taskState').textContent = card.dataset.idea === 'screenshot-app' ? 'READY TO FORGE' : 'DEMO MODE';
-  toast(card.dataset.idea === 'screenshot-app' ? '已切换到截图生成 App 的演示操作台' : `已选中「${name}」；当前展示仍使用截图生成 Worker 链路`);
+  const isSnapForge = card.dataset.idea === 'screenshot-app';
+  if (isSnapForge) resetDemoShell();
+  $('#taskState').textContent = isSnapForge ? 'READY TO FORGE' : 'DEMO · READY TO SIMULATE';
+  toast(isSnapForge ? '已切换到截图生成 App 的演示操作台' : `已选中「${name}」，即将进入 MVP 生成演示。`);
   $('#mvp').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!isSnapForge) {
+    window.clearTimeout(window.ideaDemoTimer);
+    window.ideaDemoTimer = window.setTimeout(() => {
+      if (!generateBtn.disabled) simulateBuild();
+    }, 500);
+  }
 }
 
 $$('.select-idea').forEach(button => button.addEventListener('click', event => selectIdea(event.currentTarget.closest('.idea-card'))));
 
-$('#mineBtn').addEventListener('click', () => {
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+}
+
+function firstArray(...values) {
+  return values.find(Array.isArray) || [];
+}
+
+function scoreOf(idea) {
+  const criteria = idea?.four_criterion_scores || idea?.criterion_scores || {};
+  const criterionValues = Object.values(criteria).map(Number).filter(Number.isFinite);
+  if (criterionValues.length) return Math.round(criterionValues.reduce((sum, value) => sum + value, 0) / criterionValues.length);
+  const raw = Number(idea?.score ?? idea?.total_score ?? idea?.match_score ?? idea?.rank_score ?? 0);
+  return raw > 0 && raw <= 1 ? Math.round(raw * 100) : Math.round(raw);
+}
+
+function bindIdeaButtons() {
+  $$('.select-idea').forEach(button => button.addEventListener('click', event => selectIdea(event.currentTarget.closest('.idea-card'))));
+}
+
+function renderIncubation(payload) {
+  const latest = payload?.latest;
+  const actors = payload?.team?.actors || [];
+  const ideaAgent = actors.find(actor => actor.id === 'idea-agent');
+  const state = $('#ideaAgentState');
+  if (!latest) {
+    state.textContent = ideaAgent?.running ? 'A2 就绪' : '等待 Idea Agent';
+    return;
+  }
+  activeIncubationRunId = latest.run_id || '';
+  const form = latest.cli_form || {};
+  const shortlist = latest.shortlist || {};
+  const contract = latest.mvp_contract || {};
+  const capabilities = firstArray(form.capabilities, form.items, form.tools);
+  const ideas = firstArray(shortlist.ideas, shortlist.ranked_ideas, shortlist.ranked_options, shortlist.results, shortlist.candidates);
+  const statusMap = {
+    FOREMAN_QUEUED: 'Foreman 已接收',
+    WAITING_FOR_IDEA_AGENT: '等待 Idea Agent',
+    IDEAS_RANKED: 'A2 已完成排序',
+    MVP_CONTRACT_READY: 'MVP 契约已冻结',
+    WORKER_DISPATCHED: 'Worker 已接收截图',
+    MVP_DELIVERED: 'MVP 已交付',
+  };
+  state.textContent = statusMap[latest.status] || latest.status;
+  state.classList.toggle('wait', latest.status === 'FOREMAN_QUEUED' || latest.status === 'WAITING_FOR_IDEA_AGENT');
+  if (latest.brief) $('#briefInput').value = latest.brief;
+  $('#ideaMatch').textContent = capabilities.length ? `${capabilities.length} 项可用能力` : '等待 CLI 表单';
+  $('#ideaCapabilities').innerHTML = capabilities.length
+    ? capabilities.slice(0, 4).map(item => `<li><i>✓</i> ${escapeHtml(item.name || item.capability || item.id)}</li>`).join('')
+    : '<li><i>·</i> 等待 Foreman 交接能力表单</li>';
+  $('#ideaResultsTitle').textContent = ideas.length ? `A2 排序出的 ${ideas.length} 个方向` : 'Foreman → Idea Agent 正在交接';
+  $('#ideaEvidence').textContent = form.demo_only ? 'CLI 表单：集成测试模拟' : form.source === 'cli-researcher' ? 'CLI 表单：已由 CLI Researcher 验证' : 'CLI 表单：正式输入';
+  if (!ideas.length) return;
+  const selectedId = contract.idea_id || contract.selected_idea_id || shortlist.recommended_idea_id || shortlist.selected_idea_id;
+  const stack = $('#ideaStack');
+  stack.innerHTML = ideas.slice(0, 5).map((idea, index) => {
+    const id = idea.idea_id || idea.id || `idea-${index + 1}`;
+    const selected = selectedId && id === selectedId;
+    const title = idea.name || idea.title || `创意方向 ${index + 1}`;
+    const description = idea.solution || idea.summary || idea.problem || '等待 Idea Agent 补充方案说明。';
+    const tags = firstArray(idea.tags, idea.mvp_features, idea.capability_chain_ids, idea.capability_chain?.tool_ids).slice(0, 3);
+    const score = scoreOf(idea);
+    return `<article class="idea-card ${selected ? 'selected' : ''}" data-idea="${escapeHtml(id)}"><div class="idea-no">${String(index + 1).padStart(2, '0')}</div><div class="idea-main"><div class="card-title"><h3>${escapeHtml(title)}</h3><span>${selected ? '已冻结' : 'A2 已评估'}</span></div><p>${escapeHtml(description)}</p><div class="tag-row">${tags.map(tag => `<i>${escapeHtml(typeof tag === 'string' ? tag : tag.name || tag.id)}</i>`).join('')}</div></div><div class="score"><b>${score || '—'}</b><span>综合分</span></div><button class="select-idea">${selected ? '查看 MVP' : '选择方向'} <span>→</span></button></article>`;
+  }).join('');
+  bindIdeaButtons();
+  stack.animate([{ opacity: .45, transform: 'translateY(7px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 430 });
+}
+
+async function loadIncubation() {
+  try {
+    const response = await fetch('/api/incubation', { cache: 'no-store' });
+    if (!response.ok) return;
+    renderIncubation(await response.json());
+  } catch (_) {
+    // The static file preview remains usable when the local Team service is off.
+  }
+}
+
+async function startIncubationTest() {
   const button = $('#mineBtn');
-  button.innerHTML = '正在组合 CLI... <span>···</span>';
   button.disabled = true;
-  setTimeout(() => {
-    button.innerHTML = '重新挖掘创意 <span>↗</span>';
+  button.innerHTML = 'Foreman 正在交接… <span>···</span>';
+  try {
+    const response = await fetch('/api/incubation/test', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brief: $('#briefInput').value }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '无法创建创意测试');
+    renderIncubation({ team: { actors: [] }, latest: data.latest });
+    toast(`${data.latest.run_id} 已交给 Foreman；先由 CLI Researcher 产出能力表单。`);
+    clearInterval(window.incubationTimer);
+    window.incubationTimer = setInterval(loadIncubation, 3500);
+  } catch (error) {
+    toast(error.message || '创意测试未能启动');
+  } finally {
     button.disabled = false;
-    $('#ideaStack').animate([{ opacity: .45, transform: 'translateY(7px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 430 });
-    toast('已基于新的输入，重新生成 3 个可行方向');
-  }, 850);
-});
+    button.innerHTML = '用 Team 重新挖掘 <span>↗</span>';
+  }
+}
+
+$('#mineBtn').addEventListener('click', startIncubationTest);
 
 function typeCommand() {
   const command = 'cccc discover --intent "周末想吃得快一点"';
@@ -102,6 +207,12 @@ const resultFrame = $('#resultFrame');
 const openApp = $('#openApp');
 const mvpStage = $('#mvpStage');
 const stageDivider = $('#stageDivider');
+const wholeDemoOverlay = $('#wholeDemoOverlay');
+const demoBrandName = $('#demoBrandName');
+const demoBrandType = $('#demoBrandType');
+const overlayIdea = $('#overlayIdea');
+const overlayTitle = $('#overlayTitle');
+const overlayStep = $('#overlayStep');
 let selectedSource = {
   source: 'inputs/screenshot-to-app-recording-001/fastbite-reference.jpg',
   name: 'KFC 点餐截图',
@@ -119,12 +230,16 @@ function demoAppUrl(runId) {
 function setLiveApp(url) {
   if (!url) {
     resultFrame.removeAttribute('src');
+    delete resultFrame.dataset.liveUrl;
     resultFrame.hidden = true;
     openApp.hidden = true;
     resultPreview.hidden = false;
     return;
   }
-  resultFrame.src = url;
+  if (resultFrame.dataset.liveUrl !== url) {
+    resultFrame.src = url;
+    resultFrame.dataset.liveUrl = url;
+  }
   resultFrame.hidden = false;
   openApp.href = url;
   openApp.hidden = false;
@@ -191,6 +306,7 @@ function appendAgentEvent(agent, message, kind = '', timestamp = 'DEMO') {
 }
 
 function setSource(button) {
+  resetDemoShell();
   $$('.source-chip').forEach(chip => chip.classList.remove('selected'));
   button.classList.add('selected');
   selectedSource = {
@@ -211,6 +327,26 @@ function setSource(button) {
   resultStatus.textContent = 'READY';
   resultMeta.textContent = showMode ? '点击生成，创建真实 Worker run' : '点击生成以启动演示流程';
   taskState.textContent = 'READY TO FORGE';
+}
+
+function resetDemoShell() {
+  wholeDemoOverlay.hidden = true;
+  $('.screenshot-app-shell').classList.remove('is-demo-generating');
+  demoBrandName.textContent = 'SnapForge';
+  demoBrandType.textContent = 'SCREENSHOT-TO-APP';
+  $('#runtimeTag').textContent = 'LOCAL DEMO';
+}
+
+function startDemoShell(idea) {
+  const name = idea || '截图生成 App';
+  wholeDemoOverlay.hidden = false;
+  $('.screenshot-app-shell').classList.add('is-demo-generating');
+  demoBrandName.textContent = name;
+  demoBrandType.textContent = 'IDEA-TO-MVP / DEMO PIPELINE';
+  $('#runtimeTag').textContent = 'SIMULATING';
+  overlayIdea.textContent = name;
+  overlayTitle.textContent = '正在等待 MVP Worker 启动…';
+  overlayStep.textContent = 'CCCC TEAM / 已接收 Idea 契约，正在分配构建任务';
 }
 
 $$('.source-chip').forEach(button => button.addEventListener('click', () => setSource(button)));
@@ -243,26 +379,76 @@ function renderPhase(events, runStatus) {
   $('#runStageStatus').textContent = runStatus === 'PASS' ? 'RUNNING → PASS' : latest ? `${String(latest.phase).toUpperCase()} · ${latest.status}` : 'CONTRACT READY';
 }
 
-function renderEvents(events) {
+function renderTeamSummary(summary = {}, run = {}) {
+  const cli = summary.cli || {};
+  const idea = summary.idea || {};
+  const foreman = summary.foreman || {};
+  const cliCard = $('[data-summary="cli"]');
+  const ideaCard = $('[data-summary="idea"]');
+  const foremanCard = $('[data-summary="foreman"]');
+  if (cli.records) {
+    $('b', cliCard).textContent = `${cli.records} 条目录 · ${cli.selected_capabilities} 项入选`;
+    $('small', cliCard).textContent = `${cli.categories || '—'} 类 · ${cli.validation || 'validate PASS'}`;
+  }
+  if (idea.options) {
+    $('b', ideaCard).textContent = `${idea.options} 个方向 · ${idea.recommended || '已推荐'}`;
+    const scores = idea.scores || {};
+    $('small', ideaCard).textContent = Object.keys(scores).length
+      ? `视觉 ${scores.visual_expression || '—'} · 通用 ${scores.generality || '—'} · 痛点 ${scores.pain_point || '—'} · 创新 ${scores.innovation || '—'}`
+      : '视觉 · 通用 · 痛点 · 创新';
+  }
+  if (foreman.idea_id) {
+    $('b', foremanCard).textContent = `${foreman.idea_id} · ${foreman.status || 'FROZEN'}`;
+    $('small', foremanCard).textContent = `${foreman.contract || 'MVP contract'} → mvp-worker`;
+  }
+  const latestPhase = (run.events || []).at(-1)?.phase;
+  const workerDone = run.status === 'PASS' || ['browser', 'delivery'].includes(latestPhase);
+  const qaDone = run.status === 'PASS';
+  $$('.team-roster .agent').forEach(node => {
+    const role = node.dataset.agent;
+    const done = role === 'foreman' ? Boolean(foreman.idea_id)
+      : role === 'cli' ? Boolean(cli.records)
+      : role === 'idea' ? Boolean(idea.options)
+      : role === 'worker' ? workerDone
+      : qaDone;
+    const active = run.status !== 'PASS' && ((role === 'worker' && ['visual', 'scaffold', 'delivery'].includes(latestPhase)) || (role === 'qa' && latestPhase === 'browser'));
+    node.classList.toggle('done', done);
+    node.classList.toggle('active', active);
+  });
+}
+
+function renderEvents(events, ccccEvents = [], teamEvents = []) {
   const stream = $('#logStream');
   stream.replaceChildren();
-  const roleByPhase = { visual: 'VISION', scaffold: 'MVP-WORKER', browser: 'QA', delivery: 'DELIVERY' };
-  if (!events.length) appendAgentEvent('FOREMAN', '契约已创建，等待 mvp-worker 写入第一条真实进度。', '', 'WAIT');
-  events.forEach(event => {
-    const agent = roleByPhase[event.phase] || 'MVP-WORKER';
-    const kind = event.status === 'PASS' ? 'success' : event.status === 'FAIL' ? 'failed' : '';
-    appendAgentEvent(agent, event.message || `${event.phase} ${event.status}`, kind, timeLabel(event.timestamp));
+  const roleByPhase = { visual: 'WORKER', scaffold: 'WORKER', browser: 'QA', delivery: 'WORKER' };
+  const combined = [
+    ...teamEvents.map(event => ({ ...event, source: 'team' })),
+    ...events.map(event => ({ ...event, actor: roleByPhase[event.phase] || 'WORKER', source: 'worker' })),
+  ];
+  if (!combined.length) {
+    ccccEvents.forEach(event => combined.push({ ...event, actor: event.actor || 'CCCC', message: `${event.phase} · ${event.status} · ${event.engine}`, source: 'cccc' }));
+  }
+  if (!combined.length) appendAgentEvent('FOREMAN', '契约已创建，等待 CLI Agent 写入第一条真实进度。', '', 'WAIT');
+  combined.sort((a, b) => String(a.timestamp || '').localeCompare(String(b.timestamp || ''))).forEach(event => {
+    const status = String(event.status || '');
+    const kind = ['PASS', '通过', 'FROZEN'].includes(status) ? 'success' : ['FAIL', '失败'].includes(status) ? 'failed' : '';
+    appendAgentEvent(event.actor || 'CCCC', event.message || `${event.phase || '阶段'} · ${status}`, kind, timeLabel(event.timestamp));
   });
   stream.scrollTop = stream.scrollHeight;
-  $('#eventCount').textContent = `${events.length} REAL EVENTS`;
+  $('#eventCount').textContent = `5 AGENTS · ${combined.length} EVENTS`;
 }
 
 function renderRun(payload) {
-  const { run, runtime, actor } = payload;
-  setRuntime(runtime, actor);
+  latestRunPayload = payload;
+  const { run, runtime, actor, backend } = payload;
+  const execution = run.execution || {};
+  const activeEngine = execution.label || backend?.label || '未记录执行引擎';
+  const usedFallback = Boolean(execution.fallback);
+  setRuntime(runtime, actor, backend);
   const app = run.app || {};
   const isPass = run.status === 'PASS';
   const isRunning = !isPass && Boolean(run.dispatched);
+  const hasLiveApp = Boolean(run.app_url);
   $('#signalRunId').textContent = run.run_id;
   $('#deliveryRunId').textContent = run.run_id;
   $('#signalStatus').textContent = run.status;
@@ -275,13 +461,35 @@ function renderRun(payload) {
   if (run.preview) resultPreview.src = run.preview;
   resultPreview.alt = `${app.name || 'MVP'} 的真实 Worker 预览`;
   setLiveApp(run.app_url || null);
-  resultCard.classList.toggle('is-running', isRunning);
-  workingState.hidden = !isRunning;
+  resultCard.classList.toggle('is-running', isRunning && !hasLiveApp);
+  workingState.hidden = !isRunning || hasLiveApp;
   resultStatus.textContent = run.status;
-  resultMeta.textContent = isPass ? '真实产物 · preview.png · 验收报告' : run.dispatched ? '真实 Worker 正在处理 · 进度每 3 秒刷新' : '契约已就绪，尚未派发';
-  taskState.textContent = isPass ? 'DELIVERY · PASS' : run.dispatched ? 'CCCC WORKER · RUNNING' : 'CONTRACT · READY';
+  resultMeta.textContent = isPass
+    ? `${activeEngine}${usedFallback ? '（本地离线自动兜底）' : ''} · 真实产物 · preview.png · 验收报告`
+    : run.dispatched
+      ? hasLiveApp
+        ? `${activeEngine} · 网页已回显到 Live MVP · 浏览器验收继续执行`
+        : `${activeEngine}${usedFallback ? '（本地离线自动兜底）' : ''} · 真实 Worker 正在处理 · 进度每 3 秒刷新`
+      : '契约已就绪，尚未派发';
+  taskState.textContent = isPass
+    ? (usedFallback ? 'CODEX FALLBACK · PASS' : 'DELIVERY · PASS')
+    : run.dispatched
+      ? (usedFallback ? 'CODEX FALLBACK · RUNNING' : 'CCCC WORKER · RUNNING')
+      : 'CONTRACT · READY';
+  renderTeamSummary(run.team_summary || {}, run);
   renderPhase(run.events || [], run.status);
-  renderEvents(run.events || []);
+  renderEvents(run.events || [], stageSnapshot.events || [], run.team_summary?.events || []);
+}
+
+function renderCcccStage(stage, runtime, actor, backend) {
+  stageSnapshot = stage || { events: [] };
+  setRuntime(runtime, actor, backend);
+  if (stage?.title) $('#runStageStatus').textContent = `${stage.title} · LIVE`;
+  if (latestRunPayload?.run?.run_id === activeRunId) {
+    renderEvents(latestRunPayload.run.events || [], stageSnapshot.events || [], latestRunPayload.run.team_summary?.events || []);
+  } else if (stageSnapshot.events?.length) {
+    renderEvents([], stageSnapshot.events);
+  }
 }
 
 async function loadRun() {
@@ -295,6 +503,24 @@ async function loadRun() {
     clearInterval(pollTimer);
     taskState.textContent = 'LOCAL DEMO MODE';
     toast(error.message || '运行台暂时无法连接');
+  }
+}
+
+async function loadStage() {
+  if (!stageMode) return;
+  try {
+    const suffix = activeRunId ? `?run=${encodeURIComponent(activeRunId)}` : '';
+    const response = await fetch(`/api/stage${suffix}`, { cache: 'no-store' });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '无法读取 CCCC 舞台状态');
+    if (!activeRunId && data.stage?.latest_run_id) {
+      activeRunId = data.stage.latest_run_id;
+      history.replaceState({}, '', `/stage?run=${encodeURIComponent(activeRunId)}`);
+      await loadRun();
+    }
+    renderCcccStage(data.stage, data.runtime, data.actor, data.backend);
+  } catch (error) {
+    $('#eventCount').textContent = 'CCCC 状态暂不可用';
   }
 }
 
@@ -318,11 +544,12 @@ async function createRealRun() {
     form.set('app_name', selectedSource.app);
     form.set('kind', 'mobile app');
     form.set('dispatch', 'true');
+    if (activeIncubationRunId) form.set('incubation_run_id', activeIncubationRunId);
     const response = await fetch('/api/intake', { method: 'POST', body: form });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || '投递失败');
     activeRunId = data.run_id;
-    history.replaceState({}, '', data.show_url || `/show?run=${encodeURIComponent(activeRunId)}`);
+    history.replaceState({}, '', data.stage_url || `/stage?run=${encodeURIComponent(activeRunId)}`);
     toast(`已创建 ${activeRunId}，左侧现在展示真实 Worker 日志。`);
     await loadRun();
     clearInterval(pollTimer);
@@ -341,28 +568,49 @@ async function createRealRun() {
 
 function simulateBuild() {
   const instruction = $('#buildPrompt').value.trim() || '按截图的布局与交互意图生成可运行的前端 MVP。';
+  const selectedIdea = $('.idea-card.selected h3')?.textContent || '截图生成 App';
+  const generationTitle = $('#generationTitle');
+  const generationStep = $('#generationStep');
   generateBtn.disabled = true;
+  startDemoShell(selectedIdea);
   resultCard.classList.add('is-running');
   workingState.hidden = false;
-  taskState.textContent = 'FOREMAN · ANALYSING';
-  resultStatus.textContent = 'RUNNING';
-  resultMeta.textContent = 'vision → scaffold → browser';
-  appendAgentEvent('FOREMAN', `接收截图「${selectedSource.name}」与生成指令`);
-  setTimeout(() => { taskState.textContent = 'MVP-WORKER · BUILDING'; appendAgentEvent('MVP-WORKER', '正在提取布局结构并生成静态前端…'); }, 650);
-  setTimeout(() => { taskState.textContent = 'QA · CHECKING'; appendAgentEvent('QA', '正在执行浏览器验收与交付封装…'); }, 1350);
+  taskState.textContent = 'DEMO · WAITING FOR MVP-WORKER';
+  resultStatus.textContent = 'SIMULATING';
+  resultMeta.textContent = `演示模拟 · ${selectedIdea} → SnapForge 案例`;
+  generationTitle.textContent = '正在等待 MVP Worker 启动…';
+  generationStep.textContent = 'CCCC TEAM / 已接收 Idea 契约，正在分配构建任务';
+  appendAgentEvent('FOREMAN', `演示模式：接收「${selectedIdea}」，等待 MVP-WORKER 启动。`);
+  setTimeout(() => {
+    taskState.textContent = 'DEMO · MVP-WORKER STARTING';
+    generationTitle.textContent = 'MVP Worker 已接手，正在准备构建…';
+    generationStep.textContent = 'MVP-WORKER / 初始化运行环境与浏览器会话';
+    overlayTitle.textContent = 'MVP Worker 已接手，正在准备构建…';
+    overlayStep.textContent = 'MVP-WORKER / 初始化运行环境与浏览器会话';
+    appendAgentEvent('MVP-WORKER', '演示模式：Worker 已接手，正在准备构建环境。');
+  }, 900);
+  setTimeout(() => {
+    taskState.textContent = 'DEMO · SNAPFORGE HANDOFF';
+    generationTitle.textContent = '正在载入已准备的展示案例…';
+    generationStep.textContent = 'DEMO ROUTER / SnapForge prepared case';
+    overlayTitle.textContent = '正在载入已准备的展示案例…';
+    overlayStep.textContent = 'DEMO ROUTER / SnapForge prepared case';
+    appendAgentEvent('QA', '演示模式：准备切换至 SnapForge 展示案例。');
+  }, 1900);
   setTimeout(() => {
     resultCard.classList.remove('is-running');
     workingState.hidden = true;
+    resetDemoShell();
     generateBtn.disabled = false;
-    taskState.textContent = 'DEMO RUN · PASS';
-    outputName.textContent = selectedSource.custom ? 'Demo MVP 预览' : selectedSource.app;
+    taskState.textContent = 'DEMO · SNAPFORGE READY';
+    outputName.textContent = selectedSource.custom ? 'SnapForge Demo' : selectedSource.app;
     resultPreview.src = asset(selectedSource.output);
     setLiveApp(demoAppUrl(selectedSource.runId));
     resultStatus.textContent = 'PASS';
-    resultMeta.textContent = 'preview.png · acceptance-report.json';
-    appendAgentEvent('QA', `演示流程完成：${instruction.slice(0, 24)}${instruction.length > 24 ? '…' : ''}`, 'success');
-    toast('演示生成完成；投递台服务启动后会切换为真实交付物。');
-  }, 2150);
+    resultMeta.textContent = '演示完成 · 已切换至 SnapForge 准备案例';
+    appendAgentEvent('QA', `演示模拟结束，展示已准备的 SnapForge 案例：${instruction.slice(0, 22)}${instruction.length > 22 ? '…' : ''}`, 'success');
+    toast('演示模拟完成，已展示 SnapForge 准备案例。');
+  }, 2850);
 }
 
 generateBtn.addEventListener('click', () => showMode ? createRealRun() : simulateBuild());
@@ -370,12 +618,14 @@ generateBtn.addEventListener('click', () => showMode ? createRealRun() : simulat
 typeCommand();
 setSource($('.source-chip.selected'));
 applyStageSplit();
+loadIncubation();
+window.incubationTimer = setInterval(loadIncubation, 5000);
 if (showMode && activeRunId) {
   loadRun();
+  loadStage();
   pollTimer = setInterval(loadRun, 3000);
+  stageTimer = setInterval(loadStage, 3000);
 } else if (showMode) {
-  fetch('/api/runs', { cache: 'no-store' })
-    .then(response => response.ok ? response.json() : Promise.reject())
-    .then(data => setRuntime(data.runtime, data.actor))
-    .catch(() => toast('投递台未连接：当前保留本地演示模式。'));
+  loadStage();
+  stageTimer = setInterval(loadStage, 3000);
 }

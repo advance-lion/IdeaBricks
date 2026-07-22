@@ -1,0 +1,152 @@
+{
+  "run_id": "trial-20260722-202713-3ca7",
+  "app_type": "mobile marketplace discovery home",
+  "high_fidelity_structure": "390x844 portrait commerce home with a warm off-white status area and dense white content canvas. Top order: compact status bar; horizontally clipped category tab row with the second tab active in orange and a short orange underline; rounded orange-outline search field with scan icon at left, query text, camera icon, and solid orange search button. Beneath it is a 5-column, 2-row shortcut icon grid, followed by a tiny two-dot pager indicator. A three-card promotional row sits below, each pale blush card containing a bold heading, colorful product illustration, and bright price/action pill. Then a full-width red announcement coupon strip with a speaker icon and white redeem button. The main recommendation area is a two-column masonry product feed with large rounded image blocks, multi-line product labels, and compact metadata. A fixed white bottom navigation spans the screen, with five evenly distributed icon-and-label items; the first is orange-active, the center messages item has a small orange notification badge, and the cart item is a primary interaction entry. No modal or drawer is visible. Visual density is high, with narrow gutters, 8-12px card radii, strong orange/red accents, black charcoal typography, and frequent iconography.",
+  "replaced_source_assets": {
+    "brand": "Fictional brand \"Mango Mart\"",
+    "logo": "Simple orange circular M glyph",
+    "product_photos": "Locally rendered abstract illustrations: smart desktop bot dock, mirrored music kiosk, compact game controller, snack sandwich, yellow service robot",
+    "product_names": [
+      "Orbit Dock Mini",
+      "Luma Mirror Station",
+      "Nebula Pad Controller",
+      "Garden Stack Kit",
+      "Pulse Cart Assistant"
+    ],
+    "prices": [
+      "¥428",
+      "¥286",
+      "¥158",
+      "¥12",
+      "¥74"
+    ],
+    "source_wording": "All source labels, tabs, promotion text, and navigation labels replaced with fictional Chinese marketplace copy."
+  },
+  "visible_state": {
+    "active_top_tab": "精选",
+    "search_query": "掌机配件",
+    "shortcut_page": 1,
+    "promotion_banner": "summer coupon available",
+    "feed": "default recommended products",
+    "bottom_nav_active": "首页",
+    "cart_count": 0,
+    "modal_or_drawer": "none"
+  },
+  "components": [
+    {
+      "id": "status-bar",
+      "type": "system-status-placeholder",
+      "geometry": "top 0-28px, warm off-white"
+    },
+    {
+      "id": "top-tabs",
+      "type": "horizontal-tabs",
+      "geometry": "28-76px, horizontally scrollable; active tab second position"
+    },
+    {
+      "id": "search-input",
+      "type": "search-bar",
+      "geometry": "20px side margins, 36px high, orange border; includes scan, text input, camera, submit"
+    },
+    {
+      "id": "shortcut-grid",
+      "type": "shortcut-grid",
+      "geometry": "5 columns x 2 rows, 78px per row"
+    },
+    {
+      "id": "promo-carousel",
+      "type": "three-card-promo-row",
+      "geometry": "3 equal cards, 116px wide, 148px tall"
+    },
+    {
+      "id": "coupon-strip",
+      "type": "primary-banner-action",
+      "geometry": "full-width red strip, 42px tall, white action button at right"
+    },
+    {
+      "id": "recommendation-list",
+      "type": "two-column-masonry-feed",
+      "geometry": "16px side margins, 8px gutter, rounded image-first cards"
+    },
+    {
+      "id": "bottom-navigation",
+      "type": "fixed-tab-bar",
+      "geometry": "bottom 0-70px, five tabs"
+    },
+    {
+      "id": "cart-count",
+      "type": "badge",
+      "geometry": "small orange badge attached to messages/cart navigation area"
+    },
+    {
+      "id": "add-to-cart",
+      "type": "product-card-primary-action",
+      "geometry": "compact orange control within each product card or product detail state"
+    },
+    {
+      "id": "qa-result",
+      "type": "live-status-text",
+      "geometry": "small local validation/result area shown after interaction, not initially emphasized"
+    }
+  ],
+  "inferred_interactions": [
+    {
+      "trigger": "tap a top tab or shortcut category",
+      "behavior": "switch active orange state and replace the two-column recommendation feed with the chosen fictional category; preserve the page structure."
+    },
+    {
+      "trigger": "enter text and submit search-input",
+      "behavior": "show fictional matching items in recommendation-list and update a small qa-result status with the query."
+    },
+    {
+      "trigger": "tap coupon-strip redeem button",
+      "behavior": "change banner state to claimed and update its call-to-action text."
+    },
+    {
+      "trigger": "tap add-to-cart on a recommendation card",
+      "behavior": "increment cart-count, animate or highlight the cart tab, and update qa-result with a local confirmation."
+    },
+    {
+      "trigger": "tap bottom navigation cart",
+      "behavior": "set cart tab active and show a compact local cart summary view or count state."
+    }
+  ],
+  "design_tokens": {
+    "viewport": "390x844",
+    "colors": {
+      "page": "#FFFFFF",
+      "status": "#FFF2EC",
+      "primary": "#FF5A00",
+      "primary_deep": "#F04400",
+      "accent_red": "#FF1F12",
+      "soft_pink": "#FFF5F4",
+      "ink": "#26212B",
+      "muted": "#7E7E85",
+      "divider": "#F2F2F2",
+      "success": "#19A96B"
+    },
+    "typography": {
+      "font_family": "system-ui, PingFang SC, Microsoft YaHei, sans-serif",
+      "tab": "24px 700",
+      "search": "17px 700",
+      "shortcut": "16px 650",
+      "card_title": "18px 750",
+      "product_title": "17px 700",
+      "price": "24px 800",
+      "nav": "14px 500"
+    },
+    "spacing": {
+      "page_horizontal": "16px",
+      "grid_gap": "8px",
+      "section_gap": "12px",
+      "card_radius": "10px",
+      "search_radius": "17px",
+      "banner_radius": "7px"
+    },
+    "shadows": {
+      "nav": "0 -2px 12px rgba(0,0,0,0.05)",
+      "card": "0 1px 4px rgba(26,18,12,0.04)"
+    }
+  },
+  "generator": "codex-cli"
+}

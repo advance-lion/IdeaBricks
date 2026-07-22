@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Mango Mart</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell" data-testid="app-shell">
+    <header>
+      <div class="status-bar" aria-label="设备状态">
+        <span>10:08</span>
+        <span class="status-right"><i class="signal"></i><i class="wifi"></i><b>5G</b><i class="battery">60</i></span>
+      </div>
+
+      <nav class="top-tabs" aria-label="商品频道">
+        <button type="button">关注</button>
+        <button type="button" class="is-active" data-category="精选">精选</button>
+        <button type="button" data-category="闪购">闪购</button>
+        <button type="button" data-category="新到">新到</button>
+        <button type="button" data-category="居家">居家</button>
+        <button type="button" data-category="数码">数码</button>
+        <button type="button" data-category="灵感">灵感</button>
+      </nav>
+
+      <form class="search-bar" id="search-form">
+        <span class="scan-icon" aria-hidden="true"></span>
+        <input data-testid="search-input" id="search-input" type="search" value="掌机配件" aria-label="搜索商品">
+        <button class="camera-icon" type="button" aria-label="拍照搜索"></button>
+        <button class="search-submit" type="submit">搜索</button>
+      </form>
+    </header>
+
+    <section class="shortcuts" aria-label="快捷入口">
+      <button type="button" data-category="福利"><i class="shortcut-icon icon-gift"></i><span>今日福利</span></button>
+      <button type="button" data-category="新品"><i class="shortcut-icon icon-try">U</i><span>试用上新</span></button>
+      <button type="button" data-category="省钱"><i class="shortcut-icon icon-coin">M</i><span>芒果金币</span></button>
+      <button type="button" data-category="数码"><i class="shortcut-icon icon-bag"></i><span>数码工坊</span></button>
+      <button type="button" data-category="菜鸟"><i class="shortcut-icon icon-box"></i><span>轻快驿站</span></button>
+      <button type="button" data-category="居家"><i class="shortcut-icon icon-garden"></i><span>微光花园</span></button>
+      <button type="button" data-category="闪购"><i class="shortcut-icon icon-fish"></i><span>闲逛一下</span></button>
+      <button type="button" data-category="精选"><i class="shortcut-icon icon-plane"></i><span>国际灵感</span></button>
+      <button type="button" data-category="限时"><i class="shortcut-icon icon-bolt">速</i><span>限时快选</span></button>
+      <button type="button" data-category="活动"><i class="shortcut-icon icon-calendar"></i><span>活动日历</span></button>
+    </section>
+
+    <div class="pager" aria-label="第 1 页，共 2 页"><b></b><i></i></div>
+
+    <section class="promo-row" aria-label="专属推荐">
+      <article class="promo-card snack-card">
+        <h2>午间小食 <em>直播价</em></h2>
+        <div class="snack-art" aria-hidden="true"><i></i><b></b><span></span></div>
+        <strong>¥12 <small>立即抢</small></strong>
+      </article>
+      <article class="promo-card controller-card">
+        <h2>百亿补贴 <em>领福利</em></h2>
+        <div class="controller-art" aria-hidden="true"><i></i><b></b><span></span></div>
+        <strong>¥158 <small>补贴价</small></strong>
+      </article>
+      <article class="promo-card bot-card">
+        <h2>机器人站 <em>限时抢</em></h2>
+        <div class="bot-art" aria-hidden="true"><i class="bot-eye"></i><b></b><span></span></div>
+        <strong>¥74 <small>秒杀价</small></strong>
+      </article>
+    </section>
+
+    <section class="coupon-strip" id="coupon-strip" aria-label="夏日优惠">
+      <span class="speaker-icon" aria-hidden="true"></span>
+      <p><b>清凉折扣</b><span> 夏日装备节低至 8.1 折</span></p>
+      <button type="button" id="claim-coupon">领取 ¥10</button>
+    </section>
+
+    <p class="qa-result" data-testid="qa-result" aria-live="polite"></p>
+
+    <section class="feed-heading">
+      <div><b>为你挑选</b><span>发现今日新鲜好物</span></div>
+      <button type="button" id="refresh-feed" aria-label="换一批商品">换一批</button>
+    </section>
+
+    <section class="recommendation-list" data-testid="recommendation-list" id="recommendation-list" aria-label="推荐商品"></section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="底部导航">
+    <button type="button" class="nav-item is-active" data-nav="首页"><i class="nav-home">M</i><span>首页</span></button>
+    <button type="button" class="nav-item" data-nav="逛逛"><i class="nav-video"></i><span>逛逛</span></button>
+    <button type="button" class="nav-item" data-nav="消息"><i class="nav-message"></i><sup>9+</sup><span>消息</span></button>
+    <button type="button" class="nav-item" data-nav="购物袋" id="cart-nav"><i class="nav-cart"></i><sup data-testid="cart-count">0</sup><span>购物袋</span></button>
+    <button type="button" class="nav-item" data-nav="我的"><i class="nav-user"></i><span>我的</span></button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>

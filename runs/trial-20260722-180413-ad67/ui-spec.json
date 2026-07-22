@@ -1,0 +1,225 @@
+{
+  "run_id": "trial-20260722-180413-ad67",
+  "app_type": "mobile retail discovery home screen",
+  "high_fidelity_structure": {
+    "viewport": "390x844 mobile portrait",
+    "section_order": [
+      "pale warm system-status strip",
+      "horizontal topical tab bar",
+      "outlined search field with scan and camera affordances plus orange search button",
+      "two-row grid of 10 shortcut categories",
+      "three compact promotional tiles",
+      "full-width red coupon/announcement ribbon",
+      "two-column recommendation product feed",
+      "fixed five-item bottom navigation",
+      "system gesture area"
+    ],
+    "geometry": "Dense white commerce feed with 16px side margins. The top tab bar is about 58px high; search is a rounded 38px control; shortcut icons form two evenly spaced rows; promotion tiles are three equal cards; the red ribbon spans nearly full width; product cards are two columns with rounded image panels; bottom navigation is fixed and approximately 76px high.",
+    "dominant_colour_blocks": [
+      "warm off-white header background",
+      "white content surfaces",
+      "vivid orange active/search/price accents",
+      "red coupon ribbon and urgency chips",
+      "pale pink promotional card fills",
+      "soft gray product-image backgrounds",
+      "black/dark charcoal text"
+    ],
+    "visual_density": "High-density marketplace layout with small icon labels, compressed promotional modules, colorful deal badges, and a masonry-style product feed.",
+    "bottom_navigation": "Visible, fixed, no modal or drawer open. First destination is selected with a large orange circular mark; the center message item has an orange unread badge.",
+    "primary_interaction_entries": [
+      "top topical tabs",
+      "scan button",
+      "search input",
+      "camera icon",
+      "search button",
+      "shortcut categories",
+      "promotion tiles",
+      "coupon claim button",
+      "product cards",
+      "bottom navigation",
+      "cart tab"
+    ]
+  },
+  "replaced_source_assets": {
+    "brand": "MallLite",
+    "logo": "abstract orange loop icon",
+    "product_photography": [
+      "illustrated snack wrap",
+      "generic charcoal game controller illustration",
+      "friendly yellow service bot illustration",
+      "retro modular desk gadget illustration",
+      "minimal wall-mounted music panel illustration"
+    ],
+    "product_names": [
+      "Crisp Street Wrap",
+      "Orbit Pad Mini",
+      "Luma Helper",
+      "Pixel Dock Station",
+      "Arc Sound Mirror"
+    ],
+    "prices": [
+      "$6",
+      "$29",
+      "$18",
+      "$44",
+      "$32"
+    ],
+    "source_wording_replaced": true
+  },
+  "visible_state": {
+    "active_top_tab": "For You",
+    "search_query": "pocket game console",
+    "selected_bottom_nav": "Discover",
+    "cart_count": 0,
+    "unread_message_count": 12,
+    "coupon_banner_visible": true,
+    "modal_or_drawer": "none",
+    "recommendations_visible": true
+  },
+  "components": [
+    {
+      "type": "status_bar",
+      "content": "time, connectivity, battery placeholders"
+    },
+    {
+      "type": "top_tab_strip",
+      "items": [
+        "Following",
+        "For You",
+        "Quick Picks",
+        "Local",
+        "Style",
+        "Travel",
+        "Summer Sale"
+      ],
+      "active": "For You"
+    },
+    {
+      "type": "search_bar",
+      "testid": "search-input",
+      "elements": [
+        "scan affordance",
+        "text input",
+        "camera affordance",
+        "orange submit button"
+      ]
+    },
+    {
+      "type": "shortcut_grid",
+      "items": [
+        "Daily Check-in",
+        "Try & Earn",
+        "Coin Vault",
+        "Maker Hub",
+        "Parcel Point",
+        "Tiny Farm",
+        "Leisure Bay",
+        "Global Finds",
+        "Flash Browse",
+        "Event Calendar"
+      ]
+    },
+    {
+      "type": "promo_tile_row",
+      "items": [
+        "Live Deals",
+        "Member Rebate",
+        "Robot Rush"
+      ]
+    },
+    {
+      "type": "coupon_announcement",
+      "content": "Summer treats, save up to 20%",
+      "action": "Claim $10"
+    },
+    {
+      "type": "recommendation_grid",
+      "testid": "recommendation-list",
+      "cards": [
+        "Pixel Dock Station",
+        "Arc Sound Mirror",
+        "additional fictional products"
+      ]
+    },
+    {
+      "type": "product_card_action",
+      "testid": "add-to-cart",
+      "action": "Add to cart"
+    },
+    {
+      "type": "bottom_navigation",
+      "items": [
+        "Discover",
+        "Clips",
+        "Inbox",
+        "Cart",
+        "Profile"
+      ],
+      "cart_badge_testid": "cart-count"
+    },
+    {
+      "type": "qa_status",
+      "testid": "qa-result",
+      "content": "interaction feedback area"
+    }
+  ],
+  "inferred_interactions": [
+    {
+      "trigger": "Tap a topical tab or shortcut category",
+      "result": "Updates active styling and replaces recommendation cards with matching fictional category content."
+    },
+    {
+      "trigger": "Enter text and submit search",
+      "result": "Updates the visible query and filters the recommendation grid to fictional matching items."
+    },
+    {
+      "trigger": "Tap a product card add action",
+      "result": "Adds the item, increments cart-count, and shows a brief qa-result confirmation."
+    },
+    {
+      "trigger": "Tap Claim $10",
+      "result": "Changes the coupon action to a claimed state and updates the announcement copy."
+    },
+    {
+      "trigger": "Tap bottom navigation",
+      "result": "Changes selected navigation state; Cart exposes the accumulated item count."
+    }
+  ],
+  "design_tokens": {
+    "font_family": "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+    "colors": {
+      "page": "#FFFFFF",
+      "header": "#FFF7F1",
+      "orange": "#FF5A00",
+      "orange_soft": "#FFF0E8",
+      "red": "#F51616",
+      "pink_card": "#FFF5F6",
+      "text": "#24222A",
+      "muted": "#747780",
+      "border": "#E7E7E7",
+      "green": "#22B76A",
+      "badge": "#FF552B"
+    },
+    "spacing": {
+      "page_x": "16px",
+      "section_y": "12px",
+      "card_gap": "8px",
+      "radius_sm": "8px",
+      "radius_md": "12px",
+      "radius_pill": "999px"
+    },
+    "typography": {
+      "tab": "20px/700",
+      "search": "17px/650",
+      "shortcut_label": "14px/650",
+      "product_title": "16px/700",
+      "price": "18px/800",
+      "banner": "15px/700"
+    },
+    "elevation": {
+      "cards": "0 1px 3px rgba(30,30,30,.05)",
+      "fixed_nav": "0 -2px 12px rgba(0,0,0,.08)"
+    }
+  },
+  "generator": "codex-cli"
+}

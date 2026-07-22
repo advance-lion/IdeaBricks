@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MallLite</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell" data-testid="app-shell">
+    <header class="header">
+      <div class="status-bar" aria-label="Device status">
+        <span>10:08</span>
+        <span class="status-icons">◉ ◌ &nbsp;⌁ 5G ▮▮▮ <b>60</b></span>
+      </div>
+
+      <nav class="topic-tabs" aria-label="Topics">
+        <button>Following</button>
+        <button class="active">For You</button>
+        <button>Quick Picks</button>
+        <button>Local</button>
+        <button>Style</button>
+        <button>Travel</button>
+        <button>Summer</button>
+      </nav>
+
+      <form class="search-bar" id="search-form">
+        <button class="scan" type="button" aria-label="Scan">⌗</button>
+        <input data-testid="search-input" id="search-input" value="pocket game console" aria-label="Search products">
+        <button class="camera" type="button" aria-label="Camera">▣</button>
+        <button class="search-submit" type="submit">Search</button>
+      </form>
+    </header>
+
+    <section class="shortcut-grid" aria-label="Shop categories">
+      <button data-category="daily"><i class="icon red">¥</i><span>Daily Check-in</span></button>
+      <button data-category="rewards"><i class="icon magenta">U</i><span>Try & Earn</span></button>
+      <button data-category="coins"><i class="icon gold">¢</i><span>Coin Vault</span></button>
+      <button data-category="maker"><i class="icon coral">⌂</i><span>Maker Hub</span></button>
+      <button data-category="parcel"><i class="icon blue">▣</i><span>Parcel Point</span></button>
+      <button data-category="home"><i class="icon green">♣</i><span>Tiny Farm</span></button>
+      <button data-category="leisure"><i class="icon yellow">●</i><span>Leisure Bay</span></button>
+      <button data-category="global"><i class="icon purple">✦</i><span>Global Finds</span></button>
+      <button data-category="flash"><i class="icon orange">↯</i><span>Flash Browse</span></button>
+      <button data-category="events"><i class="icon pink">▤</i><span>Event Calendar</span></button>
+    </section>
+
+    <section class="promo-row" aria-label="Featured deals">
+      <article class="promo wrap-promo">
+        <h2>Live Deals <em>▥</em></h2>
+        <div class="wrap-art"><span></span></div>
+        <strong>$6 <small>live price</small></strong>
+      </article>
+      <article class="promo pad-promo">
+        <h2>Member Rebate <em class="green-text">SAVE</em></h2>
+        <div class="controller"><b></b><i></i><i></i><i></i><i></i></div>
+        <strong>$29 <small>member deal</small></strong>
+      </article>
+      <article class="promo bot-promo">
+        <h2>Robot Rush <em>fast</em></h2>
+        <div class="bot"><b>• •</b><i></i><i></i></div>
+        <strong>$18 <small>today only</small></strong>
+      </article>
+    </section>
+
+    <section class="coupon-banner">
+      <span class="speaker">◖</span>
+      <strong id="coupon-copy">Summer treats, save up to 20%</strong>
+      <button id="claim-coupon">Claim $10</button>
+    </section>
+
+    <section class="feed-heading">
+      <strong id="feed-title">Fresh discoveries</strong>
+      <span>picked for you</span>
+    </section>
+
+    <section class="recommendation-list" data-testid="recommendation-list" id="recommendation-list" aria-live="polite"></section>
+  </main>
+
+  <div class="qa-result" data-testid="qa-result" id="qa-result" aria-live="polite"></div>
+
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <button class="nav-item active" data-nav="Discover"><i class="brand-mark">m</i><span>Discover</span></button>
+    <button class="nav-item" data-nav="Clips"><i>▻</i><span>Clips</span></button>
+    <button class="nav-item" data-nav="Inbox"><i class="message-icon">◌<b>12</b></i><span>Inbox</span></button>
+    <button class="nav-item" data-nav="Cart"><i class="cart-icon">⌑<b data-testid="cart-count" id="cart-count">0</b></i><span>Cart</span></button>
+    <button class="nav-item" data-nav="Profile"><i>☺</i><span>Profile</span></button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>

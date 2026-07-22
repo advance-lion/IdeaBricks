@@ -1,0 +1,245 @@
+{
+  "run_id": "trial-20260722-193042-0978",
+  "app_type": "mobile discovery-commerce home screen",
+  "high_fidelity_structure": {
+    "viewport": "390×844 mobile portrait; dense white commerce home feed with a pale blush status/header background and a fixed white bottom navigation.",
+    "section_order": [
+      "system-status strip",
+      "horizontally scrollable category tabs",
+      "orange-outlined rounded search bar",
+      "two-row 5-column quick-service icon grid",
+      "three equal promotional deal cards",
+      "full-width red coupon/action banner",
+      "two-column staggered recommendation masonry feed",
+      "fixed five-item bottom navigation"
+    ],
+    "geometry": {
+      "header_tabs": "about 54px tall, left-aligned text tabs; selected tab is orange with a short orange underline",
+      "search": "full-width inset 10px, 42px tall pill/rounded rectangle; scan icon left, camera icon near right, orange search button occupying the right fifth",
+      "quick_grid": "10 circular or simple illustrated icons in 5 columns, two 92px-ish rows with labels below",
+      "promo_cards": "three cards in one row with 8px gaps, each roughly 31% width and 150px tall",
+      "coupon_banner": "red rounded rectangle, nearly full width, 56px tall; white announcement area and a pale claim button on the right",
+      "feed": "two columns separated by 8px; image-first cards with rounded image tops and text/price metadata below",
+      "bottom_nav": "fixed 78px bar; five evenly distributed icons and labels, first item active with a large orange circular mark"
+    },
+    "dominant_colour_blocks": [
+      "#FFFFFF page and cards",
+      "#FFF2F0 pale pink header and promotional card ground",
+      "#FF4A0A / #FF5B18 saturated orange for selected controls and search",
+      "#FF2115 bright red for coupon banner and price accents",
+      "#22242B dark charcoal type",
+      "#F2F3F5 subtle divider and icon backgrounds"
+    ],
+    "visual_density": "high; compact Chinese-style retail discovery layout with minimal empty space, strong orange/red conversion accents, bold labels, and colorful iconography.",
+    "bottom_navigation_state": "visible and fixed; Discover tab is active, Cart tab carries an orange 3-count badge; no modal or drawer is open.",
+    "primary_interaction_entries": [
+      "search field and search button",
+      "top category tabs",
+      "quick-service tiles",
+      "deal cards",
+      "coupon claim button",
+      "recommendation product cards",
+      "add-to-cart controls associated with products",
+      "bottom Cart navigation"
+    ]
+  },
+  "replaced_source_assets": {
+    "branding": {
+      "app_name": "橙集",
+      "active_nav_label": "发现",
+      "no_source_logos": true
+    },
+    "image_strategy": "Use local CSS/SVG-style fictional illustrations only; do not reuse screenshot imagery, logos, retailer marks, packaging, or portraits.",
+    "fictional_promo_assets": [
+      {
+        "title": "热播小食",
+        "visual": "illustrated stacked citrus sandwich",
+        "price_label": "¥8 开播价"
+      },
+      {
+        "title": "全能操控器",
+        "visual": "charcoal gamepad silhouette with colored buttons",
+        "price_label": "¥218 优享价"
+      },
+      {
+        "title": "豆豆巡游者",
+        "visual": "yellow friendly tabletop robot",
+        "price_label": "¥129 限时价"
+      }
+    ],
+    "fictional_recommendation_assets": [
+      {
+        "title": "磁吸像素充电坞",
+        "visual": "dark modular desktop robot dock illustration",
+        "price_label": "¥268 入会价"
+      },
+      {
+        "title": "弧面音乐镜",
+        "visual": "minimal ivory smart mirror with abstract album art",
+        "price_label": "¥386 尝鲜价"
+      }
+    ],
+    "source_text_replacement_policy": "All original marketplace names, service labels, campaign language, product names, prices, avatars, notifications, and user data are replaced with the fictional labels and values in this spec."
+  },
+  "visible_state": {
+    "active_top_tab": "精选",
+    "search_query": "掌机配件",
+    "quick_services": [
+      "每日礼",
+      "新客试用",
+      "橙果积分",
+      "造物间",
+      "驿站柜",
+      "绿野小铺",
+      "摸鱼集",
+      "环球淘",
+      "闪选速递",
+      "活动簿"
+    ],
+    "coupon_state": "unclaimed",
+    "cart_count": 3,
+    "recommendations": "default discovery feed visible",
+    "selected_bottom_nav": "发现",
+    "modal_or_drawer": "none"
+  },
+  "components": [
+    {
+      "name": "AppShell",
+      "testid": "app-shell",
+      "role": "root mobile layout with fixed navigation and scrollable content"
+    },
+    {
+      "name": "TopTabs",
+      "items": [
+        "关注",
+        "精选",
+        "快购",
+        "灵感",
+        "穿搭",
+        "飞行",
+        "轻奢"
+      ],
+      "active": "精选",
+      "interaction": "changes feed theme and active underline"
+    },
+    {
+      "name": "SearchBar",
+      "testid": "search-input",
+      "placeholder": "搜索好物与灵感",
+      "visible_value": "掌机配件",
+      "controls": [
+        "scan decorative icon",
+        "camera decorative icon",
+        "搜索 button"
+      ],
+      "interaction": "submits query and visibly filters/relabels recommendation cards"
+    },
+    {
+      "name": "QuickServiceGrid",
+      "layout": "5 columns × 2 rows",
+      "items": "fictional service tiles listed in visible_state.quick_services"
+    },
+    {
+      "name": "PromoStrip",
+      "layout": "three equal illustrated deal cards",
+      "items": "fictional_promo_assets"
+    },
+    {
+      "name": "CouponBanner",
+      "copy": "盛夏灵感周 · 低至 8 折",
+      "action_label": "领 ¥12",
+      "state": "unclaimed"
+    },
+    {
+      "name": "RecommendationList",
+      "testid": "recommendation-list",
+      "layout": "two-column masonry cards",
+      "items": "fictional_recommendation_assets"
+    },
+    {
+      "name": "ProductAction",
+      "testid": "add-to-cart",
+      "role": "small add button on each recommendation card; may be plus icon rather than source-derived wording"
+    },
+    {
+      "name": "BottomNavigation",
+      "items": [
+        "发现",
+        "视频",
+        "消息",
+        "购物袋",
+        "我的"
+      ],
+      "active": "发现"
+    },
+    {
+      "name": "CartBadge",
+      "testid": "cart-count",
+      "value": "3"
+    },
+    {
+      "name": "QaResult",
+      "testid": "qa-result",
+      "role": "visually hidden or compact in-app test status region populated after interaction checks"
+    }
+  ],
+  "inferred_interactions": [
+    {
+      "trigger": "Tap a top tab such as 穿搭",
+      "visible_result": "active underline moves to the tapped tab and the recommendation titles/images switch to a matching fictional collection."
+    },
+    {
+      "trigger": "Enter or submit a different search query",
+      "visible_result": "recommendation list updates to matching fictional cards; a small result-count or query label becomes visible."
+    },
+    {
+      "trigger": "Tap the coupon claim area",
+      "visible_result": "banner changes from “领 ¥12” to “已领取”, with a confirmation toast or inline checkmark."
+    },
+    {
+      "trigger": "Tap a product add control",
+      "visible_result": "cart-count increments immediately and a brief “已加入购物袋” confirmation appears."
+    },
+    {
+      "trigger": "Tap 购物袋 in bottom navigation",
+      "visible_result": "cart tab becomes active and displays the current fictional cart summary locally."
+    }
+  ],
+  "design_tokens": {
+    "font_family": "system-ui, -apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "colors": {
+      "page": "#FFFFFF",
+      "header_tint": "#FFF3F0",
+      "orange": "#FF5A16",
+      "orange_deep": "#FF3E00",
+      "red": "#FF2417",
+      "pink_card": "#FFF6F5",
+      "text": "#202127",
+      "muted_text": "#70747D",
+      "line": "#F0F1F3",
+      "success": "#18B76B"
+    },
+    "spacing": {
+      "page_x": "10px",
+      "section_gap": "10px",
+      "card_gap": "8px",
+      "radius_small": "8px",
+      "radius_medium": "12px",
+      "radius_pill": "22px"
+    },
+    "type": {
+      "tab": "24px / 700",
+      "search": "16px / 650",
+      "service_label": "15px / 700",
+      "promo_heading": "18px / 800",
+      "product_title": "16px / 700",
+      "price": "22px / 800",
+      "nav_label": "13px / 500"
+    },
+    "shadows": {
+      "card": "0 1px 3px rgba(32,33,39,0.05)",
+      "bottom_nav": "0 -2px 10px rgba(32,33,39,0.06)"
+    }
+  },
+  "generator": "codex-cli"
+}

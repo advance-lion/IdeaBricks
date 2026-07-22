@@ -1,0 +1,15 @@
+{
+  "run_id": "trial-20260722-193042-0978",
+  "worker": "mvp-worker",
+  "created_at": "2026-07-22T19:35:38+08:00",
+  "status": "PASS",
+  "artifacts": {
+    "source_dir": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-193042-0978\\app",
+    "ui_spec": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-193042-0978\\ui-spec.json",
+    "preview": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-193042-0978\\artifacts\\preview.png",
+    "acceptance_report": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-193042-0978\\artifacts\\acceptance-report.json"
+  },
+  "acceptance_status": "PASS",
+  "missing_required_files": [],
+  "github": "https://github.com/advance-lion/forge-cli-to-mvp/tree/codex/delivery-trial-20260722-193042-0978/runs/trial-20260722-193042-0978"
+}

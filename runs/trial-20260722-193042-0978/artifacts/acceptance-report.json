@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "url": "http://127.0.0.1:50747/index.html",
+  "qa_url": "http://127.0.0.1:50747/index.html?qa=1",
+  "browser": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "checks": [
+    {
+      "id": "page-load",
+      "status": "PASS",
+      "evidence": "dump-dom exit=0"
+    },
+    {
+      "id": "required-testids",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "qa-result",
+      "status": "PASS",
+      "result": {
+        "status": "PASS",
+        "checks": [
+          {
+            "id": "page-load",
+            "status": "PASS"
+          },
+          {
+            "id": "required-sections",
+            "status": "PASS"
+          },
+          {
+            "id": "search-or-filter",
+            "status": "PASS",
+            "inputElement": "#search-input",
+            "query": "helper",
+            "filter_count_before_primary_action": 1
+          },
+          {
+            "id": "primary-action",
+            "status": "PASS",
+            "action": "save fictional find",
+            "saved_before": 0,
+            "saved_after": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "required-interactions",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "preview",
+      "status": "PASS",
+      "path": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-193042-0978\\artifacts\\preview.png"
+    }
+  ],
+  "browser_stderr": {
+    "screenshot": "FetchError, Platform error: 0, Error string: [empty]\n\n[41268:17988:0722/193525.464:ERROR:chrome\\browser\\importer\\edge_china_browsers\\edge_qqbrowser_importer_utils_win.cc:163] QQBrowser user data path not found.\n[41268:30756:0722/193525.738:ERROR:chrome\\browser\\task_manager\\providers\\fallback_task_provider.cc:126] Every renderer should have at least one task provided by a primary task provider. If a \"Renderer\" fallback task is shown, it is a bug. If you have repro steps, please file a new bug and tag it as a dependency of crbug.com/739782.\n39597 bytes written to file C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-193042-0978\\artifacts\\preview.png\n[41268:30756:0722/193526.353:ERROR:chrome\\browser\\task_manager\\providers\\fallback_task_provider.cc:126] Every renderer should have at least one task provided by a primary task provider. If a \"Renderer\" fallback task is shown, it is a bug. If you have repro steps, please file a new bug and tag it as a dependency of crbug.com/739782.\n",
+    "dump_dom": "[34196:19196:0722/193528.711:ERROR:components\\edge_auth\\edge_auth_errors.cc:540] EDGE_IDENTITY: Get Default OS Account failed: Error: Primary Error: kImplicitSignInFailure, Secondary Error: kAccountProviderFetchError, Platform error: 0, Error string: [empty]\n\n[34196:44684:0722/193529.089:ERROR:chrome\\browser\\importer\\edge_china_browsers\\edge_qqbrowser_importer_utils_win.cc:163] QQBrowser user data path not found.\n[34196:19196:0722/193529.586:ERROR:chrome\\browser\\task_manager\\providers\\fallback_task_provider.cc:126] Every renderer should have at least one task provided by a primary task provider. If a \"Renderer\" fallback task is shown, it is a bug. If you have repro steps, please file a new bug and tag it as a dependency of crbug.com/739782.\n"
+  }
+}

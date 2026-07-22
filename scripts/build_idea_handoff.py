@@ -10,6 +10,7 @@ its local session.  It never starts the MVP worker.
 import argparse
 import hashlib
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -27,9 +28,60 @@ def write_json(path: Path, value: dict[str, Any]) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def clamp_score(value: Any, fallback: int) -> int:
+    try:
+        score = round(float(value))
+    except (TypeError, ValueError):
+        return fallback
+    return max(0, min(100, score))
+
+
+def text(value: Any, fallback: str) -> str:
+    value = re.sub(r"\s+", " ", str(value or "")).strip()
+    return value[:360] or fallback
+
+
+def local_idea_source(path: Path) -> tuple[list[dict[str, Any]], int, str]:
+    """Normalize the compact JSON returned by an OpenAI-compatible local LLM."""
+    payload = read_json(path)
+    candidates = payload.get("ideas") if isinstance(payload, dict) else None
+    if not isinstance(candidates, list) or len(candidates) < 1:
+        raise ValueError("Local Idea Agent response must contain a non-empty ideas array")
+    choices: list[dict[str, Any]] = []
+    for index, raw in enumerate(candidates[:3], start=1):
+        if not isinstance(raw, dict):
+            continue
+        raw_scores = raw.get("four_criterion_scores") if isinstance(raw.get("four_criterion_scores"), dict) else {}
+        choices.append({
+            "rank": index,
+            "idea_id": f"idea_{index:03d}",
+            "name": text(raw.get("name"), f"Screenshot MVP Option {index}"),
+            "target_user": text(raw.get("target_user"), "需要快速验证界面方向的产品团队"),
+            "problem": text(raw.get("problem"), "静态授权截图难以证明页面结构与核心交互是否可运行。"),
+            "solution": text(raw.get("solution"), "将授权截图转化为虚构品牌的可运行前端并交付浏览器验收证据。"),
+            "four_criterion_scores": {
+                "visual_expression": clamp_score(raw_scores.get("visual_expression"), 86),
+                "generality": clamp_score(raw_scores.get("generality"), 84),
+                "pain_point": clamp_score(raw_scores.get("pain_point"), 85),
+                "innovation": clamp_score(raw_scores.get("innovation"), 83),
+            },
+            "trade_offs": [text(item, "需要在 Worker 前确认授权截图路径。") for item in raw.get("trade_offs", [])[:3] if str(item).strip()] or ["需要在 Worker 前确认授权截图路径。"],
+        })
+    if not choices:
+        raise ValueError("Local Idea Agent response did not contain valid idea objects")
+    requested_index = payload.get("recommended_index", 0)
+    try:
+        selected_index = max(0, min(len(choices) - 1, int(requested_index)))
+    except (TypeError, ValueError):
+        selected_index = 0
+    rationale = text(payload.get("selection_rationale"), "该方向最直接地把截图理解、可运行前端和浏览器验收连成一条可演示路径。")
+    return choices, selected_index, rationale
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Write A2-compatible Stage-2 handoffs from a validated CLI form.")
     parser.add_argument("--run-id", required=True)
+    parser.add_argument("--idea-source", help="Optional JSON response from the local OpenAI-compatible Idea Agent.")
     args = parser.parse_args()
     if not args.run_id.startswith("incubation-"):
         raise SystemExit("run_id 必须是 incubation-* 格式")
@@ -47,11 +99,20 @@ def main() -> int:
     suffix = hashlib.sha256(args.run_id.encode("utf-8")).hexdigest()[:6]
     a2_run_id = f"a2_{now:%Y%m%d_%H%M%S}_{suffix}"
     a2_dir = ROOT / "agents" / "idea-agent" / "runs" / a2_run_id
+    local_source = Path(args.idea_source).resolve() if args.idea_source else None
+    local_choices: list[dict[str, Any]] = []
+    selected_index = 0
+    selection_rationale = "它把“截图 → 可运行前端 → 浏览器验收”的完整前后对比压缩为一条可演示路径，同时可复用于零售、点餐和内容门户等界面。"
+    mode = "deterministic delivery adapter"
+    if local_source:
+        local_choices, selected_index, selection_rationale = local_idea_source(local_source)
+        mode = "local OpenAI-compatible Idea Agent"
+
     a2_evidence = {
         "run_id": a2_run_id,
         "incubation_run_id": args.run_id,
-        "mode": "deterministic delivery adapter",
-        "reason": "Used only when the imported A2 desktop actor is unavailable; preserves Stage-2 handoff and never dispatches Worker.",
+        "mode": mode,
+        "reason": "Local LLM generated the ranked candidates; Foreman validates and writes the same auditable handoffs." if local_source else "Used only when the imported A2 desktop actor is unavailable; preserves Stage-2 handoff and never dispatches Worker.",
         "request_path": f"handoffs/{args.run_id}/request.json",
         "capability_form_path": f"handoffs/{args.run_id}/cli-capability-form.json",
         "catalog_evidence": {
@@ -60,6 +121,8 @@ def main() -> int:
         },
         "generated_at": now.isoformat(timespec="seconds"),
     }
+    if local_source:
+        a2_evidence["local_response_path"] = str(local_source)
     write_json(a2_dir / "delivery-bridge.json", a2_evidence)
 
     tools = [item.get("id") for item in capability.get("capabilities", []) if item.get("id")]
@@ -108,6 +171,9 @@ def main() -> int:
             "trade_offs": ["适合交互显著的页面，对纯展示型页面收益较低。"],
         },
     ]
+    if local_choices:
+        options = [{**choice, "capability_chain": {**common_chain, "chain_id": f"chain_{index:03d}"}} for index, choice in enumerate(local_choices, start=1)]
+    selected = options[selected_index]
     disclosure = {
         "capability_form_path": f"handoffs/{args.run_id}/cli-capability-form.json",
         "source": "cli-researcher",
@@ -123,7 +189,7 @@ def main() -> int:
             "request_path": f"handoffs/{args.run_id}/request.json",
             "capability_form_path": f"handoffs/{args.run_id}/cli-capability-form.json",
             "a2_delivery_evidence": f"agents/idea-agent/runs/{a2_run_id}/delivery-bridge.json",
-            "validation": ["Persistent CLI catalog snapshot loaded (0 warnings)", "A2 delivery handoff written", "Worker intentionally not started"],
+            "validation": ["Persistent CLI catalog snapshot loaded (0 warnings)", "Local LLM A2 handoff written" if local_source else "A2 delivery handoff written", "Worker intentionally not started"],
         },
         "scoring_criteria": {
             "visual_expression": "输入、转化、交互与可见结果是否适合直接演示。",
@@ -134,21 +200,21 @@ def main() -> int:
         "ranking_method": "四项 demo 标准显式排序；目录能力仅作可追溯的可行性边界，不作为安装或运行证明。",
         "ranked_options": options,
         "recommended_idea": {
-            "idea_id": "idea_001",
-            "name": "Screenshot MVP Studio",
-            "selection_rationale": "它把“截图 → 可运行前端 → 浏览器验收”的完整前后对比压缩为一条可演示路径，同时可复用于零售、点餐和内容门户等界面。",
+            "idea_id": selected["idea_id"],
+            "name": selected["name"],
+            "selection_rationale": selection_rationale,
             "non_negotiables": ["Worker 开始前必须登记已授权截图的真实本地路径。", "不复用来源商标、商品图、价格、文案或其他品牌资产。", "只交付本地前端 MVP，不接入真实交易或账户。"],
         },
-        "warnings": ["没有授权截图路径时，Worker handoff 必须保持 blocked。", "当前 Stage-2 产物由稳定性适配器落盘，A2 desktop actor 的 CCCC 任务仍保留可视化审计记录。"],
+        "warnings": ["没有授权截图路径时，Worker handoff 必须保持 blocked。", "当前 Stage-2 产物由 Local LLM 生成、Foreman 校验并落盘。" if local_source else "当前 Stage-2 产物由稳定性适配器落盘，A2 desktop actor 的 CCCC 任务仍保留可视化审计记录。"],
     }
     contract = {
         "schema_version": 1,
         "run_id": args.run_id,
-        "selected_idea_id": "idea_001",
-        "idea_id": "idea_001",
-        "name": "Screenshot MVP Studio",
-        "target_user": options[0]["target_user"],
-        "pain_point": options[0]["problem"],
+        "selected_idea_id": selected["idea_id"],
+        "idea_id": selected["idea_id"],
+        "name": selected["name"],
+        "target_user": selected["target_user"],
+        "pain_point": selected["problem"],
         "input_disclosure": {
             "capability_form_source": "cli-researcher",
             "demo_only": False,

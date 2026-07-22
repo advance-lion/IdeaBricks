@@ -14,6 +14,9 @@ import os
 import shutil
 import subprocess
 import sys
+import time
+import urllib.error
+import urllib.request
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -36,6 +39,73 @@ def read_json(path: Path) -> dict[str, Any]:
     except (OSError, json.JSONDecodeError):
         return {}
     return value if isinstance(value, dict) else {}
+
+
+def model_settings() -> dict[str, Any]:
+    """Read the shared OpenAI-compatible Local LLM configuration.
+
+    This intentionally matches the Worker configuration, so one untracked
+    ``config/local-model.local.json`` enables both Idea Agent and Worker on a
+    host without a coding CLI.
+    """
+    config_path = ROOT / "config" / "local-model.local.json"
+    from_file = read_json(config_path) if config_path.is_file() else {}
+    return {
+        "base_url": os.environ.get("LOCAL_MODEL_BASE_URL") or os.environ.get("LOCAL_LLM_BASE_URL") or from_file.get("base_url", ""),
+        "api_key": os.environ.get("LOCAL_MODEL_API_KEY") or os.environ.get("LOCAL_LLM_API_KEY") or from_file.get("api_key", ""),
+        "model": os.environ.get("LOCAL_MODEL_NAME") or os.environ.get("LOCAL_LLM_MODEL") or from_file.get("model", ""),
+        "timeout": int(os.environ.get("LOCAL_MODEL_TIMEOUT") or from_file.get("timeout_seconds", 60)),
+        "idea_timeout": int(os.environ.get("LOCAL_MODEL_IDEA_TIMEOUT") or from_file.get("idea_timeout_seconds", 90)),
+    }
+
+
+def local_chat(settings: dict[str, Any], prompt: str, *, max_tokens: int, timeout: int) -> str:
+    """Call an OpenAI-compatible chat-completions endpoint without an SDK."""
+    base_url = str(settings.get("base_url", "")).rstrip("/")
+    model = str(settings.get("model", ""))
+    api_key = str(settings.get("api_key", ""))
+    if not base_url or not model:
+        raise RuntimeError("Local LLM is not configured (set LOCAL_MODEL_BASE_URL and LOCAL_MODEL_NAME)")
+    payload = {
+        "model": model,
+        "temperature": 0.2,
+        "max_tokens": max_tokens,
+        "chat_template_kwargs": {"enable_thinking": False},
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+    request = urllib.request.Request(
+        f"{base_url}/chat/completions", data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=max(30, timeout)) as response:
+            response_json = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")[-800:]
+        raise RuntimeError(f"Local LLM rejected the Stage 2 request: {detail}") from exc
+    except urllib.error.URLError as exc:
+        raise RuntimeError(f"Local LLM is unavailable: {exc}") from exc
+    content = response_json.get("choices", [{}])[0].get("message", {}).get("content", "")
+    if not isinstance(content, str) or not content.strip():
+        raise RuntimeError("Local LLM returned no Stage 2 content")
+    return content
+
+
+def parse_local_json(content: str) -> dict[str, Any]:
+    """Accept a JSON-only reply while tolerating an accidental code fence."""
+    cleaned = content.strip()
+    if cleaned.startswith("```"):
+        cleaned = cleaned.split("\n", 1)[-1]
+        if cleaned.rstrip().endswith("```"):
+            cleaned = cleaned.rstrip()[:-3]
+    start, end = cleaned.find("{"), cleaned.rfind("}")
+    candidate = cleaned if start < 0 or end <= start else cleaned[start:end + 1]
+    value = json.loads(candidate)
+    if not isinstance(value, dict):
+        raise RuntimeError("Local LLM Stage 2 response was not a JSON object")
+    return value
 
 
 def log(path: Path, message: str) -> None:
@@ -144,6 +214,53 @@ def claude_run(prompt: str, output: Path, timeout: int, run_log: Path) -> tuple[
     return True, "completed"
 
 
+def local_idea_prompt(run_id: str, request: Path, cli_form: Path) -> str:
+    """Constrain a small local model to the portable Stage-2 response schema."""
+    return f"""You are the Idea Agent in a screenshot-to-app CCCC team. Produce the idea-ranking input for run {run_id}.
+
+User request JSON:
+{request.read_text(encoding="utf-8-sig")}
+
+CLI capability snapshot reference JSON (catalog evidence only; do not claim its tools are installed or invoke its researcher):
+{cli_form.read_text(encoding="utf-8-sig")}
+
+Return ONLY one valid compact JSON object, no markdown. Use exactly this shape:
+{{
+  "recommended_index": 0,
+  "selection_rationale": "short reason",
+  "ideas": [
+    {{
+      "name": "short product name",
+      "target_user": "specific user",
+      "problem": "specific problem",
+      "solution": "solution",
+      "four_criterion_scores": {{"visual_expression": 0, "generality": 0, "pain_point": 0, "innovation": 0}},
+      "trade_offs": ["one honest limitation"]
+    }}
+  ]
+}}
+
+Provide 1 to 3 ranked ideas. Scores must be integers from 0 to 100. The selected idea must use this exact demo chain: authorized screenshot -> visual/layout understanding -> runnable fictional-brand local frontend -> browser QA -> evidence delivery. Do not use real brands, real transactions, accounts, or external network requests. The Worker must remain blocked until Foreman records the authorized screenshot path."""
+
+
+def local_idea_run(run_id: str, request: Path, cli_form: Path, output: Path, timeout: int, run_log: Path) -> tuple[bool, str]:
+    """Ask Local LLM for candidates, then save validated JSON for the adapter."""
+    started = time.monotonic()
+    try:
+        settings = model_settings()
+        effective_timeout = min(timeout, max(30, int(settings["idea_timeout"])))
+        content = local_chat(settings, local_idea_prompt(run_id, request, cli_form), max_tokens=1400, timeout=effective_timeout)
+        value = parse_local_json(content)
+        output.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        elapsed = time.monotonic() - started
+        log(run_log, f"LOCAL IDEA completed: model={settings.get('model', '')}, elapsed_seconds={elapsed:.2f}")
+        return True, f"completed with {settings.get('model', '')} in {elapsed:.2f}s"
+    except (OSError, ValueError, RuntimeError, json.JSONDecodeError) as exc:
+        elapsed = time.monotonic() - started
+        log(run_log, f"LOCAL IDEA failed after {elapsed:.2f}s: {exc}")
+        return False, str(exc)[-900:]
+
+
 def cccc_send(sender: str, recipient: str, text: str, run_log: Path, priority: str = "normal") -> None:
     command = shutil.which("cccc")
     if not command:
@@ -179,8 +296,11 @@ def stage2_valid(shortlist_path: Path, contract_path: Path, run_id: str) -> bool
     )
 
 
-def run_adapter(script: str, run_id: str, run_log: Path) -> bool:
-    result = subprocess.run([str(PYTHON), script, "--run-id", run_id], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120)
+def run_adapter(script: str, run_id: str, run_log: Path, idea_source: Path | None = None) -> bool:
+    command = [str(PYTHON), script, "--run-id", run_id]
+    if idea_source:
+        command.extend(["--idea-source", str(idea_source)])
+    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120)
     log(run_log, f"adapter {script}: {'PASS' if result.returncode == 0 else 'FAIL'}")
     if result.stdout:
         log(run_log, result.stdout.strip()[-1200:])
@@ -203,6 +323,7 @@ def main() -> int:
     shortlist = handoff / "idea-shortlist.json"
     contract = handoff / "mvp-contract.json"
     run_log = handoff / "orchestration.log"
+    local_stage2 = handoff / "local-stage2-response.json"
     codex_stage2 = handoff / "codex-stage2-last-message.md"
     claude_stage2 = handoff / "claude-stage2-last-message.md"
     if not request.is_file():
@@ -236,18 +357,25 @@ Write valid {shortlist} and {contract}. The contract must hand off from idea-for
     else:
         stage2_mode = "adapter"
         attempts = (
+            ("local-openai", local_idea_run, local_stage2),
             ("codex-cli", codex_run, codex_stage2),
             ("claude-code", claude_run, claude_stage2),
         )
         for engine, runner, output in attempts:
             log(run_log, f"Stage 2: requesting {engine} as idea-agent")
-            completed, detail = runner(stage2_prompt, output, args.stage2_timeout, run_log)
+            if engine == "local-openai":
+                completed, detail = local_idea_run(args.run_id, request, cli_form, output, args.stage2_timeout, run_log)
+                if completed:
+                    completed = run_adapter("scripts/build_idea_handoff.py", args.run_id, run_log, output)
+                    detail = "completed and normalized" if completed else "local response could not be normalized"
+            else:
+                completed, detail = runner(stage2_prompt, output, args.stage2_timeout, run_log)
             if completed and stage2_valid(shortlist, contract, args.run_id):
                 stage2_mode = engine
                 break
             log(run_log, f"Stage 2: {engine} result invalid ({detail})")
         if stage2_mode == "adapter":
-            log(run_log, "Stage 2: no CLI agent produced valid handoffs; using deterministic adapter")
+            log(run_log, "Stage 2: no configured model agent produced valid handoffs; using deterministic adapter")
             if not run_adapter("scripts/build_idea_handoff.py", args.run_id, run_log) or not stage2_valid(shortlist, contract, args.run_id):
                 raise SystemExit("Stage 2 failed: no valid idea handoffs")
     cccc_send("idea-agent", "idea-foreman", f"Stage 2 完成：{args.run_id} 的 idea-shortlist.json 与 mvp-contract.json 已交付（执行模式：{stage2_mode}）。推荐截图生成可运行 App；等待 Foreman 补充授权截图后再派发 Worker。", run_log, "attention")

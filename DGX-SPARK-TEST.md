@@ -1,6 +1,6 @@
 # DGX Spark test run
 
-The DGX Spark host is the runtime of record for the Worker: its local VLM/LLM receives the screenshot and produces the frontend. Codex CLI is optional. Claude Code is only an explicit fallback, recorded in each run's evidence.
+The DGX Spark host is the runtime of record for the Idea Agent and Worker: its local LLM ranks the idea candidates, then its local VLM/LLM receives the screenshot and produces the frontend. Codex CLI and Claude Code are optional fallbacks, recorded in each run's evidence.
 
 The supplied test ZIP omits previous runs and tool caches, but retains the persistent CLI snapshot, raw catalog provenance, and the two authorized reference screenshots used by the demo controls. It is therefore self-contained for a normal demo run; use the full repository only when you need to refresh catalog maintenance data.
 
@@ -9,7 +9,6 @@ The supplied test ZIP omits previous runs and tool caches, but retains the persi
 ```bash
 python3 --version
 node --version
-claude --version                 # optional fallback; Codex is not required
 curl http://127.0.0.1:8000/v1/models
 nvidia-smi
 ```
@@ -35,7 +34,7 @@ The tracked runtime policy is:
 }
 ```
 
-On a Spark with no Codex but with Claude Code, the effective fallback is automatically `claude`. With a healthy local service, neither CLI is called.
+On a Spark with only CCCC Team and a healthy local service, neither coding CLI is called: Foreman reuses the bundled catalog snapshot, Local LLM completes Idea Stage 2, and the Worker uses the same endpoint. On a Spark with no Codex but with Claude Code, the effective Worker fallback is automatically `claude`.
 
 ## 3. Validate before recording
 

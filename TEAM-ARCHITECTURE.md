@@ -38,6 +38,6 @@ If an imported peer's desktop runtime is unavailable, an operator may use that p
 
 ## Runtime policy for the current demo
 
-Foreman is a deterministic orchestration controller and does not require a coding CLI. Idea Agent requests the workspace Codex CLI first; if it is absent or does not produce valid handoffs, it requests Claude Code, then uses its deterministic delivery adapter only as the final fallback. CLI Researcher runs only as a catalog-maintenance job.
+Foreman is a deterministic orchestration controller and does not require a coding CLI. Idea Agent requests the configured OpenAI-compatible Local LLM first; the response is normalized and validated into the standard handoffs. If Local LLM is absent or invalid, it requests Codex CLI, then Claude Code, and uses its deterministic delivery adapter only as the final fallback. CLI Researcher runs only as a catalog-maintenance job and normal incubations reuse its bundled persistent snapshot.
 
 MVP Worker is configured for DGX Spark's OpenAI-compatible local VLM/LLM (`local-openai`) as the primary execution engine. It uses Codex CLI and then Claude Code only when that local service is unavailable or returns invalid output. Every switch is recorded in `runs/<run_id>/run-execution.json` and the Worker pipeline log; a fallback must never be presented as DGX local inference.

@@ -175,14 +175,14 @@ def write_template_app(contract: dict[str, Any], run_dir: Path) -> None:
 
 
 def codex_exec(prompt: str, image_path: Path, output: Path, completion: Path | tuple[Path, ...] | None = None) -> None:
-    node = shutil.which("node")
-    if not CODEX.is_file() or not node:
-        raise RuntimeError(f"Codex CLI 或 Node 未找到：{CODEX}")
+    command = codex_command()
+    if not command:
+        raise RuntimeError("Codex CLI 未找到。请安装并登录 codex，或设置 CODEX_BIN 指向 codex 命令或 codex.js。")
     # Run Node directly.  A .CMD shim can leave a child process behind on
     # Windows when it times out, making a failed run appear to be stuck.
     process = subprocess.Popen(
         [
-            node, str(CODEX), "exec", "--ephemeral", "--dangerously-bypass-approvals-and-sandbox",
+            *command, "exec", "--ephemeral", "--dangerously-bypass-approvals-and-sandbox",
             "-C", str(ROOT), "-o", str(output), f"--image={image_path}", "-",
         ],
         cwd=ROOT,
@@ -247,9 +247,25 @@ def claude_command() -> str | None:
     return shutil.which("claude") or shutil.which("claude.exe")
 
 
+def codex_command() -> list[str] | None:
+    """Resolve a packaged codex.js, an explicit CODEX_BIN, or a PATH install."""
+    configured = os.environ.get("CODEX_BIN", "").strip()
+    candidate = Path(configured).expanduser() if configured else None
+    if candidate and candidate.is_file():
+        if candidate.suffix.lower() == ".js":
+            node = shutil.which("node")
+            return [node, str(candidate)] if node else None
+        return [str(candidate)]
+    node = shutil.which("node")
+    if CODEX.is_file() and node:
+        return [node, str(CODEX)]
+    executable = shutil.which("codex") or shutil.which("codex.exe") or shutil.which("codex.cmd")
+    return [executable] if executable else None
+
+
 def cli_backend_available(backend: str) -> bool:
     if backend == "codex":
-        return CODEX.is_file() and bool(shutil.which("node"))
+        return bool(codex_command())
     if backend == "claude":
         return bool(claude_command())
     return False
@@ -329,9 +345,7 @@ def run_codex_scaffold(contract_path: Path, run_dir: Path, image_path: Path) -> 
     output = run_dir / "codex-scaffold-message.md"
     contract = load_contract(contract_path)
     ui_spec = load_contract(run_dir / "ui-spec.json")
-    if not FRONTEND_DESIGN_SKILL.is_file():
-        raise RuntimeError(f"Codex 前端设计 skill 缺失：{FRONTEND_DESIGN_SKILL}")
-    record_frontend_design_guidance(run_dir, "codex", True)
+    record_frontend_design_guidance(run_dir, "codex", FRONTEND_DESIGN_SKILL.is_file())
     prompt = local_prompt(contract, ui_spec, engine="codex")
     emit("MODEL codex: ui-spec.json → 前端脚手架")
     codex_exec(prompt, image_path, output)
@@ -495,12 +509,17 @@ def frontend_design_protocol(engine: str) -> str:
     relying on a host-local skill discovery mechanism.
     """
     skill_read = ""
-    if engine == "codex":
+    if engine == "codex" and FRONTEND_DESIGN_SKILL.is_file():
         skill_read = f"""
 Before writing any code, read the complete frontend-design skill at:
 {FRONTEND_DESIGN_SKILL}
 Use its full guidance in addition to the embedded protocol below. Do this work
 silently; your response still contains code sections only.
+"""
+    elif engine == "codex":
+        skill_read = """
+The optional on-disk frontend-design skill is not installed on this host. Use
+the complete embedded protocol below; it is the portable Worker policy.
 """
     return f"""
 FRONTEND DESIGN PROTOCOL (mandatory for this {engine} worker):

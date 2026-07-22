@@ -4,6 +4,9 @@ runs/
 .tools/
 inputs/
 contracts/live-trials/
+handoffs/
+logs/
+exports/
 config/local-model.local.json
 config/cccc-team.local.json
 config/worker-test-mode.local.json

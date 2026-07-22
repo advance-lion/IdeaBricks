@@ -416,7 +416,7 @@ def worker_backend_info(requested_backend: str | None = None) -> dict[str, Any]:
     local = {"available": False, "status": "unconfigured", "model": model, "message": "未配置本地模型"}
     codex_path = ROOT / ".tools" / "codex-cli" / "node_modules" / ".pnpm" / "@openai+codex@0.144.6" / "node_modules" / "@openai" / "codex" / "bin" / "codex.js"
     available = {
-        "codex": codex_path.is_file() and bool(shutil.which("node")),
+        "codex": (codex_path.is_file() and bool(shutil.which("node"))) or bool(cli_command("codex")),
         "claude": bool(cli_command("claude")),
     }
     labels = {"codex": "Codex CLI", "claude": "Claude Code"}

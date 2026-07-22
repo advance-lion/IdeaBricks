@@ -54,12 +54,28 @@ def kill_tree(process: subprocess.Popen[str]) -> None:
         process.kill()
 
 
-def codex_run(prompt: str, output: Path, timeout: int, run_log: Path) -> tuple[bool, str]:
+def codex_command() -> list[str] | None:
+    """Resolve either the packaged Codex CLI entry or a normal PATH install."""
+    configured = os.environ.get("CODEX_BIN", "").strip()
+    candidate = Path(configured).expanduser() if configured else None
+    if candidate and candidate.is_file():
+        if candidate.suffix.lower() == ".js":
+            node = shutil.which("node")
+            return [node, str(candidate)] if node else None
+        return [str(candidate)]
     node = shutil.which("node")
-    if not node or not CODEX.is_file():
-        return False, "Codex CLI entry or Node is unavailable"
+    if CODEX.is_file() and node:
+        return [node, str(CODEX)]
+    executable = shutil.which("codex") or shutil.which("codex.exe") or shutil.which("codex.cmd")
+    return [executable] if executable else None
+
+
+def codex_run(prompt: str, output: Path, timeout: int, run_log: Path) -> tuple[bool, str]:
+    command = codex_command()
+    if not command:
+        return False, "Codex CLI is unavailable; install codex or set CODEX_BIN"
     process = subprocess.Popen(
-        [node, str(CODEX), "exec", "--ephemeral", "--dangerously-bypass-approvals-and-sandbox", "-C", str(ROOT), "-o", str(output), "-"],
+        [*command, "exec", "--ephemeral", "--dangerously-bypass-approvals-and-sandbox", "-C", str(ROOT), "-o", str(output), "-"],
         cwd=ROOT,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,

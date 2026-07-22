@@ -1,0 +1,20 @@
+{
+  "research_scope": "CLI tools related to AI coding, agent workflows, developer automation, and terminal productivity",
+  "target_users": [
+    "developers",
+    "technical founders",
+    "solo builders",
+    "engineering teams"
+  ],
+  "category_boundaries": [
+    "must expose a CLI or terminal-first workflow",
+    "include AI agent CLIs and developer automation CLIs",
+    "exclude GUI-only products unless they also provide a CLI"
+  ],
+  "minimum_tools": 30,
+  "max_tools": 80,
+  "output_language": "zh-CN",
+  "implementation_path": "../cli-catalog",
+  "existing_cli_item_schema_path": "../cli-catalog/schema/cli.schema.json",
+  "notes": "Use the existing single-CLI item schema. Do not redesign item fields."
+}

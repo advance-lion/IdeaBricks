@@ -1,0 +1,35 @@
+{
+  "id": "benrutter/hop",
+  "name": "Hop!",
+  "aliases": [],
+  "description": "File explorer designed to be fast, simple and user-friendly, running on any operating system.",
+  "repo_url": "https://github.com/benrutter/hop",
+  "homepage": "",
+  "install": {},
+  "category": "Files & Search",
+  "tags": [
+    "file-explorer",
+    "file-explorer-and-tree-visualization"
+  ],
+  "github_stars": 32,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "file-explorer"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

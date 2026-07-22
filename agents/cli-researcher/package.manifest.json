@@ -1,0 +1,50 @@
+{
+  "name": "stage1-cli-researcher",
+  "package_type": "cccc-stage-agent-deliverable",
+  "version": "0.1.0",
+  "stage": "stage-1-cli-research",
+  "actor_name": "cli-researcher",
+  "description": "Stage-1 worker package for researching, classifying, validating, and handing off a CLI catalog in a CCCC workflow.",
+  "contents": {
+    "worker": "cli-catalog",
+    "cccc_capsule": "cccc-agent-capsule"
+  },
+  "worker": {
+    "entrypoint": "python3 -m cli_catalog",
+    "working_directory": "cli-catalog",
+    "guidance": "cli-catalog/AGENTS.md",
+    "schema": "cli-catalog/schema/cli.schema.json",
+    "field_docs": "cli-catalog/docs/FIELDS.md"
+  },
+  "cccc": {
+    "integration_guide": "cccc-agent-capsule/CCCC_INTEGRATION.md",
+    "actor_profile": "cccc-agent-capsule/actor-profile.json",
+    "actor_guidance": [
+      "cli-catalog/AGENTS.md",
+      "cccc-agent-capsule/actor.md"
+    ],
+    "task_template": "cccc-agent-capsule/task-template.md",
+    "task_create_payload": "cccc-agent-capsule/cccc-task-create.payload.json",
+    "agent_state_template": "cccc-agent-capsule/agent-state-template.json",
+    "leader_runbook": "cccc-agent-capsule/leader-runbook.md",
+    "acceptance_checklist": "cccc-agent-capsule/acceptance-checklist.md",
+    "handoff": "cccc-agent-capsule/handoff-to-ideator.md",
+    "stage2_handoff_payload": "cccc-agent-capsule/stage2-handoff.payload.json"
+  },
+  "outputs_for_next_stage": [
+    "cli-catalog/catalog/cli-summary.json",
+    "cli-catalog/catalog/data/*.json",
+    "cli-catalog/schema/cli.schema.json",
+    "cli-catalog/docs/FIELDS.md"
+  ],
+  "validation": {
+    "command": "python3 -m cli_catalog validate",
+    "working_directory": "cli-catalog"
+  },
+  "excluded": [
+    ".git",
+    ".DS_Store",
+    "__pycache__",
+    "forge-cli-to-mvp"
+  ]
+}

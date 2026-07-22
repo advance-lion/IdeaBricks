@@ -1,0 +1,41 @@
+{
+  "id": "facebook/pathpicker",
+  "name": "PathPicker",
+  "aliases": [],
+  "description": "A tool from Facebook that parses the output from a command and presents a UI to select files and directories, can be used to apply a command of a interactively selected files or to move across directories.",
+  "repo_url": "https://github.com/facebook/pathpicker",
+  "homepage": "https://facebook.github.io/PathPicker/",
+  "install": {},
+  "category": "Directory Navigation",
+  "tags": [
+    "awesome-list",
+    "file-and-file-system-handling",
+    "file-handling"
+  ],
+  "github_stars": 5221,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "file-handling"
+    },
+    {
+      "id": "awesome-cli-apps",
+      "repo": "agarrharr/awesome-cli-apps",
+      "commit": "598390e9ca817ab33b7821c7a0e4af676975fc25"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

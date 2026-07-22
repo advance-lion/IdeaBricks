@@ -1,0 +1,34 @@
+{
+  "action": "create",
+  "title": "Stage 1: CLI market research catalog",
+  "assignee": "cli-researcher",
+  "type": "standard",
+  "priority": "high",
+  "notes": "Use stage1-cli-researcher/cccc-agent-capsule/task-template.md. Actor working directory: stage1-cli-researcher/cli-catalog. Preserve schema/cli.schema.json. Produce and validate cli-summary.json, catalog/data/*.json, and cli-catalog.md for the ideation actor.",
+  "checklist": [
+    {
+      "status": "pending",
+      "text": "Confirm actor guidance files are loaded: cli-catalog/AGENTS.md and cccc-agent-capsule/actor.md"
+    },
+    {
+      "status": "pending",
+      "text": "Run sync, render, or summary command appropriate for the current research scope"
+    },
+    {
+      "status": "pending",
+      "text": "Run python3 -m cli_catalog validate"
+    },
+    {
+      "status": "pending",
+      "text": "Confirm cli-catalog/catalog/cli-summary.json exists"
+    },
+    {
+      "status": "pending",
+      "text": "Confirm cli-catalog/catalog/data/*.json contains full records"
+    },
+    {
+      "status": "pending",
+      "text": "Prepare stage2 handoff using cccc-agent-capsule/stage2-handoff.payload.json"
+    }
+  ]
+}

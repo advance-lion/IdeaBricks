@@ -1,0 +1,35 @@
+{
+  "id": "cosmicwanderer7/mkgit",
+  "name": "mkgit",
+  "aliases": [],
+  "description": "This Bash script automates the process of creating a new GitHub repository, initializing it with a README file, and pushing the initial commit to the remote repository. The script prompts the user for a repository name and utilizes the GitHub API to create a new public repository.",
+  "repo_url": "https://github.com/cosmicwanderer7/mkgit",
+  "homepage": "",
+  "install": {},
+  "category": "Development",
+  "tags": [
+    "git",
+    "git-and-accessories"
+  ],
+  "github_stars": 13,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "git"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

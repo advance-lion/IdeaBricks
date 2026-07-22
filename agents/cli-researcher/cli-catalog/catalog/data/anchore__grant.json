@@ -1,0 +1,35 @@
+{
+  "id": "anchore/grant",
+  "name": "grant",
+  "aliases": [],
+  "description": "Grant is a tool for generating and managing license security policies for container images.",
+  "repo_url": "https://github.com/anchore/grant",
+  "homepage": "https://anchore.com/opensource/",
+  "install": {},
+  "category": "Security",
+  "tags": [
+    "security",
+    "security-and-encryption"
+  ],
+  "github_stars": 178,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "security"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

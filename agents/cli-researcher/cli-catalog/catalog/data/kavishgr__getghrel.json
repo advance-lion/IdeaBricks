@@ -1,0 +1,35 @@
+{
+  "id": "kavishgr/getghrel",
+  "name": "getghrel",
+  "aliases": [],
+  "description": "A user-friendly command-line tool that fetches and installs the latest release assets from GitHub for macOS and Linux; it automatically detects your operating system and architecture, downloads the relevant binary, and unpacks it, ensuring a hassle-free experience.",
+  "repo_url": "https://github.com/kavishgr/getghrel",
+  "homepage": "",
+  "install": {},
+  "category": "Development",
+  "tags": [
+    "package-manager",
+    "package-managers"
+  ],
+  "github_stars": 25,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "package-manager"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

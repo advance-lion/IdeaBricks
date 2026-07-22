@@ -1,0 +1,43 @@
+{
+  "id": "HKUDS/CLI-Anything/3mf",
+  "name": "3MF",
+  "aliases": [],
+  "description": "Mesh geometry editor for 3D printing files — detect and resize cylindrical holes, repair meshes, compare 3MF files",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://3mf.io",
+  "install": {
+    "pip": "pip install git+https://github.com/HKUDS/CLI-Anything.git#subdirectory=3MF/agent-harness"
+  },
+  "category": "Media & Graphics",
+  "tags": [
+    "cli-anything",
+    "graphics",
+    "registry",
+    "requires-deps"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/HKUDS/CLI-Anything/blob/main/3MF/agent-harness/cli_anything/threemf/skills/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "graphics"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

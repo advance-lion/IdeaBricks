@@ -1,0 +1,43 @@
+{
+  "id": "HKUDS/CLI-Anything/iterm2",
+  "name": "iTerm2",
+  "aliases": [],
+  "description": "Control a running iTerm2 instance — manage windows, tabs, split panes, send text, read output, run tmux -CC, broadcast keystrokes, and configure preferences.",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://iterm2.com",
+  "install": {
+    "pip": "pip install git+https://github.com/HKUDS/CLI-Anything.git#subdirectory=iterm2/agent-harness"
+  },
+  "category": "DevOps & Cloud",
+  "tags": [
+    "cli-anything",
+    "devops",
+    "registry",
+    "requires-deps"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/HKUDS/CLI-Anything/blob/main/skills/cli-anything-iterm2/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "devops"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

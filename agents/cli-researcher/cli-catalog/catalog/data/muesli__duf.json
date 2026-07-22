@@ -1,0 +1,49 @@
+{
+  "id": "muesli/duf",
+  "name": "duf",
+  "aliases": [],
+  "description": "Disk Usage/Free Utility.",
+  "repo_url": "https://github.com/muesli/duf",
+  "homepage": "",
+  "install": {},
+  "category": "Disk Usage",
+  "tags": [
+    "awesome-list",
+    "disk-analyzer",
+    "disk-usage-analyzers",
+    "modern-unix"
+  ],
+  "github_stars": 15210,
+  "agent": {
+    "score": 2,
+    "friendly": false,
+    "signals": [
+      "modern-unix"
+    ],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "disk-analyzer"
+    },
+    {
+      "id": "modern-unix",
+      "repo": "ibraheemdev/modern-unix",
+      "commit": "67ee5aba0e5660b76cc1a437c64ad165212148d1"
+    },
+    {
+      "id": "awesome-cli-apps",
+      "repo": "agarrharr/awesome-cli-apps",
+      "commit": "598390e9ca817ab33b7821c7a0e4af676975fc25"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

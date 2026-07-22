@@ -1,0 +1,35 @@
+{
+  "id": "nicolgit/gits-statuses",
+  "name": "gits-statuses",
+  "aliases": [],
+  "description": "A python/powershell command-line tool to display the status of multiple Git repositories in a clear, tabular format.",
+  "repo_url": "https://github.com/nicolgit/gits-statuses",
+  "homepage": "",
+  "install": {},
+  "category": "Development",
+  "tags": [
+    "git",
+    "git-and-accessories"
+  ],
+  "github_stars": 30,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "git"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

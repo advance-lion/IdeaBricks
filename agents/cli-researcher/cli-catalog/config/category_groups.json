@@ -1,0 +1,95 @@
+{
+  "default_group": "Other",
+  "groups": {
+    "AI & Agents": ["ai", "ai-cli-commands", "copilot"],
+    "Development": [
+      "programming",
+      "programming-boilerplate",
+      "versioning",
+      "git",
+      "devops",
+      "webdev",
+      "package-manager",
+      "editors",
+      "diff",
+      "learning"
+    ],
+    "Files & Search": [
+      "file-manager",
+      "file-explorer",
+      "find",
+      "file-handling",
+      "file-watch",
+      "file-dir-cleanup",
+      "file-renamer",
+      "file-system",
+      "ls",
+      "cd",
+      "rm",
+      "disk-analyzer",
+      "option-picker",
+      "text-search",
+      "text-search-replace",
+      "viewers"
+    ],
+    "Data & JSON": [
+      "data-management",
+      "data-management-json",
+      "data-management-tabular",
+      "science",
+      "financial"
+    ],
+    "Network & API": [
+      "networking",
+      "transfer",
+      "browser",
+      "online",
+      "pastebin",
+      "rss",
+      "torrent"
+    ],
+    "DevOps & Cloud": ["vm", "monitor", "monitor-top", "system", "devops"],
+    "Security": ["security", "password-manager"],
+    "Productivity": [
+      "productivity",
+      "note-taking",
+      "todo-manager",
+      "organizers",
+      "time-tracker",
+      "office",
+      "history",
+      "launcher"
+    ],
+    "Communication": ["chat", "email"],
+    "Media & Graphics": [
+      "image",
+      "video",
+      "audio",
+      "animation",
+      "graphics",
+      "music",
+      "screen-recorder",
+      "screensaver"
+    ],
+    "Text & Docs": [
+      "text-processing",
+      "markdown",
+      "cheatsheet",
+      "writing",
+      "prompt",
+      "flashcard"
+    ],
+    "Shell & Terminal": ["shells", "terminal", "typing"],
+    "Utilities": [
+      "conversion",
+      "copy-paste",
+      "backup",
+      "calc",
+      "utility",
+      "funny",
+      "games",
+      "font",
+      "religion"
+    ]
+  }
+}

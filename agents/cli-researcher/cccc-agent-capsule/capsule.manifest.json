@@ -1,0 +1,52 @@
+{
+  "name": "cli-researcher",
+  "capsule_type": "cccc-actor-capsule",
+  "version": "0.1.0",
+  "stage": "stage-1-cli-research",
+  "owner_role": "cli-researcher",
+  "coordinator_role": "foreman",
+  "purpose": "Research and classify CLI tools, then produce a structured catalog for downstream idea generation.",
+  "implementation": {
+    "kind": "existing-local-project",
+    "path": "../cli-catalog",
+    "runtime_guidance": "AGENTS.md",
+    "entrypoint": "python3 -m cli_catalog",
+    "binding_doc": "implementation-binding.md"
+  },
+  "schema_policy": {
+    "single_cli_item_schema": "../cli-catalog/schema/cli.schema.json",
+    "rule": "Do not redefine the team's existing CLI item structure inside this capsule."
+  },
+  "inputs": [
+    "research_scope",
+    "target_users",
+    "category_boundaries",
+    "minimum_tools",
+    "max_tools",
+    "output_language",
+    "existing_cli_item_schema_path"
+  ],
+  "required_outputs": [
+    "../cli-catalog/catalog/data/*.json",
+    "../cli-catalog/catalog/cli-catalog.md",
+    "../cli-catalog/catalog/cli-summary.json",
+    "../cli-catalog/meta/changelog.md"
+  ],
+  "downstream_consumers": [
+    "ideation-actor"
+  ],
+  "entrypoints": {
+    "cccc_integration": "CCCC_INTEGRATION.md",
+    "actor_profile": "actor-profile.json",
+    "actor_guidance": "actor.md",
+    "task_template": "task-template.md",
+    "task_create_payload": "cccc-task-create.payload.json",
+    "agent_state_template": "agent-state-template.json",
+    "implementation_binding": "implementation-binding.md",
+    "artifact_contract": "artifact-contract.md",
+    "schema_binding": "schema-binding.md",
+    "acceptance_checklist": "acceptance-checklist.md",
+    "handoff": "handoff-to-ideator.md",
+    "stage2_handoff_payload": "stage2-handoff.payload.json"
+  }
+}

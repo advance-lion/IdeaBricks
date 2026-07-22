@@ -1,0 +1,43 @@
+{
+  "id": "HKUDS/CLI-Anything/rms",
+  "name": "Teltonika RMS",
+  "aliases": [],
+  "description": "Device management and monitoring via Teltonika RMS REST API",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://rms.teltonika-networks.com",
+  "install": {
+    "pip": "pip install git+https://github.com/HKUDS/CLI-Anything.git#subdirectory=rms/agent-harness"
+  },
+  "category": "Other",
+  "tags": [
+    "cli-anything",
+    "network",
+    "registry",
+    "requires-deps"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/HKUDS/CLI-Anything/blob/main/skills/cli-anything-rms/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "network"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

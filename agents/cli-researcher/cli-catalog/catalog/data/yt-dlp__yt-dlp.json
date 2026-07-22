@@ -1,0 +1,50 @@
+{
+  "id": "yt-dlp/yt-dlp",
+  "name": "yt-dlp",
+  "aliases": [],
+  "description": "A youtube-dl fork with additional features and fixes.",
+  "repo_url": "https://github.com/yt-dlp/yt-dlp",
+  "homepage": "",
+  "install": {},
+  "category": "Video",
+  "tags": [
+    "agent-friendly",
+    "awesome-list",
+    "data-transfer",
+    "transfer"
+  ],
+  "github_stars": 179189,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "awesome-ai-cli",
+      "curated-agent-list"
+    ],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "transfer"
+    },
+    {
+      "id": "awesome-ai-cli",
+      "repo": "luoyuctl/awesome-ai-cli",
+      "commit": "b1957619c34be84cb1d822baf419dc124daacec0"
+    },
+    {
+      "id": "awesome-cli-apps",
+      "repo": "agarrharr/awesome-cli-apps",
+      "commit": "598390e9ca817ab33b7821c7a0e4af676975fc25"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

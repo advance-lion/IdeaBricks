@@ -1,0 +1,43 @@
+{
+  "id": "sharkdp/hyperfine",
+  "name": "hyperfine",
+  "aliases": [],
+  "description": "A command-line benchmarking tool.",
+  "repo_url": "https://github.com/sharkdp/hyperfine",
+  "homepage": "",
+  "install": {},
+  "category": "DevOps & Cloud",
+  "tags": [
+    "modern-unix",
+    "monitor",
+    "system-monitoring"
+  ],
+  "github_stars": 28512,
+  "agent": {
+    "score": 2,
+    "friendly": false,
+    "signals": [
+      "modern-unix"
+    ],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "monitor"
+    },
+    {
+      "id": "modern-unix",
+      "repo": "ibraheemdev/modern-unix",
+      "commit": "67ee5aba0e5660b76cc1a437c64ad165212148d1"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

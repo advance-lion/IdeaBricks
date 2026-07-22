@@ -1,0 +1,37 @@
+{
+  "id": "planetscale/cli",
+  "name": "PlanetScale",
+  "aliases": [],
+  "description": "PlanetScale command line interface for managing databases, branches, deploy requests, and workflows.",
+  "repo_url": "https://github.com/planetscale/cli",
+  "homepage": "",
+  "install": {},
+  "category": "AI & Agents",
+  "tags": [
+    "composio-list"
+  ],
+  "github_stars": 662,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "composio-agent-clis",
+      "curated-agent-list"
+    ],
+    "skill_url": "planetscale-cli/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "composio-agent-clis",
+      "repo": "ComposioHQ/awesome-agent-clis",
+      "commit": "9f765d2dbe8d91e956311dd6a6b364bde3e902b3"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00",
+    "manual_edit": true
+  }
+}

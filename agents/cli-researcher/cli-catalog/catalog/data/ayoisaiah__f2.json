@@ -1,0 +1,41 @@
+{
+  "id": "ayoisaiah/f2",
+  "name": "F2",
+  "aliases": [],
+  "description": "Cross-platform command-line tool for batch renaming files and directories quickly and safely.",
+  "repo_url": "https://github.com/ayoisaiah/f2",
+  "homepage": "",
+  "install": {},
+  "category": "Files",
+  "tags": [
+    "awesome-list",
+    "file-renamer",
+    "file-renamers"
+  ],
+  "github_stars": 2426,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "file-renamer"
+    },
+    {
+      "id": "awesome-cli-apps",
+      "repo": "agarrharr/awesome-cli-apps",
+      "commit": "598390e9ca817ab33b7821c7a0e4af676975fc25"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "mooz/percol",
+  "name": "percol",
+  "aliases": [],
+  "description": "A Python script that \"1) receives input lines from `stdin` or a file, 2) lists the input lines and waits for input that filter/select the line(s), 3) outputs the selected line(s) to `stdout`\"; can be used to add interactivity to many regular shell commands.",
+  "repo_url": "https://github.com/mooz/percol",
+  "homepage": "",
+  "install": {},
+  "category": "Files & Search",
+  "tags": [
+    "fuzzy-finders-and-option-pickers",
+    "option-picker"
+  ],
+  "github_stars": 3328,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "option-picker"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

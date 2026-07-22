@@ -1,0 +1,106 @@
+{
+  "source": "cli-researcher",
+  "supply_mode": "persistent-catalog-snapshot",
+  "maintenance_role": "CLI Agent periodically refreshes this file outside incubation runs",
+  "summary_index": "agents/cli-researcher/cli-catalog/catalog/cli-summary.json",
+  "full_records_root": "agents/cli-researcher/cli-catalog/catalog/data",
+  "schema": "agents/cli-researcher/cli-catalog/schema/cli.schema.json",
+  "field_docs": "agents/cli-researcher/cli-catalog/docs/FIELDS.md",
+  "snapshot_path": "agents/cli-researcher/cli-catalog/catalog/idea-capability-snapshot.json",
+  "validation": {
+    "status": "PASS",
+    "command": "python -m cli_catalog validate",
+    "output": "Validation passed (0 warnings)",
+    "validated_at": "2026-07-22T16:57:01+08:00"
+  },
+  "catalog_counts": {
+    "categories": 50,
+    "records": 2400
+  },
+  "capabilities": [
+    {
+      "category": "AI & Agents",
+      "id": "anthropics/claude-code",
+      "cli": "Claude",
+      "function": "Claude Code command line tool for agentic coding tasks, codebase navigation, editing, and automation from the terminal.",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "HKUDS/CLI-Anything/comfyui",
+      "cli": "ComfyUI",
+      "function": "AI image generation workflow management via ComfyUI REST API",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "HKUDS/CLI-Anything/eez-studio",
+      "cli": "EEZ Studio",
+      "function": "EEZ Studio project, LVGL UI, and SCPI command automation via native .eez-project JSON and real EEZ Studio backend hooks",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "HKUDS/CLI-Anything/jimeng",
+      "cli": "Jimeng / Dreamina CLI",
+      "function": "Official ByteDance AI image and video generation CLI — text-to-image, text-to-video, image-to-video, digital human, and intelligent canva...",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "HKUDS/CLI-Anything/macrocli",
+      "cli": "MacroCLI",
+      "function": "Layered macro runtime that converts GUI workflows into parameterized, agent-callable macros — record once, run anywhere via CLI with back...",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "HKUDS/CLI-Anything/n8n",
+      "cli": "n8n",
+      "function": "Workflow automation via n8n REST API — 55+ commands",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "vercel-labs/agent-browser",
+      "cli": "agent-browser",
+      "function": "Agent-oriented browser automation tooling for controlling browser sessions and web workflows from code or the command line.",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "jackwener/opencli",
+      "cli": "OpenCLI",
+      "function": "Open-source AI coding agent CLI for terminal-based software engineering workflows.",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "stripe/stripe-cli",
+      "cli": "Stripe",
+      "function": "Stripe command line interface for testing webhooks, triggering events, and managing Stripe development workflows.",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "jrswab/axe",
+      "cli": "Axe",
+      "function": "Agent-friendly command line workspace for coordinating AI coding tasks and development workflows.",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "steipete/gifgrep",
+      "cli": "gifgrep",
+      "function": "Command line tool for searching GIF files and extracting matching animated image results.",
+      "score": 3
+    },
+    {
+      "category": "AI & Agents",
+      "id": "lydakis/mcpx",
+      "cli": "mcpx",
+      "function": "Command line tool for managing and running MCP server workflows for AI agents.",
+      "score": 3
+    }
+  ]
+}

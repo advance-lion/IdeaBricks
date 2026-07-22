@@ -1,0 +1,51 @@
+{
+  "id": "larksuite/cli",
+  "name": "Lark",
+  "aliases": [],
+  "description": "Official Lark (Feishu) CLI for managing Lark apps, bots, and cloud resources from the terminal",
+  "repo_url": "https://github.com/larksuite/cli",
+  "homepage": "https://github.com/larksuite/cli",
+  "install": {
+    "npm": "npm install -g @larksuite/cli"
+  },
+  "category": "Other",
+  "tags": [
+    "agent-friendly",
+    "awesome-list",
+    "cli-anything",
+    "communication",
+    "public_registry",
+    "requires-deps"
+  ],
+  "github_stars": 15675,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "awesome-ai-cli",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/HKUDS/CLI-Anything/blob/main/npx skills add larksuite/cli -y -g"
+  },
+  "sources": [
+    {
+      "id": "awesome-ai-cli",
+      "repo": "luoyuctl/awesome-ai-cli",
+      "commit": "b1957619c34be84cb1d822baf419dc124daacec0"
+    },
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "communication"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

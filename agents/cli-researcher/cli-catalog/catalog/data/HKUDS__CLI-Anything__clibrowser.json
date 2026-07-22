@@ -1,0 +1,43 @@
+{
+  "id": "HKUDS/CLI-Anything/clibrowser",
+  "name": "clibrowser",
+  "aliases": [],
+  "description": "Zero-dependency CLI browser for AI agents with search, extraction, forms, RSS, crawling, auth, and WebMCP support",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://github.com/allthingssecurity/clibrowser",
+  "install": {
+    "shell": "cargo install --git https://github.com/allthingssecurity/clibrowser.git --tag v0.1.0 --locked"
+  },
+  "category": "Network & API",
+  "tags": [
+    "cli-anything",
+    "registry",
+    "requires-deps",
+    "web"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "web"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

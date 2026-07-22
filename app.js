@@ -269,6 +269,9 @@ function renderEvents(events, ccccEvents = []) {
 function renderRun(payload) {
   latestRunPayload = payload;
   const { run, runtime, actor, backend } = payload;
+  const execution = run.execution || {};
+  const activeEngine = execution.label || backend?.label || '未记录执行引擎';
+  const usedFallback = Boolean(execution.fallback);
   setRuntime(runtime, actor, backend);
   const app = run.app || {};
   const isPass = run.status === 'PASS';
@@ -288,8 +291,16 @@ function renderRun(payload) {
   resultCard.classList.toggle('is-running', isRunning);
   workingState.hidden = !isRunning;
   resultStatus.textContent = run.status;
-  resultMeta.textContent = isPass ? '真实产物 · preview.png · 验收报告' : run.dispatched ? '真实 Worker 正在处理 · 进度每 3 秒刷新' : '契约已就绪，尚未派发';
-  taskState.textContent = isPass ? 'DELIVERY · PASS' : run.dispatched ? 'CCCC WORKER · RUNNING' : 'CONTRACT · READY';
+  resultMeta.textContent = isPass
+    ? `${activeEngine}${usedFallback ? '（本地离线自动兜底）' : ''} · 真实产物 · preview.png · 验收报告`
+    : run.dispatched
+      ? `${activeEngine}${usedFallback ? '（本地离线自动兜底）' : ''} · 真实 Worker 正在处理 · 进度每 3 秒刷新`
+      : '契约已就绪，尚未派发';
+  taskState.textContent = isPass
+    ? (usedFallback ? 'CODEX FALLBACK · PASS' : 'DELIVERY · PASS')
+    : run.dispatched
+      ? (usedFallback ? 'CODEX FALLBACK · RUNNING' : 'CCCC WORKER · RUNNING')
+      : 'CONTRACT · READY';
   renderPhase(run.events || [], run.status);
   renderEvents(run.events || [], stageSnapshot.events || []);
 }

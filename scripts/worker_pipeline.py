@@ -17,6 +17,7 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 import urllib.error
 import urllib.request
 import time
@@ -28,6 +29,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON = Path(sys.executable)
 CODEX = ROOT / ".tools" / "codex-cli" / "node_modules" / ".pnpm" / "@openai+codex@0.144.6" / "node_modules" / "@openai" / "codex" / "bin" / "codex.js"
+ACTIVE_BACKEND = "local-openai"
 
 
 def cccc_group_id() -> str:
@@ -74,8 +76,7 @@ def sync_cccc_status(run_id: str, phase: str, status: str) -> None:
         return
     phases = {"visual": "视觉理解", "scaffold": "前端脚手架", "browser": "浏览器验收", "delivery": "交付封装"}
     states = {"STARTED": "进行中", "PASS": "通过", "FAIL": "失败"}
-    backend = os.environ.get("MVP_WORKER_BACKEND", "local-openai").strip().lower() or "local-openai"
-    engine = {"local-openai": "本地 LLM / VLM · local-agent", "codex": "Codex", "cccc-codex": "CCCC + Codex"}.get(backend, backend)
+    engine = {"local-openai": "本地 LLM / VLM · local-agent", "codex": "Codex 远程兜底", "cccc-codex": "CCCC + Codex"}.get(ACTIVE_BACKEND, ACTIVE_BACKEND)
     text = f"[Worker 状态同步] run={run_id}｜阶段={phases.get(phase, phase)}｜状态={states.get(status, status)}｜执行引擎={engine}"
     priority = "attention" if status == "FAIL" else "normal"
     result = call(command, "send", text, "--group", cccc_group_id(), "--by", "mvp-worker", "--to", "user", "--priority", priority, timeout=20)
@@ -162,7 +163,7 @@ def write_template_app(contract: dict[str, Any], run_dir: Path) -> None:
         (destination / name).write_text(text, encoding="utf-8")
 
 
-def codex_exec(prompt: str, image_path: Path, output: Path) -> None:
+def codex_exec(prompt: str, image_path: Path, output: Path, completion: Path | tuple[Path, ...] | None = None) -> None:
     node = shutil.which("node")
     if not CODEX.is_file() or not node:
         raise RuntimeError(f"Codex CLI 或 Node 未找到：{CODEX}")
@@ -182,6 +183,31 @@ def codex_exec(prompt: str, image_path: Path, output: Path) -> None:
         errors="replace",
         creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),
     )
+    # `codex exec` sometimes keeps its session alive after apply_patch has
+    # completed.  The controller owns the next phase, so as soon as the
+    # required artifact appears it can safely end this one-shot model call.
+    # This keeps fallback runs from looking stalled for the full CLI timeout.
+    finished = threading.Event()
+    artifact_ready = threading.Event()
+
+    def stop_after_artifact() -> None:
+        if completion is None:
+            return
+        while not finished.wait(1):
+            try:
+                required = (completion,) if isinstance(completion, Path) else completion
+                ready = bool(required) and all(path.is_file() and path.stat().st_size > 32 for path in required)
+            except OSError:
+                ready = False
+            if ready:
+                artifact_ready.set()
+                label = completion.name if isinstance(completion, Path) else "必需前端文件"
+                emit(f"MODEL codex: 已写入 {label}，进入校验与下一阶段")
+                subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"], capture_output=True, text=True, encoding="utf-8", errors="replace")
+                return
+
+    watcher = threading.Thread(target=stop_after_artifact, daemon=True)
+    watcher.start()
     try:
         stdout, stderr = process.communicate(prompt, timeout=240)
     except subprocess.TimeoutExpired as exc:
@@ -192,6 +218,11 @@ def codex_exec(prompt: str, image_path: Path, output: Path) -> None:
         # this function, so let a complete on-disk result proceed to browser
         # acceptance; an incomplete result still fails closed there.
         emit("MODEL codex: 超过 240 秒，已终止残留进程；正在核验已写入的文件")
+        return
+    finally:
+        finished.set()
+        watcher.join(timeout=2)
+    if artifact_ready.is_set():
         return
     if process.returncode:
         raise RuntimeError((stderr or stdout or "Codex 生成失败")[-2400:])
@@ -206,7 +237,7 @@ The JSON must include \"run_id\": \"{run_dir.name}\" and these non-empty keys: a
 high_fidelity_structure must explicitly describe the actual screenshot's section order, geometry, dominant colour blocks, visual density, bottom navigation or modal/drawer state, and primary interaction entries. Do not use a generic food or shopping template unless the screenshot actually shows it.
 Replace all source brand/logo/product photos/prices/source wording with fictional counterparts. Do not reply or acknowledge until ui-spec.json exists and valid JSON has been written."""
     emit("MODEL codex: 视觉理解 → ui-spec.json")
-    codex_exec(prompt, image_path, output)
+    codex_exec(prompt, image_path, output, run_dir / "ui-spec.json")
     path = run_dir / "ui-spec.json"
     if not path.is_file():
         message = output.read_text(encoding="utf-8", errors="replace")[-1000:] if output.is_file() else ""
@@ -226,7 +257,7 @@ Use the attached screenshot only to cross-check fidelity. Use apply_patch NOW to
 Do not create any other files. Follow ui-spec.json literally: closely reproduce the screenshot's actual layout rhythm, component geometry, colour blocks, density, visible modal/drawer state and interaction entries. Do not fall back to a generic food ordering page if the ui spec describes something else.
 Replace brand/logo/product photography/prices/source wording with fictional content and self-authored CSS/SVG shapes. Include data-testid=app-shell, search-input, recommendation-list, cart-count, add-to-cart and qa-result. In ?qa=1 run actual content filtering and a primary-action function, then write JSON to qa-result. No external URLs. Do not reply until all three files exist."""
     emit("MODEL codex: ui-spec.json → 前端脚手架")
-    codex_exec(prompt, image_path, output)
+    codex_exec(prompt, image_path, output, tuple(required_paths(run_dir)[1:]))
     missing = [str(path) for path in required_paths(run_dir)[1:] if not path.is_file()]
     if missing:
         message = output.read_text(encoding="utf-8", errors="replace")[-1000:] if output.is_file() else ""
@@ -576,6 +607,8 @@ def main() -> int:
         help="local-openai uses the configured local VLM/LLM; Codex remains an explicit fallback.",
     )
     args = parser.parse_args()
+    global ACTIVE_BACKEND
+    ACTIVE_BACKEND = args.backend
     contract_path = Path(args.contract).resolve()
     contract = load_contract(contract_path)
     run_id = str(contract["run_id"])

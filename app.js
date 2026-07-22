@@ -9,6 +9,8 @@ let stageTimer;
 let stageSnapshot = { events: [] };
 let latestRunPayload;
 let activeIncubationRunId = '';
+let incubationBriefDirty = false;
+let submittedIncubationBrief = '';
 
 function toast(message) {
   const node = $('#toast');
@@ -274,7 +276,14 @@ function renderIncubation(payload) {
   };
   state.textContent = statusMap[latest.status] || latest.status;
   state.classList.toggle('wait', latest.status === 'FOREMAN_QUEUED' || latest.status === 'WAITING_FOR_IDEA_AGENT');
-  if (latest.brief) $('#briefInput').value = latest.brief;
+  const briefInput = $('#briefInput');
+  // Polling is for shared run state, never for replacing the operator's
+  // in-progress prompt. Only load a server brief before editing, or after
+  // this operator has submitted that exact brief.
+  if (latest.brief && (!incubationBriefDirty || latest.brief === submittedIncubationBrief)) {
+    briefInput.value = latest.brief;
+    incubationBriefDirty = false;
+  }
   $('#ideaMatch').textContent = capabilities.length
     ? `${capabilities.length} 项匹配 · 来自 ${catalogCounts.records || 2400} 条长期能力库`
     : 'Foreman 正在读取长期能力库';
@@ -313,15 +322,22 @@ async function loadIncubation() {
 
 async function startIncubationTest() {
   const button = $('#mineBtn');
+  const brief = $('#briefInput').value.trim();
+  if (!brief) {
+    toast('请先写下要孵化的需求。');
+    return;
+  }
   button.disabled = true;
   button.innerHTML = 'Foreman 正在交接… <span>···</span>';
   try {
     const response = await fetch('/api/incubation/test', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ brief: $('#briefInput').value }),
+      body: JSON.stringify({ brief }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || '无法创建创意测试');
+    submittedIncubationBrief = brief;
+    incubationBriefDirty = false;
     renderIncubation({ team: { actors: [] }, latest: data.latest });
     toast(`${data.latest.run_id} 已交给 Foreman；已读取持久能力库，正在派发 Idea Agent。`);
     clearInterval(window.incubationTimer);
@@ -334,6 +350,7 @@ async function startIncubationTest() {
   }
 }
 
+$('#briefInput').addEventListener('input', () => { incubationBriefDirty = true; });
 $('#mineBtn').addEventListener('click', startIncubationTest);
 
 function typeCommand() {

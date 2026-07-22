@@ -1,0 +1,196 @@
+{
+  "run_id": "trial-20260722-162927-5d7c",
+  "app_type": "mobile marketplace discovery home",
+  "high_fidelity_structure": {
+    "section_order": [
+      "compact system-status strip",
+      "horizontal discovery tabs with selected tab underline",
+      "rounded outlined search field with scan and camera affordances plus orange submit button",
+      "two-row 5-column shortcut icon grid",
+      "three equal promotional tiles",
+      "full-width red coupon announcement ribbon",
+      "two-column masonry recommendation feed",
+      "fixed five-item bottom navigation",
+      "Android system navigation area"
+    ],
+    "geometry": "390×844 portrait viewport; white content canvas; top tab row is 54px high; search is a 40px pill inset 10px; shortcut grid occupies about 250px with circular/square illustrated icons; promo tiles are three narrow cards in one row; coupon ribbon is 38px with 8px side inset; feed begins below with 8px gutters and two uneven-width visual columns; fixed bottom app navigation is about 76px high.",
+    "dominant_colour_blocks": "warm off-white top background; white content cards; vivid orange selected search/action accents; red/pink price labels and coupon ribbon; pale blush promo-card backgrounds; occasional green/purple/yellow shortcut icons; dark charcoal text.",
+    "visual_density": "high-density retail dashboard with tightly stacked modules, strong illustrated commerce imagery, bold price/action accents, and minimal whitespace.",
+    "bottom_navigation": "visible and fixed; first item is selected with a large orange circular icon; four unselected monochrome icons with labels; cart-style item is a primary entry and notification badge appears over the messages-style item.",
+    "modal_or_drawer_state": "none visible.",
+    "primary_interaction_entries": [
+      "top discovery tabs",
+      "search text field",
+      "scan icon",
+      "camera icon",
+      "orange search button",
+      "shortcut grid tiles",
+      "promo tiles",
+      "coupon claim button",
+      "recommendation cards",
+      "bottom navigation including cart"
+    ]
+  },
+  "replaced_source_assets": {
+    "brand_and_logo": "Replace all marketplace logos and labels with fictional brand 'PoppyMart' and a simple abstract orange loop emblem.",
+    "product_photography": "Use locally rendered abstract product illustrations: a herb sandwich replaced by a colorful notebook stack, game controller replaced by a teal portable speaker, yellow robot replaced by a coral desk lamp, recommendation photos replaced by a modular toy radio and a minimalist wall clock.",
+    "product_names": "Use fictional neutral items such as 'PixelPocket Mini Speaker', 'LoopLamp Desk Light', 'Blockwave Charging Hub', and 'Arc Mirror Audio Panel'.",
+    "prices": "Replace source prices with fictional values such as ¥42, ¥218, ¥136, and ¥319.",
+    "source_wording": "Replace all Chinese source copy, store names, campaign labels, search query, navigation labels, badges and category names with fictional app wording such as 'Explore', 'Spark', 'Quick Finds', 'Deals', 'Search', 'Claim', and 'PoppyMart'."
+  },
+  "visible_state": {
+    "selected_top_tab": "Spark",
+    "search_query": "pocket music player",
+    "selected_bottom_nav": "Explore",
+    "cart_count": 0,
+    "message_badge": "12",
+    "content_mode": "default recommendation feed",
+    "coupon_state": "unclaimed",
+    "modal": "none"
+  },
+  "components": [
+    {
+      "id": "status-strip",
+      "type": "decorative-status-bar",
+      "content": "time and generic status glyphs"
+    },
+    {
+      "id": "top-tabs",
+      "type": "horizontal-tab-list",
+      "items": [
+        "Following",
+        "Spark",
+        "Quick Finds",
+        "New",
+        "Style",
+        "Flights",
+        "Super Deals"
+      ],
+      "selected": "Spark"
+    },
+    {
+      "id": "search-bar",
+      "type": "search",
+      "testid": "search-input",
+      "leading_actions": [
+        "scan"
+      ],
+      "trailing_actions": [
+        "camera",
+        "submit"
+      ],
+      "query": "pocket music player"
+    },
+    {
+      "id": "shortcut-grid",
+      "type": "icon-grid",
+      "columns": 5,
+      "rows": 2,
+      "items": [
+        "Daily Drop",
+        "Try Studio",
+        "Coin Club",
+        "Maker Hall",
+        "Parcel Spot",
+        "Tiny Garden",
+        "Tide Fish",
+        "World Shop",
+        "Fast Browse",
+        "Event Clock"
+      ]
+    },
+    {
+      "id": "promo-row",
+      "type": "three-card-promo",
+      "cards": [
+        "Live Pick",
+        "Value Boost",
+        "Flash Pick"
+      ]
+    },
+    {
+      "id": "coupon-ribbon",
+      "type": "announcement-with-action",
+      "message": "Sunny savings week — up to 18% off",
+      "action": "Claim ¥10"
+    },
+    {
+      "id": "recommendation-list",
+      "type": "two-column-masonry-feed",
+      "testid": "recommendation-list",
+      "cards": [
+        "Blockwave Charging Hub",
+        "Arc Mirror Audio Panel",
+        "Cloud Shelf Light",
+        "Pocket Craft Kit"
+      ]
+    },
+    {
+      "id": "bottom-nav",
+      "type": "fixed-navigation",
+      "items": [
+        "Explore",
+        "Clips",
+        "Inbox",
+        "Cart",
+        "Me"
+      ],
+      "selected": "Explore",
+      "cart_testid": "cart-count"
+    },
+    {
+      "id": "qa-result",
+      "type": "visually-hidden-or-small-status-region",
+      "testid": "qa-result",
+      "purpose": "reports current search/filter and action state"
+    },
+    {
+      "id": "add-to-cart",
+      "type": "card-action-button",
+      "testid": "add-to-cart",
+      "purpose": "adds a recommended item and updates cart count"
+    }
+  ],
+  "inferred_interactions": [
+    {
+      "trigger": "Tap a top tab",
+      "effect": "updates selected underline and swaps shortcut/promotional labels or recommendation ordering."
+    },
+    {
+      "trigger": "Edit search and tap submit",
+      "effect": "filters the recommendation list and updates qa-result with the active query."
+    },
+    {
+      "trigger": "Tap coupon claim",
+      "effect": "changes the ribbon action to a claimed confirmation and updates visible coupon state."
+    },
+    {
+      "trigger": "Tap recommendation add-to-cart",
+      "effect": "increments cart-count and changes the corresponding action to added."
+    },
+    {
+      "trigger": "Tap a bottom navigation item",
+      "effect": "changes selected navigation styling; Cart can display the current count."
+    }
+  ],
+  "design_tokens": {
+    "viewport": "390px × 844px",
+    "font_family": "system sans-serif",
+    "surface": "#FFFFFF",
+    "top_surface": "#FFF7F2",
+    "ink": "#25212A",
+    "muted_ink": "#74747B",
+    "primary": "#FF5A12",
+    "accent_red": "#FF2414",
+    "accent_pink": "#FF3C70",
+    "promo_blush": "#FFF6F7",
+    "line": "#ECECEF",
+    "card_radius": "8px",
+    "search_radius": "16px",
+    "page_gutter": "8px",
+    "section_gap": "10px",
+    "nav_height": "76px",
+    "shadow": "0 1px 4px rgba(0,0,0,0.06)"
+  },
+  "generator": "codex-cli"
+}

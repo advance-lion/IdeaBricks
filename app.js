@@ -361,7 +361,7 @@ async function createRealRun() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || '投递失败');
     activeRunId = data.run_id;
-    history.replaceState({}, '', `/stage?run=${encodeURIComponent(activeRunId)}`);
+    history.replaceState({}, '', data.stage_url || `/stage?run=${encodeURIComponent(activeRunId)}`);
     toast(`已创建 ${activeRunId}，左侧现在展示真实 Worker 日志。`);
     await loadRun();
     clearInterval(pollTimer);

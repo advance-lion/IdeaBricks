@@ -1,0 +1,37 @@
+{
+  "id": "sindresorhus/awesome",
+  "name": "awesome",
+  "aliases": [],
+  "description": "Curated list of awesome software and resources; useful as a discovery source, not a directly executable CLI.",
+  "repo_url": "https://github.com/sindresorhus/awesome",
+  "homepage": "",
+  "install": {},
+  "category": "Other",
+  "tags": [
+    "awesome-list",
+    "resource-list"
+  ],
+  "github_stars": 487132,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [
+      "resource-list"
+    ],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "awesome-cli-apps",
+      "repo": "agarrharr/awesome-cli-apps",
+      "commit": "598390e9ca817ab33b7821c7a0e4af676975fc25"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00",
+    "manual_edit": true
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "HKUDS/CLI-Anything/obsidian-cli",
+  "name": "Obsidian CLI",
+  "aliases": [],
+  "description": "Official Obsidian command line interface for vault automation, developer tools, screenshots, search, history, and plugin workflows",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://obsidian.md/help/cli",
+  "install": {},
+  "category": "Other",
+  "tags": [
+    "cli-anything",
+    "knowledge",
+    "public_registry",
+    "requires-deps"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://obsidian.md/help/cli"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "knowledge"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

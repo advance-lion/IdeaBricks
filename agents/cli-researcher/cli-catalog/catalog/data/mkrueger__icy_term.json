@@ -1,0 +1,35 @@
+{
+  "id": "mkrueger/icy_term",
+  "name": "icy_tools",
+  "aliases": [],
+  "description": "Icy Term a terminal program for legacy BBS systems, Icy Draw a drawing tool supporting almost all ANSI formats, Icy View a viewer to browse/view Ansi screens, Icy Play a tool that shows icy draw animations on cmd line/bbs.",
+  "repo_url": "https://github.com/mkrueger/icy_term",
+  "homepage": "",
+  "install": {},
+  "category": "Communication",
+  "tags": [
+    "chat",
+    "chat-and-instant-messaging"
+  ],
+  "github_stars": 76,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "chat"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

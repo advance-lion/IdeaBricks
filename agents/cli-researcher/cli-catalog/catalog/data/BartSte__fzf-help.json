@@ -1,0 +1,35 @@
+{
+  "id": "BartSte/fzf-help",
+  "name": "fzf-help",
+  "aliases": [],
+  "description": "An fzf extension that allows you to select command line options of a given command; the options are retrieved from the command its `--help` documentation.",
+  "repo_url": "https://github.com/BartSte/fzf-help",
+  "homepage": "",
+  "install": {},
+  "category": "Text & Docs",
+  "tags": [
+    "cheatsheet",
+    "commands-cheatsheet-and-snippets"
+  ],
+  "github_stars": 60,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "cheatsheet"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

@@ -6,3 +6,4 @@ inputs/
 contracts/live-trials/
 config/local-model.local.json
 config/cccc-team.local.json
+config/worker-test-mode.local.json

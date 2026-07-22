@@ -1,0 +1,35 @@
+{
+  "id": "pommee/Pocker",
+  "name": "Pocker",
+  "aliases": [],
+  "description": "Pocker is a TUI tool to help with docker related tasks, such as view containers/images, manage status of containers, see logs, attributes, environment variables and container statistics, filter logs based on keywords, start shell inside a container.",
+  "repo_url": "https://github.com/pommee/Pocker",
+  "homepage": "",
+  "install": {},
+  "category": "DevOps & Cloud",
+  "tags": [
+    "containerization-and-virtualization",
+    "vm"
+  ],
+  "github_stars": 189,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "vm"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

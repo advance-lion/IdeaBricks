@@ -1,0 +1,34 @@
+{
+  "id": "trevorbayless/cli-chess",
+  "name": "cli-chess",
+  "aliases": [],
+  "description": "A highly customizable way to play chess in your terminal. Play online (via Lichess.org) and offline against the Fairy-Stockfish engine. All Lichess variants are supported.",
+  "repo_url": "https://github.com/trevorbayless/cli-chess",
+  "homepage": "",
+  "install": {},
+  "category": "Utilities",
+  "tags": [
+    "games"
+  ],
+  "github_stars": 297,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "games"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "HKUDS/CLI-Anything/renderdoc",
+  "name": "RenderDoc",
+  "aliases": [],
+  "description": "GPU frame capture analysis: pipeline state, shader export, texture inspection, draw call browsing",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://renderdoc.org",
+  "install": {
+    "pip": "pip install git+https://github.com/HKUDS/CLI-Anything.git#subdirectory=renderdoc/agent-harness"
+  },
+  "category": "Media & Graphics",
+  "tags": [
+    "cli-anything",
+    "graphics",
+    "registry",
+    "requires-deps"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/HKUDS/CLI-Anything/blob/main/skills/cli-anything-renderdoc/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "graphics"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

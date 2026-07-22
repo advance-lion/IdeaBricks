@@ -1,0 +1,34 @@
+{
+  "id": "proycon/colibri-core",
+  "name": "Colibri Core",
+  "aliases": [],
+  "description": "A software to quickly and efficiently count and extract patterns (n-grams and more) from large corpus data, to extract various statistics on the extracted patterns, and to compute relations between the extracted patterns.",
+  "repo_url": "https://github.com/proycon/colibri-core",
+  "homepage": "https://proycon.github.io/colibri-core/",
+  "install": {},
+  "category": "Text & Docs",
+  "tags": [
+    "text-processing"
+  ],
+  "github_stars": 131,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "text-processing"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

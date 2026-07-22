@@ -53,7 +53,7 @@
     "maximum_repair_attempts": 1
   },
   "delivery": {
-    "github_enabled": false,
+    "github_enabled": true,
     "required_files": [
       "ui-spec.json",
       "app/index.html",

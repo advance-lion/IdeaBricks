@@ -1,0 +1,35 @@
+{
+  "id": "oddlama/gentoo-install",
+  "name": "gentoo-install",
+  "aliases": [],
+  "description": "This project aspires to be your favorite way to install gentoo. It aims to provide a smooth installation experience, both for beginners and experts. You may configure it by using a menuconfig-inspired interface or simply via a config file.",
+  "repo_url": "https://github.com/oddlama/gentoo-install",
+  "homepage": "",
+  "install": {},
+  "category": "Utilities",
+  "tags": [
+    "utilities",
+    "utility"
+  ],
+  "github_stars": 770,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "utility"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

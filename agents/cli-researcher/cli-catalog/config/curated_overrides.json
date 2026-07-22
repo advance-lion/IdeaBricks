@@ -1,0 +1,173 @@
+{
+  "version": 1,
+  "entries": {
+    "sindresorhus/awesome": {
+      "description": "Curated list of awesome software and resources; useful as a discovery source, not a directly executable CLI.",
+      "tags": [
+        "resource-list"
+      ],
+      "agent_score": 1,
+      "agent_friendly": false,
+      "agent_signals": [
+        "resource-list"
+      ],
+      "remove_tags": [
+        "agent-friendly"
+      ]
+    },
+    "anthropics/claude-code": {
+      "description": "Claude Code command line tool for agentic coding tasks, codebase navigation, editing, and automation from the terminal."
+    },
+    "ComposioHQ/awesome-claude-skills": {
+      "description": "Curated collection of Claude skills; useful as a skill discovery source, not a directly executable CLI.",
+      "tags": [
+        "resource-list"
+      ],
+      "agent_score": 1,
+      "agent_friendly": false,
+      "agent_signals": [
+        "resource-list"
+      ],
+      "remove_tags": [
+        "agent-friendly"
+      ]
+    },
+    "VoltAgent/awesome-openclaw-skills": {
+      "description": "Curated collection of OpenClaw skills and examples; useful as a discovery source, not a directly executable CLI.",
+      "tags": [
+        "resource-list"
+      ],
+      "agent_score": 1,
+      "agent_friendly": false,
+      "agent_signals": [
+        "resource-list"
+      ],
+      "remove_tags": [
+        "agent-friendly"
+      ]
+    },
+    "Unitech/pm2": {
+      "description": "Node.js process manager for starting, monitoring, restarting, and managing application processes from the command line."
+    },
+    "vercel-labs/agent-browser": {
+      "description": "Agent-oriented browser automation tooling for controlling browser sessions and web workflows from code or the command line."
+    },
+    "googleworkspace/cli": {
+      "description": "Command line interface for automating Google Workspace resources and workflows."
+    },
+    "jackwener/opencli": {
+      "description": "Open-source AI coding agent CLI for terminal-based software engineering workflows."
+    },
+    "agarrharr/awesome-cli-apps": {
+      "description": "Curated list of command line applications; useful as a catalog source, not a directly executable CLI.",
+      "tags": [
+        "resource-list"
+      ],
+      "agent_score": 1,
+      "agent_friendly": false,
+      "agent_signals": [
+        "resource-list"
+      ],
+      "remove_tags": [
+        "agent-friendly"
+      ]
+    },
+    "aws/aws-cli": {
+      "description": "Official AWS command line interface for managing AWS services and cloud resources."
+    },
+    "vercel/vercel": {
+      "description": "Vercel command line interface for deploying, managing, and inspecting Vercel projects."
+    },
+    "steipete/gogcli": {
+      "description": "Command line tool for interacting with GOG.com games and account resources."
+    },
+    "elevenlabs/elevenlabs-python": {
+      "description": "Python SDK and command line tooling for ElevenLabs text-to-speech, voice, and audio workflows."
+    },
+    "steipete/wacli": {
+      "description": "Command line helper for WhatsApp-related workflows."
+    },
+    "DingTalk-Real-AI/dingtalk-workspace-cli": {
+      "description": "DingTalk workspace command line tool for automating DingTalk collaboration workflows."
+    },
+    "supabase/cli": {
+      "description": "Supabase command line interface for local development, database management, functions, and project operations."
+    },
+    "stripe/stripe-cli": {
+      "description": "Stripe command line interface for testing webhooks, triggering events, and managing Stripe development workflows."
+    },
+    "replicate/replicate-python": {
+      "description": "Python client and command line tooling for running Replicate machine learning models."
+    },
+    "smithery-ai/cli": {
+      "description": "Smithery command line interface for discovering, configuring, and managing MCP servers."
+    },
+    "planetscale/cli": {
+      "description": "PlanetScale command line interface for managing databases, branches, deploy requests, and workflows."
+    },
+    "railwayapp/cli": {
+      "description": "Railway command line interface for deploying, configuring, and managing Railway projects."
+    },
+    "resend/resend-cli": {
+      "description": "Resend command line interface for email sending and developer workflows."
+    },
+    "tursodatabase/turso-cli": {
+      "description": "Turso command line interface for managing databases, replicas, authentication, and local development."
+    },
+    "steipete/sonoscli": {
+      "description": "Command line interface for controlling Sonos speakers and playback."
+    },
+    "composio/awesome-claude-skills": {
+      "description": "Curated collection of Claude skills; useful as a skill discovery source, not a directly executable CLI.",
+      "tags": [
+        "resource-list"
+      ],
+      "agent_score": 1,
+      "agent_friendly": false,
+      "agent_signals": [
+        "resource-list"
+      ],
+      "remove_tags": [
+        "agent-friendly"
+      ]
+    },
+    "composio/awesome-openclaw-plugins": {
+      "description": "Curated collection of OpenClaw plugins; useful as a plugin discovery source, not a directly executable CLI.",
+      "tags": [
+        "resource-list"
+      ],
+      "agent_score": 1,
+      "agent_friendly": false,
+      "agent_signals": [
+        "resource-list"
+      ],
+      "remove_tags": [
+        "agent-friendly"
+      ]
+    },
+    "notion-cli/notion-cli": {
+      "description": "Command line interface for interacting with Notion workspaces and pages."
+    },
+    "jrswab/axe": {
+      "description": "Agent-friendly command line workspace for coordinating AI coding tasks and development workflows."
+    },
+    "steipete/gifgrep": {
+      "description": "Command line tool for searching GIF files and extracting matching animated image results."
+    },
+    "steipete/ordercli": {
+      "description": "Command line tool for inspecting and automating order-related workflows."
+    },
+    "lydakis/mcpx": {
+      "description": "Command line tool for managing and running MCP server workflows for AI agents."
+    },
+    "agentsdance/agentx": {
+      "description": "AgentX command line tool for building and running AI agent workflows."
+    },
+    "nicepkg/jimeng-cli": {
+      "description": "Jimeng command line interface for AI image and video generation workflows."
+    },
+    "nickyc975/netease-music-cli": {
+      "description": "NetEase Cloud Music command line interface for searching and playing music from the terminal."
+    }
+  }
+}

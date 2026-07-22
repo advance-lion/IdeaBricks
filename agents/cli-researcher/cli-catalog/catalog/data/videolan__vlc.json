@@ -1,0 +1,34 @@
+{
+  "id": "videolan/vlc",
+  "name": "VLC",
+  "aliases": [],
+  "description": "VLC media player and multimedia engine; Can play most multimedia files: files, discs, streams, devices; It's also able to convert, encode, stream and manipulate streams into numerous formats.",
+  "repo_url": "https://github.com/videolan/vlc",
+  "homepage": "https://code.videolan.org/videolan/vlc",
+  "install": {},
+  "category": "Media & Graphics",
+  "tags": [
+    "video"
+  ],
+  "github_stars": 19069,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "video"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

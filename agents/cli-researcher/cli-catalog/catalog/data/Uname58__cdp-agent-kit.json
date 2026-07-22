@@ -1,0 +1,43 @@
+{
+  "id": "Uname58/cdp-agent-kit",
+  "name": "Browser CDP",
+  "aliases": [],
+  "description": "Browser automation via raw Chrome DevTools Protocol — connects to YOUR existing Chrome, no extensions, no new browser, inherits all cookies and sessions",
+  "repo_url": "https://github.com/Uname58/cdp-agent-kit",
+  "homepage": "https://github.com/Uname58/cdp-agent-kit",
+  "install": {
+    "pip": "pip install git+https://github.com/Uname58/cdp-agent-kit.git#subdirectory=contrib/cli-anything-harness/agent-harness"
+  },
+  "category": "Network & API",
+  "tags": [
+    "cli-anything",
+    "public_registry",
+    "requires-deps",
+    "web"
+  ],
+  "github_stars": 0,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://raw.githubusercontent.com/Uname58/cdp-agent-kit/master/contrib/cli-anything-harness/agent-harness/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "web"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

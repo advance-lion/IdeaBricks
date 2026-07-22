@@ -1,0 +1,34 @@
+{
+  "id": "debba/rewindtty",
+  "name": "rewindtty",
+  "aliases": [],
+  "description": "A terminal session recorder and replayer written in C that allows you to capture and replay terminal sessions with precise timing.",
+  "repo_url": "https://github.com/debba/rewindtty",
+  "homepage": "",
+  "install": {},
+  "category": "Media & Graphics",
+  "tags": [
+    "screen-recorder"
+  ],
+  "github_stars": 129,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "screen-recorder"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

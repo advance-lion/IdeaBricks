@@ -51,7 +51,7 @@ PAGE = r"""<!doctype html>
   <header class="top"><div class="brand"><i>⇣</i>截图生成 MVP · Worker 投递台</div><nav class="access"><a href="/apps/screenshot-to-app-recording-001-malllite/index.html" target="_blank">运行网页 ↗</a><a href="http://127.0.0.1:8848/ui/" target="_blank">CCCC GUI ↗</a><a href="/repo" target="_blank">仓库状态 ↗</a><a href="/show">运行舞台 →</a></nav><div class="state" id="actor-state"><b></b><span>正在检查 CCCC Worker</span></div></header>
   <p class="eyebrow">UPLOAD → CONTRACT → WORKER → BROWSER QA</p>
   <section class="intro"><h1>不用终端路径。<br><em>把截图放在这里。</em></h1><p>这是 Worker 的输入台：选择或直接拖入一张授权截图，系统会创建独立契约并把任务交给 CCCC。输出始终保留在本地 run 目录中。</p></section>
-  <section class="desk"><form class="card intake" id="intake-form"><div class="card-title"><h2>投递一张参考截图</h2><span>JPG · PNG · WEBP / 最大 16 MB</span></div><label class="drop" id="drop-zone"><input id="screenshot" name="screenshot" type="file" accept="image/jpeg,image/png,image/webp" required><div class="drop-main"><div class="drop-mark"></div><h3>拖放截图，或点击选择</h3><p>图片只用于理解布局与交互意图</p></div><div class="file-preview"><img id="preview" alt="待投递截图预览"><div><b id="file-name"></b><small id="file-meta"></small><small>已就绪，可创建 Worker 契约</small></div></div></label><p class="note"><b>输入限制：</b>单次最多上传两张参考截图。本投递台当前按“一张主截图 = 一个可审计 run”执行；多图 VLM 接入后会开放为同一次 run 的两张参考图。</p><div class="model-health" id="model-health" role="status">正在检查本地模型与远程兜底…</div><div class="form-row"><div class="field"><label for="app-name">虚构应用名称</label><input id="app-name" name="app_name" maxlength="32" value="SparkMVP" required></div><div class="field"><label for="kind">页面类型</label><input id="kind" name="kind" maxlength="32" value="mobile app" required></div></div><label class="dispatch"><input id="dispatch" name="dispatch" type="checkbox" checked>创建契约后立即发送到 CCCC 的 <b>mvp-worker</b></label><button class="submit" id="submit" type="submit">创建本次试跑 <span>→</span></button><div class="statusline" id="statusline"></div></form>
+  <section class="desk"><form class="card intake" id="intake-form"><div class="card-title"><h2>投递参考截图</h2><span>JPG · PNG · WEBP / 最大 16 MB</span></div><label class="drop" id="drop-zone"><input id="screenshot" name="screenshot" type="file" accept="image/jpeg,image/png,image/webp" required><div class="drop-main"><div class="drop-mark"></div><h3>拖放截图，或点击选择</h3><p>图片只用于理解布局与交互意图</p></div><div class="file-preview"><img id="preview" alt="待投递截图预览"><div><b id="file-name"></b><small id="file-meta"></small><small>已就绪，可创建 Worker 契约</small></div></div></label><div class="model-health" id="model-health" role="status">正在检查本地模型与远程兜底…</div><div class="form-row"><div class="field"><label for="app-name">虚构应用名称</label><input id="app-name" name="app_name" maxlength="32" value="SparkMVP" required></div><div class="field"><label for="kind">页面类型</label><input id="kind" name="kind" maxlength="32" value="mobile app" required></div></div><label class="dispatch"><input id="dispatch" name="dispatch" type="checkbox" checked>创建契约后立即发送到 CCCC 的 <b>mvp-worker</b></label><button class="submit" id="submit" type="submit">创建本次试跑 <span>→</span></button><div class="statusline" id="statusline"></div></form>
   <aside class="card rail"><div class="card-title"><h2>这次试跑会发生什么</h2><span>本地执行</span></div><ol class="flow"><li><b>1</b><div><strong>保存截图</strong><small>复制到独立 run；不覆盖任何已完成样例。</small></div></li><li><b>2</b><div><strong>生成 MVP 契约</strong><small>包含应用名、验收规则和交付清单。</small></div></li><li><b>3</b><div><strong>派发给 CCCC Worker</strong><small>Worker 在终端输出中文阶段日志。</small></div></li><li><b>4</b><div><strong>浏览器自动验收</strong><small>交付源码、PNG 预览、JSON 报告与回执。</small></div></li></ol><p class="note"><b>安全边界：</b>参考图只用于布局与交互理解。Worker 必须产生虚构品牌与自制素材，不能复用 Logo、商品图或品牌文案。</p></aside></section>
   <section class="card evidence"><div class="evidence-head"><h2>最近试跑与可视化证据</h2><button type="button" id="refresh">刷新</button></div><div id="runs"><p class="empty">正在读取本地 run…</p></div></section>
 </main><div class="toast" id="toast"></div>
@@ -60,7 +60,7 @@ const $=s=>document.querySelector(s);const zone=$('#drop-zone'),input=$('#screen
 function say(message,error=false){const el=$('#statusline');el.textContent=message;el.className='statusline'+(error?' error':'');el.style.display='block';toast.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3600)}
 function renderFile(file){if(!file)return;$('#file-name').textContent=file.name;$('#file-meta').textContent=`${Math.ceil(file.size/1024)} KB · ${file.type||'image'}`;preview.src=URL.createObjectURL(file);zone.classList.add('has-file')}
 input.addEventListener('change',()=>renderFile(input.files[0]));['dragenter','dragover'].forEach(type=>zone.addEventListener(type,e=>{e.preventDefault();zone.classList.add('drag')}));['dragleave','drop'].forEach(type=>zone.addEventListener(type,e=>{e.preventDefault();zone.classList.remove('drag')}));zone.addEventListener('drop',e=>{const file=e.dataTransfer.files[0];if(!file)return;const dt=new DataTransfer();dt.items.add(file);input.files=dt.files;renderFile(file)});
-async function refresh(){try{const data=await fetch('/api/runs').then(r=>r.json());const actor=$('#actor-state'),engine=data.backend||{label:'未识别',detail:'请检查 Worker 配置'},team=data.team||{},local=engine.local||{},health=$('#model-health');let healthText='执行引擎状态未知，请检查 Worker 配置。',healthClass='offline',stateClass='offline';if(local.available){healthText=`本地模型已连接：${local.model||'已配置模型'}。本次将使用本地 VLM/LLM 完成视觉理解与前端生成。`;healthClass='online';stateClass=data.actor.running?'ready':''}else if(engine.fallback){healthText=`本地模型不可连接（${local.model||'未配置模型'}）；本次将自动切换至 Codex 远程兜底，任务不会空转。`;healthClass='fallback';stateClass='fallback'}else{healthText=`本地模型不可连接（${local.model||'未配置模型'}），且 Codex 兜底不可用。请启动服务或检查 Codex 登录后再投递。`;healthClass='offline';stateClass='offline'}health.textContent=healthText;health.className='model-health '+healthClass;actor.className='state '+stateClass;actor.innerHTML=`<b></b><span>${data.actor.running?'CCCC Worker 已运行':'CCCC Worker 当前停止；投递时会自动启动'} · 已绑定 Team：${team.title||'未识别'} · ${healthText}</span>`;const host=$('#runs');if(!data.runs.length){host.innerHTML='<p class="empty">还没有新的试跑。投递一张截图后，契约会同步给 Team 的 Foreman 与 Worker。</p>';return}host.innerHTML=data.runs.map(run=>{const execution=run.execution||{},runEngine=execution.label||engine.label||'未记录执行引擎',fallback=Boolean(execution.fallback);return `<article class="run"><div><b>${run.run_id}</b><small>${run.created_at||'已创建，等待 Worker'}</small></div><span class="pill ${run.status==='PASS'?'pass':run.status==='处理中'?'working':''}">${run.status}</span><span class="pill ${run.dispatched?'working':''}">${run.dispatched?'已派发':'仅已准备'}</span><span class="pill ${fallback?'fallback':''}">${fallback?'Codex 兜底':runEngine}</span><div class="links">${run.ui_spec?`<a target="_blank" href="${run.ui_spec}">视觉规格</a>`:''}${run.app_url?`<a class="live" target="_blank" href="${run.app_url}">运行网页</a>`:''}${run.pipeline_log?`<a target="_blank" href="${run.pipeline_log}">流水线日志</a>`:''}${run.preview?`<a target="_blank" href="${run.preview}">预览图</a>`:''}${run.report?`<a target="_blank" href="${run.report}">验收</a>`:''}${run.delivery?`<a target="_blank" href="${run.delivery}">回执</a>`:''}<a target="_blank" href="/stage?run=${run.run_id}">舞台</a><a target="_blank" href="http://127.0.0.1:8848/ui/">CCCC</a><a target="_blank" href="/repo">仓库</a></div></article>`}).join('')}catch(e){$('#runs').innerHTML='<p class="empty">无法读取本地状态，请确认投递台仍在运行。</p>'}}
+async function refresh(){try{const data=await fetch('/api/runs').then(r=>r.json());const actor=$('#actor-state'),engine=data.backend||{label:'未识别',detail:'请检查 Worker 配置'},team=data.team||{},local=engine.local||{},health=$('#model-health');const ready=Boolean(engine.can_dispatch),localActive=engine.id==='local-openai';const healthText=localActive?`本地模型已连接：${local.model||'local-agent'}。截图理解与前端生成将由 Local LLM/VLM 执行。`:engine.fallback?`本地模型不可连接；当前自动切换到 ${engine.label}，任务不会空转。`:`当前执行引擎：${engine.label||'Codex CLI'}。`;health.textContent=healthText;health.className='model-health '+(localActive?'online':engine.fallback?'fallback':ready?'online':'offline');actor.className='state '+(ready&&data.actor.running?'ready':'offline');actor.innerHTML=`<b></b><span>${data.actor.running?'CCCC Worker 已运行':'CCCC Worker 当前停止；投递时会自动启动'} · 已绑定 Team：${team.title||'未识别'} · ${healthText}</span>`;const host=$('#runs');if(!data.runs.length){host.innerHTML='<p class="empty">还没有新的试跑。投递一张截图后，契约会同步给 Team 的 Foreman 与 Worker。</p>';return}host.innerHTML=data.runs.map(run=>{const execution=run.execution||{},runEngine=execution.label||engine.label||'未记录执行引擎';return `<article class="run"><div><b>${run.run_id}</b><small>${run.created_at||'已创建，等待 Worker'}</small></div><span class="pill ${run.status==='PASS'?'pass':run.status==='处理中'?'working':''}">${run.status}</span><span class="pill ${run.dispatched?'working':''}">${run.dispatched?'已派发':'仅已准备'}</span><span class="pill">${runEngine}</span><div class="links">${run.ui_spec?`<a target="_blank" href="${run.ui_spec}">视觉规格</a>`:''}${run.app_url?`<a class="live" target="_blank" href="${run.app_url}">运行网页</a>`:''}${run.pipeline_log?`<a target="_blank" href="${run.pipeline_log}">流水线日志</a>`:''}${run.preview?`<a target="_blank" href="${run.preview}">预览图</a>`:''}${run.report?`<a target="_blank" href="${run.report}">验收</a>`:''}${run.delivery?`<a target="_blank" href="${run.delivery}">回执</a>`:''}<a target="_blank" href="/stage?run=${run.run_id}">舞台</a><a target="_blank" href="http://127.0.0.1:8848/ui/">CCCC</a><a target="_blank" href="/repo">仓库</a></div></article>`}).join('')}catch(e){$('#runs').innerHTML='<p class="empty">无法读取本地状态，请确认投递台仍在运行。</p>'}}
 $('#refresh').addEventListener('click',refresh);setInterval(refresh,5000);refresh();
 $('#intake-form').addEventListener('submit',async e=>{e.preventDefault();if(!input.files[0])return say('请先选择一张截图。',true);const btn=$('#submit');btn.disabled=true;btn.innerHTML='正在创建… <span>⋯</span>';try{const fd=new FormData(e.currentTarget);fd.set('dispatch',$('#dispatch').checked?'true':'false');const result=await fetch('/api/intake',{method:'POST',body:fd}).then(async r=>{const json=await r.json();if(!r.ok)throw new Error(json.error||'创建失败');return json});say(result.message);await refresh()}catch(err){say(err.message,true)}finally{btn.disabled=false;btn.innerHTML='创建本次试跑 <span>→</span>'}});
 </script></body></html>"""
@@ -120,13 +120,15 @@ def notify_team_intake(run_id: str, contract: Path, screenshot: Path, app_name: 
     message = (
         f"[投递台输入] run={run_id}｜应用={app_name}｜状态=契约已创建｜"
         f"契约={contract.resolve()}｜截图={screenshot.resolve()}｜"
-        "执行=本地 LLM / VLM Worker 已启动。"
+        "执行=Worker Pipeline 已启动，具体引擎以 run-execution.json 为准。"
         "Foreman 可读取该契约作为本次 Worker 交付的输入依据；无需重复创建 run。"
     )
-    result = subprocess.run(
-        [command, "send", message, "--group", cccc_group_id(), "--by", "user", "--to", "idea-foreman,mvp-worker"],
-        cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20,
-    )
+    env = os.environ.copy()
+    env.update({"CCCC_EXE": command, "CCCC_TEXT": message, "CCCC_GROUP": cccc_group_id()})
+    result = subprocess.run([
+        "powershell", "-NoProfile", "-Command",
+        "& $env:CCCC_EXE send $env:CCCC_TEXT --group $env:CCCC_GROUP --by user --to idea-foreman,mvp-worker",
+    ], cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
     if result.returncode:
         return "未同步 Team 输入通知：" + (result.stderr or result.stdout).strip()[-300:]
     return None
@@ -195,7 +197,14 @@ def incubation_run_data(run_dir: Path) -> dict[str, Any]:
     cli_form = read_json(run_dir / "cli-capability-form.json") or {}
     shortlist = read_json(run_dir / "idea-shortlist.json") or {}
     contract = read_json(run_dir / "mvp-contract.json") or {}
-    if contract:
+    worker_handoff = read_json(run_dir / "worker-handoff.json") or {}
+    worker_run_id = str(worker_handoff.get("worker_run_id") or "")
+    worker_delivery = (read_json(ROOT / "runs" / worker_run_id / "worker-delivery.json") or {}) if worker_run_id else {}
+    if worker_delivery.get("status") == "PASS":
+        status = "MVP_DELIVERED"
+    elif worker_handoff:
+        status = "WORKER_DISPATCHED"
+    elif contract:
         status = "MVP_CONTRACT_READY"
     elif shortlist:
         status = "IDEAS_RANKED"
@@ -211,12 +220,17 @@ def incubation_run_data(run_dir: Path) -> dict[str, Any]:
         "cli_form": cli_form,
         "shortlist": shortlist,
         "mvp_contract": contract,
+        "worker_handoff": worker_handoff,
+        "worker_delivery": worker_delivery,
         "created_at": datetime.fromtimestamp(run_dir.stat().st_mtime).astimezone().isoformat(timespec="seconds"),
         "links": {
             "request": f"/handoffs/{run_dir.name}/request.json",
             "cli_form": f"/handoffs/{run_dir.name}/cli-capability-form.json" if cli_form else None,
             "shortlist": f"/handoffs/{run_dir.name}/idea-shortlist.json" if shortlist else None,
             "mvp_contract": f"/handoffs/{run_dir.name}/mvp-contract.json" if contract else None,
+            "worker_handoff": f"/handoffs/{run_dir.name}/worker-handoff.json" if worker_handoff else None,
+            "worker_stage": f"/stage?run={worker_run_id}" if worker_run_id else None,
+            "orchestration_log": f"/handoffs/{run_dir.name}/orchestration.log" if (run_dir / "orchestration.log").is_file() else None,
         },
     }
 
@@ -224,13 +238,13 @@ def incubation_run_data(run_dir: Path) -> dict[str, Any]:
 def incubation_data() -> dict[str, Any]:
     root = ROOT / "handoffs"
     runs = [path for path in root.glob("incubation-*") if path.is_dir()] if root.is_dir() else []
-    runs.sort(key=lambda path: path.stat().st_mtime, reverse=True)
+    runs.sort(key=lambda path: path.name, reverse=True)
     latest = incubation_run_data(runs[0]) if runs else None
     return {"team": {"title": team_binding_info()["title"], "actors": incubation_actor_states()}, "latest": latest}
 
 
 def start_incubation_test(brief: str) -> dict[str, Any]:
-    """Create an explicitly labelled platform test; it never impersonates teammate A."""
+    """Create a Foreman run from the already maintained CLI catalog snapshot."""
     cleaned = " ".join(brief.split())[:600]
     if not cleaned:
         raise ValueError("请先写下要孵化的需求。")
@@ -247,37 +261,42 @@ def start_incubation_test(brief: str) -> dict[str, Any]:
         },
         "test_mode": True,
     }
-    cli_form = {
-        "run_id": run_id,
-        "source": "platform-test-simulation",
-        "demo_only": True,
-        "warning": "同学 A 的 CLI Agent 尚未接入；这是用于验证 Foreman → Idea Agent 接口的模拟能力表单，不是正式市场调研结果。",
-        "capabilities": [
-            {"id": "vision-layout", "name": "界面截图理解", "input": "authorized screenshot", "output": "layout and interaction spec"},
-            {"id": "frontend-scaffold", "name": "前端脚手架", "input": "UI spec", "output": "runnable local frontend"},
-            {"id": "browser-qa", "name": "浏览器验收", "input": "frontend", "output": "acceptance report"},
-            {"id": "local-git", "name": "本地 Git 交付", "input": "source files", "output": "commit evidence"},
-        ],
-    }
     write_json(handoff / "request.json", request)
-    write_json(handoff / "cli-capability-form.json", cli_form)
+    # Materialize a run-scoped reference synchronously so the first UI paint
+    # already shows the persistent capability library. This is a local read;
+    # it does not start CLI Researcher or refresh the catalog.
+    snapshot = subprocess.run(
+        [str(PYTHON), "scripts/build_cli_handoff.py", "--run-id", run_id], cwd=ROOT,
+        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20,
+    )
+    if snapshot.returncode:
+        raise ValueError("持久化 CLI 能力快照不可用；请先执行 CLI Agent 维护任务：" + (snapshot.stderr or snapshot.stdout).strip()[-400:])
     command = cccc_command()
     if not command:
         raise ValueError("CCCC 命令不可用，已保存测试输入但未派发。")
     task = (
-        f"[平台集成测试] run={run_id}。读取 {handoff / 'request.json'} 与 {handoff / 'cli-capability-form.json'}。"
-        "该 CLI 表单明确是 test simulation：不要把它说成同学 A 的正式产出。"
-        "你只做 Foreman：把相同 run 的需求和表单转交给 idea-agent，等待其写入 "
+        f"[平台孵化] run={run_id}。读取 {handoff / 'request.json'} 与已保存能力快照引用 {handoff / 'cli-capability-form.json'}。"
+        "你是全局 Foreman：本轮不要唤起 cli-researcher；CLI Agent 只在后台维护长期能力库。"
+        "现在直接向 idea-agent 派发创意挖掘任务，等待其写入 "
         f"{handoff / 'idea-shortlist.json'} 与 {handoff / 'mvp-contract.json'}，然后核对并向用户汇报。"
-        "不要自己生成 Idea，不要启动 mvp-worker。"
+        "你不代替 Idea Agent 生成创意，也不在授权截图就绪前启动 mvp-worker。"
     )
     result = subprocess.run([
-        command, "tracked-send", task, "--group", cccc_group_id(), "--by", "user", "--to", "idea-foreman",
-        "--title", f"Incubation test: {run_id}", "--outcome", "Foreman forwards the test handoff to idea-agent; idea-shortlist.json and mvp-contract.json exist.",
-        "--handoff-to", "idea-agent", "--idempotency-key", f"platform-incubation-{run_id}",
+        command, "send", task, "--group", cccc_group_id(), "--by", "user", "--to", "idea-foreman", "--priority", "attention",
     ], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
     if result.returncode:
         raise ValueError("无法派发给 Foreman：" + (result.stderr or result.stdout).strip()[-500:])
+    process_log = handoff / "orchestration.process.log"
+    with process_log.open("a", encoding="utf-8") as output:
+        subprocess.Popen(
+            [str(PYTHON), "scripts/run_incubation_pipeline.py", "--run-id", run_id],
+            cwd=ROOT,
+            stdout=output,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding="utf-8",
+            creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),
+        )
     return incubation_run_data(handoff)
 
 
@@ -293,6 +312,22 @@ def worker_events(run_id: str) -> list[dict[str, Any]]:
         except (OSError, json.JSONDecodeError):
             continue
     return sorted(events, key=lambda event: str(event.get("timestamp", "")))[-32:]
+
+
+def compact_worker_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Keep the final successful phase chain for the stage while raw JSONL remains intact."""
+    compact: list[dict[str, Any]] = []
+    for phase in ("visual", "scaffold", "browser", "delivery"):
+        phase_events = [event for event in events if event.get("phase") == phase]
+        passed = next((event for event in reversed(phase_events) if event.get("status") == "PASS"), None)
+        if passed:
+            started = next((event for event in reversed(phase_events) if event.get("status") == "STARTED" and str(event.get("timestamp", "")) <= str(passed.get("timestamp", ""))), None)
+            if started:
+                compact.append(started)
+            compact.append(passed)
+        elif phase_events:
+            compact.append(phase_events[-1])
+    return sorted(compact, key=lambda event: str(event.get("timestamp", "")))
 
 
 def runtime_info() -> dict[str, Any]:
@@ -357,12 +392,35 @@ def cccc_stage_events(run_id: str | None = None) -> dict[str, Any]:
     return {"group_id": cccc_group_id(), "title": title, "actors": actors, "events": events[-16:], "latest_run_id": latest_run_id}
 
 
-def worker_backend_info() -> dict[str, str]:
-    """Expose local-model health and the safe execution fallback, never secrets."""
-    requested = os.environ.get("MVP_WORKER_BACKEND", "local-openai").strip().lower() or "local-openai"
+def cli_command(name: str) -> str | None:
+    configured = os.environ.get(f"{name.upper()}_BIN", "").strip()
+    if configured:
+        return configured
+    return shutil.which(name) or shutil.which(f"{name}.exe")
+
+
+def worker_backend_info(requested_backend: str | None = None) -> dict[str, Any]:
+    """Select DGX local inference first, with Codex/Claude as honest fallbacks."""
+    runtime = read_json(ROOT / "config" / "worker-runtime.local.json") or {}
+    test_mode = read_json(ROOT / "config" / "worker-test-mode.local.json") or {}
+    forced_backend = str(test_mode.get("force_backend") or "").strip().lower()
+    # An explicit per-run selection from the stage is authoritative. The test
+    # mode setting still provides the default for older callers that omit it.
+    requested = str(requested_backend or forced_backend or os.environ.get("MVP_WORKER_BACKEND") or runtime.get("backend") or "codex").strip().lower()
+    configured_order = runtime.get("fallback_order") or ["codex", "claude"]
+    fallback_order = [str(item).strip().lower() for item in configured_order if str(item).strip().lower() in {"codex", "claude"}]
+    if not fallback_order:
+        fallback_order = ["codex", "claude"]
     config = read_json(ROOT / "config" / "local-model.local.json") or {}
     model = os.environ.get("LOCAL_MODEL_NAME") or str(config.get("model") or "未配置模型")
     local = {"available": False, "status": "unconfigured", "model": model, "message": "未配置本地模型"}
+    codex_path = ROOT / ".tools" / "codex-cli" / "node_modules" / ".pnpm" / "@openai+codex@0.144.6" / "node_modules" / "@openai" / "codex" / "bin" / "codex.js"
+    available = {
+        "codex": codex_path.is_file() and bool(shutil.which("node")),
+        "claude": bool(cli_command("claude")),
+    }
+    labels = {"codex": "Codex CLI", "claude": "Claude Code"}
+
     if requested == "local-openai":
         base_url = str(os.environ.get("LOCAL_MODEL_BASE_URL") or config.get("base_url") or "").rstrip("/")
         api_key = str(os.environ.get("LOCAL_MODEL_API_KEY") or config.get("api_key") or "")
@@ -374,21 +432,92 @@ def worker_backend_info() -> dict[str, str]:
                 local = {"available": True, "status": "online", "model": model, "message": "本地 VLM/LLM 服务已连接"}
             except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError):
                 local = {"available": False, "status": "offline", "model": model, "message": "本地 VLM/LLM 服务不可连接"}
-    codex_path = ROOT / ".tools" / "codex-cli" / "node_modules" / ".bin" / "codex.CMD"
-    codex_ready = codex_path.is_file()
-    if requested == "local-openai" and not local["available"] and codex_ready:
-        return {
-            "id": "codex", "requested": requested, "label": "Codex 远程兜底", "detail": "本地模型离线；新任务将自动改由 Codex 执行，避免空转",
-            "fallback": True, "local": local, "can_dispatch": True,
-        }
-    if requested == "local-openai":
-        return {
-            "id": "local-openai", "requested": requested, "label": "本地 LLM / VLM", "detail": f"{model} · 本地视觉理解 + 本地前端生成",
-            "fallback": False, "local": local, "can_dispatch": bool(local["available"]),
-        }
-    if requested == "codex":
-        return {"id": "codex", "requested": requested, "label": "Codex", "detail": "Codex 视觉理解 + 前端生成", "fallback": False, "local": local, "can_dispatch": codex_ready}
-    return {"id": requested, "requested": requested, "label": "CCCC + Codex", "detail": "CCCC 调度的 Codex Worker", "fallback": False, "local": local, "can_dispatch": True}
+        if local["available"]:
+            return {"id": "local-openai", "requested": requested, "label": "DGX Spark Local LLM / VLM", "detail": f"{model} · 本地视觉理解 + 前端生成", "fallback": False, "fallback_order": fallback_order, "local": local, "can_dispatch": True}
+        fallback = next((backend for backend in fallback_order if available[backend]), None)
+        if fallback:
+            return {"id": fallback, "requested": requested, "label": f"{labels[fallback]} 兜底", "detail": f"Local LLM 不可连接；新任务自动切换 {labels[fallback]}", "fallback": True, "fallback_order": fallback_order, "local": local, "can_dispatch": True}
+        return {"id": "local-openai", "requested": requested, "label": "DGX Spark Local LLM / VLM 不可用", "detail": "Local LLM 不可连接，且 Codex CLI 与 Claude Code 都不可用", "fallback": False, "fallback_order": fallback_order, "local": local, "can_dispatch": False}
+
+    if requested in available:
+        if not available[requested]:
+            fallback = next((backend for backend in fallback_order if available[backend]), None)
+            if fallback:
+                return {"id": fallback, "requested": requested, "label": f"{labels[fallback]} 兜底", "detail": f"{labels[requested]} 不可用；新任务自动切换 {labels[fallback]}", "fallback": True, "fallback_order": fallback_order, "local": {**local, "status": "not-probed", "message": "CLI 模式未探测 Local LLM"}, "can_dispatch": True}
+        mode_detail = "测试阶段默认使用 Codex CLI；未探测 Local LLM" if not requested_backend and forced_backend == "codex" else f"{labels[requested]} 视觉理解 + 前端生成"
+        return {"id": requested, "requested": requested, "label": labels[requested], "detail": mode_detail, "fallback": False, "fallback_order": fallback_order, "local": {**local, "status": "not-probed", "message": "CLI 模式未探测 Local LLM"}, "can_dispatch": available[requested]}
+    return {"id": requested, "requested": requested, "label": "未识别执行引擎", "detail": f"不支持的 Worker 引擎：{requested}", "fallback": False, "fallback_order": fallback_order, "local": local, "can_dispatch": False}
+
+
+def team_summary(contract: dict[str, Any]) -> dict[str, Any]:
+    """Summarize the upstream CCCC handoffs attached to one Worker contract."""
+    handoff = contract.get("handoff", {}) if isinstance(contract, dict) else {}
+    parent_run_id = str(handoff.get("parent_run_id") or "")
+    if not re.fullmatch(r"incubation-[\w-]+", parent_run_id):
+        return {}
+    root = ROOT / "handoffs" / parent_run_id
+    cli_path, shortlist_path, mvp_path = root / "cli-capability-form.json", root / "idea-shortlist.json", root / "mvp-contract.json"
+    cli, shortlist, mvp = read_json(cli_path) or {}, read_json(shortlist_path) or {}, read_json(mvp_path) or {}
+    ideas = shortlist.get("ranked_options") or shortlist.get("ideas") or []
+    recommended = shortlist.get("recommended_idea") or {}
+    selected_id = str(mvp.get("idea_id") or mvp.get("selected_idea_id") or recommended.get("idea_id") or "")
+    selected = next((idea for idea in ideas if str(idea.get("idea_id") or idea.get("id")) == selected_id), recommended)
+    scores = selected.get("four_criterion_scores") or {}
+
+    def timestamp(path: Path) -> str:
+        try:
+            return datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat(timespec="seconds")
+        except OSError:
+            return ""
+
+    try:
+        request_timestamp = datetime.strptime(parent_run_id.removeprefix("incubation-").rsplit("-", 1)[0], "%Y%m%d-%H%M%S").replace(tzinfo=datetime.now().astimezone().tzinfo).isoformat(timespec="seconds")
+    except ValueError:
+        request_timestamp = timestamp(root / "request.json")
+
+    counts = cli.get("catalog_counts") or {}
+    validation = cli.get("validation") or {}
+    events = [
+        {
+            "timestamp": request_timestamp, "actor": "FOREMAN", "status": "PASS",
+            "message": "已标准化用户需求 · screenshot-to-app",
+        },
+        {
+            "timestamp": timestamp(cli_path), "actor": "FOREMAN", "status": "PASS",
+            "message": f"读取持久 CLI 能力库 {counts.get('records', '—')} 条 · 匹配 {len(cli.get('capabilities') or [])} 项 · 本轮未唤起 CLI Agent",
+        },
+        {
+            "timestamp": timestamp(shortlist_path), "actor": "IDEA", "status": "PASS",
+            "message": f"评估 {len(ideas)} 个方向 · 推荐 {recommended.get('name') or mvp.get('name') or 'Screenshot MVP'}",
+        },
+        {
+            "timestamp": timestamp(mvp_path), "actor": "FOREMAN", "status": "PASS",
+            "message": f"冻结 {selected_id or 'selected idea'} · 交接 mvp-worker",
+        },
+    ]
+    return {
+        "parent_run_id": parent_run_id,
+        "cli": {
+            "status": validation.get("status") or "PASS",
+            "records": counts.get("records"),
+            "categories": counts.get("categories"),
+            "selected_capabilities": len(cli.get("capabilities") or []),
+            "validation": validation.get("output") or "validated",
+            "supply_mode": cli.get("supply_mode") or "persistent-catalog-snapshot",
+        },
+        "idea": {
+            "status": "PASS" if ideas else "WAIT",
+            "options": len(ideas),
+            "recommended": recommended.get("name") or mvp.get("name"),
+            "scores": scores,
+        },
+        "foreman": {
+            "status": "FROZEN" if mvp else "WAIT",
+            "idea_id": selected_id,
+            "contract": mvp.get("name") or recommended.get("name"),
+        },
+        "events": [event for event in events if event["timestamp"]],
+    }
 
 
 def run_data(run_dir: Path) -> dict[str, Any]:
@@ -397,10 +526,14 @@ def run_data(run_dir: Path) -> dict[str, Any]:
     context = read_json(run_dir / "run-context.json") or {}
     contract = read_json(run_dir / "mvp-contract.json") or {}
     ui_spec_data = read_json(run_dir / "ui-spec.json") or {}
-    events = worker_events(run_id)
+    events = compact_worker_events(worker_events(run_id))
     input_file = next((item for item in (run_dir / "input").glob("reference.*") if item.is_file()), None)
     artifacts = delivery.get("artifacts", {}) if isinstance(delivery, dict) else {}
     execution = read_json(run_dir / "run-execution.json") or {}
+    recorded_github = delivery.get("github") if isinstance(delivery, dict) else None
+    github_url = None
+    if delivery.get("status") == "PASS":
+        github_url = recorded_github if isinstance(recorded_github, str) and recorded_github.startswith("https://github.com/") else repository_info().get("github_url")
     dispatched = (ROOT / "contracts" / "live-trials" / f"{run_id}.dispatch.json").is_file()
     return {
         "run_id": run_id,
@@ -413,10 +546,12 @@ def run_data(run_dir: Path) -> dict[str, Any]:
         "preview": f"/files/{run_id}/artifacts/preview.png" if (run_dir / "artifacts" / "preview.png").is_file() else None,
         "report": f"/files/{run_id}/artifacts/acceptance-report.json" if (run_dir / "artifacts" / "acceptance-report.json").is_file() else None,
         "delivery": f"/files/{run_id}/worker-delivery.json" if (run_dir / "worker-delivery.json").is_file() else None,
+        "github_url": github_url,
         "app_url": f"/apps/{run_id}/index.html" if (run_dir / "app" / "index.html").is_file() else None,
         "pipeline_log": f"/files/{run_id}/worker-pipeline.log" if (run_dir / "worker-pipeline.log").is_file() else None,
         "artifact_summary": artifacts,
         "execution": execution,
+        "team_summary": team_summary(contract),
         "ui_spec": f"/files/{run_id}/ui-spec.json" if (run_dir / "ui-spec.json").is_file() else None,
     }
 
@@ -444,6 +579,7 @@ def launch_pipeline(contract: Path, run_dir: Path, run_id: str, backend: dict[st
         "active_backend": backend.get("id"),
         "label": backend.get("label"),
         "fallback": bool(backend.get("fallback")),
+        "fallback_order": backend.get("fallback_order", []),
         "local_health": backend.get("local"),
         "started_at": datetime.now().astimezone().isoformat(timespec="seconds"),
     }, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -542,6 +678,13 @@ class IntakeHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/project":
             json_response(self, HTTPStatus.OK, {"repository": repository_info(), "team": team_binding_info()})
             return
+        if parsed.path == "/api/catalog":
+            summary = read_json(ROOT / "agents" / "cli-researcher" / "cli-catalog" / "catalog" / "cli-summary.json")
+            if not summary:
+                json_response(self, HTTPStatus.SERVICE_UNAVAILABLE, {"error": "CLI capability catalog is unavailable"})
+                return
+            json_response(self, HTTPStatus.OK, summary)
+            return
         if parsed.path == "/api/incubation":
             json_response(self, HTTPStatus.OK, incubation_data())
             return
@@ -600,7 +743,7 @@ class IntakeHandler(SimpleHTTPRequestHandler):
                     raise ValueError("测试需求不能为空，且不能超过 16 KB。")
                 payload = json.loads(self.rfile.read(content_length).decode("utf-8"))
                 latest = start_incubation_test(str(payload.get("brief", "")))
-                json_response(self, HTTPStatus.CREATED, {"message": "Foreman 已接收集成测试，正在交接给 Idea Agent。", "latest": latest})
+                json_response(self, HTTPStatus.CREATED, {"message": "Foreman 已接收需求并读取持久能力库，正在派发 Idea Agent。", "latest": latest})
             except (ValueError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
                 json_response(self, HTTPStatus.BAD_REQUEST, {"error": str(exc)})
             except Exception as exc:
@@ -633,6 +776,19 @@ class IntakeHandler(SimpleHTTPRequestHandler):
             app_name = safe_name(form.getfirst("app_name", "SparkMVP"), "SparkMVP")
             kind = safe_name(form.getfirst("kind", "mobile app"), "mobile app")
             dispatch = form.getfirst("dispatch", "false") == "true"
+            requested_backend = str(form.getfirst("backend", "")).strip().lower()
+            if requested_backend and requested_backend not in {"codex", "local-openai"}:
+                raise ValueError("不支持的生成引擎。请选择 Codex CLI 或 Local LLM。")
+            incubation_run_id = str(form.getfirst("incubation_run_id", "")).strip()
+            parent_contract: dict[str, Any] = {}
+            parent_contract_path: Path | None = None
+            if incubation_run_id:
+                if not re.fullmatch(r"incubation-[\w-]+", incubation_run_id):
+                    raise ValueError("无效的孵化 run ID。")
+                parent_contract_path = ROOT / "handoffs" / incubation_run_id / "mvp-contract.json"
+                parent_contract = read_json(parent_contract_path)
+                if not parent_contract:
+                    raise ValueError("Idea Agent 的 MVP 契约尚未就绪，请稍后再生成。")
             created = datetime.now().astimezone()
             run_id = f"trial-{created.strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:4]}"
             upload_dir = ROOT / "inputs" / "live-uploads"
@@ -645,22 +801,50 @@ class IntakeHandler(SimpleHTTPRequestHandler):
             if not sample:
                 raise ValueError("找不到 Worker 契约模板。")
             sample["run_id"] = run_id
-            sample["handoff"] = {"from": "worker-intake-desk", "to": "mvp-worker"}
+            if parent_contract:
+                sample["handoff"] = {
+                    "from": "idea-foreman", "to": "mvp-worker",
+                    "parent_run_id": incubation_run_id,
+                    "source_contract": str(parent_contract_path.resolve()),
+                }
+                sample["selected_idea"] = {
+                    "idea_id": parent_contract.get("idea_id") or parent_contract.get("selected_idea_id"),
+                    "name": parent_contract.get("name"),
+                    "target_user": parent_contract.get("target_user"),
+                    "pain_point": parent_contract.get("pain_point"),
+                }
+                if parent_contract.get("primary_interaction"):
+                    sample["app"]["goal"] = parent_contract["primary_interaction"]
+            else:
+                sample["handoff"] = {"from": "worker-intake-desk", "to": "mvp-worker"}
             sample["source_screenshot"]["path"] = str(screenshot.resolve())
             sample["source_screenshot"]["authorized_for_demo"] = True
             sample["app"]["name"] = app_name
             sample["app"]["kind"] = kind
+            if requested_backend:
+                sample["execution"] = {"requested_backend": requested_backend}
             contract = contract_dir / f"{run_id}.json"
             contract.write_text(json.dumps(sample, ensure_ascii=False, indent=2), encoding="utf-8")
+            if parent_contract:
+                write_json(ROOT / "handoffs" / incubation_run_id / "worker-handoff.json", {
+                    "parent_run_id": incubation_run_id,
+                    "worker_run_id": run_id,
+                    "source_contract": str(parent_contract_path.resolve()),
+                    "worker_contract": str(contract.resolve()),
+                    "authorized_screenshot": str(screenshot.resolve()),
+                    "authorized_for_demo": True,
+                    "created_at": created.isoformat(timespec="seconds"),
+                    "handoff": {"from": "idea-foreman", "to": "mvp-worker", "status": "DISPATCHED" if dispatch else "READY"},
+                })
             launcher = PYTHON
             prepared = subprocess.run([str(launcher), str(ROOT / "scripts" / "prepare_run.py"), "--contract", str(contract)], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30)
             if prepared.returncode:
                 raise ValueError(f"创建独立 run 失败：{prepared.stderr or prepared.stdout}")
             message = "截图已创建独立契约，等待 Worker。"
             if dispatch:
-                backend = worker_backend_info()
+                backend = worker_backend_info(requested_backend or None)
                 if not backend.get("can_dispatch"):
-                    raise ValueError("本地模型服务不可连接，且 Codex 兜底不可用。请启动本地模型服务或检查 Codex 登录状态。")
+                    raise ValueError(backend.get("detail") or "当前执行引擎不可用；请检查 DGX Local LLM、Codex CLI 或 Claude Code。")
                 command = cccc_command()
                 if not command:
                     raise ValueError("CCCC 命令不可用；截图已准备，但未派发。")

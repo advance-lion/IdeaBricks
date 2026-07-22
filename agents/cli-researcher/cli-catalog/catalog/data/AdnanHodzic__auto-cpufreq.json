@@ -1,0 +1,35 @@
+{
+  "id": "AdnanHodzic/auto-cpufreq",
+  "name": "auto-cpufreq",
+  "aliases": [],
+  "description": "Automatic CPU speed and power optimizer for Linux, which allows to dynamically change the settings of the CPU to save energy and extend the battery life on laptops.",
+  "repo_url": "https://github.com/AdnanHodzic/auto-cpufreq",
+  "homepage": "",
+  "install": {},
+  "category": "DevOps & Cloud",
+  "tags": [
+    "system",
+    "system-tools"
+  ],
+  "github_stars": 7627,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "system"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

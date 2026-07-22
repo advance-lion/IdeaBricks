@@ -1,0 +1,34 @@
+{
+  "id": "MirBSD/mksh",
+  "name": "mksh",
+  "aliases": [],
+  "description": "(MirBSD Korn Shell) an actively developed free implementation of the Korn Shell programming language and a successor to the Public Domain Korn Shell (pdksh).",
+  "repo_url": "https://github.com/MirBSD/mksh",
+  "homepage": "http://www.mirbsd.org/mksh.htm",
+  "install": {},
+  "category": "Shell & Terminal",
+  "tags": [
+    "shells"
+  ],
+  "github_stars": 241,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "shells"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

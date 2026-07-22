@@ -1,0 +1,43 @@
+{
+  "id": "LI-Meng420/stata-cli",
+  "name": "Stata",
+  "aliases": [],
+  "description": "Run Stata do-files, batch jobs, and reproducible econometric projects from the terminal with JSON output, log parsing, project scaffolding, and security guard",
+  "repo_url": "https://github.com/LI-Meng420/stata-cli",
+  "homepage": "https://www.stata.com",
+  "install": {
+    "pip": "pip install git+https://github.com/LI-Meng420/stata-cli.git"
+  },
+  "category": "Data & JSON",
+  "tags": [
+    "cli-anything",
+    "registry",
+    "requires-deps",
+    "science"
+  ],
+  "github_stars": null,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://raw.githubusercontent.com/LI-Meng420/stata-cli/main/cli_anything/stata/skills/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "science"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

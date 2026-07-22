@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CLI Catalog Entry",
+  "type": "object",
+  "required": ["id", "name", "description", "repo_url", "category", "tags", "agent", "sources", "meta"],
+  "properties": {
+    "id": { "type": "string", "description": "Stable identifier, usually owner/repo" },
+    "name": { "type": "string" },
+    "aliases": { "type": "array", "items": { "type": "string" } },
+    "description": { "type": "string" },
+    "repo_url": { "type": "string" },
+    "homepage": { "type": "string" },
+    "install": { "type": "object", "additionalProperties": { "type": "string" } },
+    "category": { "type": "string" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "github_stars": { "type": ["integer", "null"], "minimum": 0 },
+    "agent": {
+      "type": "object",
+      "properties": {
+        "score": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "friendly": { "type": "boolean" },
+        "signals": { "type": "array", "items": { "type": "string" } },
+        "skill_url": { "type": ["string", "null"] }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "repo": { "type": "string" },
+          "commit": { "type": "string" },
+          "upstream_category": { "type": "string" }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "first_seen_at": { "type": "string" },
+        "updated_at": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "deprecated"] },
+        "github_stars_updated_at": { "type": "string" },
+        "manual_edit": { "type": "boolean" },
+        "locked_category": { "type": "boolean" }
+      }
+    }
+  }
+}

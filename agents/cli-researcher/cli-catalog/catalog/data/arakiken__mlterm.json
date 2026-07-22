@@ -1,0 +1,35 @@
+{
+  "id": "arakiken/mlterm",
+  "name": "mlterm",
+  "aliases": [],
+  "description": "A very fast low latency terminal emulator with features such as rendering variable width fonts, proper bidirectional support out of the box, a daemon mode, multiple XIM, and true background transparency.",
+  "repo_url": "https://github.com/arakiken/mlterm",
+  "homepage": "https://mlterm.sourceforge.net/",
+  "install": {},
+  "category": "Shell & Terminal",
+  "tags": [
+    "terminal",
+    "terminals"
+  ],
+  "github_stars": 234,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "terminal"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

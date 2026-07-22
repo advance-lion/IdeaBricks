@@ -1,0 +1,34 @@
+{
+  "id": "jrnl-org/jrnl",
+  "name": "jrnl",
+  "aliases": [],
+  "description": "jrnl is a simple journal application for the command line to easily create, search, and view journal entries; journals are stored as human-readable plain text, and can also be encrypted using AES encryption.",
+  "repo_url": "https://github.com/jrnl-org/jrnl",
+  "homepage": "",
+  "install": {},
+  "category": "Productivity",
+  "tags": [
+    "note-taking"
+  ],
+  "github_stars": 7273,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "note-taking"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

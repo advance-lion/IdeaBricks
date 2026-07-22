@@ -1,0 +1,38 @@
+{
+  "id": "smithery-ai/cli",
+  "name": "Smithery",
+  "aliases": [],
+  "description": "Smithery command line interface for discovering, configuring, and managing MCP servers.",
+  "repo_url": "https://github.com/smithery-ai/cli",
+  "homepage": "",
+  "install": {},
+  "category": "AI & Agents",
+  "tags": [
+    "agent-friendly",
+    "awesome-list"
+  ],
+  "github_stars": 800,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "awesome-ai-cli",
+      "curated-agent-list"
+    ],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "awesome-ai-cli",
+      "repo": "luoyuctl/awesome-ai-cli",
+      "commit": "b1957619c34be84cb1d822baf419dc124daacec0"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00",
+    "manual_edit": true
+  }
+}

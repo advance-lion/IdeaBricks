@@ -45,25 +45,55 @@
         </div>
       </section>
 
-      <section class="workspace section-shell" aria-label="运行工作台">
-        <div class="workspace-title"><p class="eyebrow"><span></span> SYSTEM MAP / 02</p><h2>能力不仅仅是清单，<br />还是可拼装的积木。</h2><p class="catalogue-note">CLI CATALOGUE<br /><span>将市场能力按任务阶段组合使用</span></p></div>
-        <div class="command-panel">
-          <div class="panel-tabs"><span class="window-dots"><i></i><i></i><i></i></span><b>capability-map.json</b><small><span id="cliCount">已展示 6 / 12 个 CLI</span> <button class="catalogue-toggle" id="cliToggle" aria-expanded="false">展开清单 +</button></small></div>
-          <div class="cli-grid" id="cliGrid">
-            <article class="cli-item active"><span class="cli-icon">⌘</span><div><b>截图理解</b><small>vision-cli</small></div><em>READY</em></article>
-            <article class="cli-item"><span class="cli-icon">▣</span><div><b>前端生成</b><small>mvp-worker</small></div><em>READY</em></article>
-            <article class="cli-item"><span class="cli-icon">⌁</span><div><b>趋势检索</b><small>search-cli</small></div><em>READY</em></article>
-            <article class="cli-item"><span class="cli-icon">✦</span><div><b>需求聚类</b><small>insight-cli</small></div><em>READY</em></article>
-            <article class="cli-item"><span class="cli-icon">↗</span><div><b>浏览器验收</b><small>browser-qa</small></div><em>READY</em></article>
-            <article class="cli-item"><span class="cli-icon">◌</span><div><b>交付封装</b><small>delivery-cli</small></div><em>READY</em></article>
-            <article class="cli-item cli-extra" hidden><span class="cli-icon">⌁</span><div><b>市场检索</b><small>market-search</small></div><em>READY</em></article>
-            <article class="cli-item cli-extra" hidden><span class="cli-icon">◫</span><div><b>数据清洗</b><small>data-refine</small></div><em>READY</em></article>
-            <article class="cli-item cli-extra" hidden><span class="cli-icon">◈</span><div><b>竞品对比</b><small>compare-cli</small></div><em>READY</em></article>
-            <article class="cli-item cli-extra" hidden><span class="cli-icon">◉</span><div><b>文案生成</b><small>copy-cli</small></div><em>READY</em></article>
-            <article class="cli-item cli-extra" hidden><span class="cli-icon">⌇</span><div><b>原型录制</b><small>record-cli</small></div><em>READY</em></article>
-            <article class="cli-item cli-extra" hidden><span class="cli-icon">✓</span><div><b>质量报告</b><small>report-cli</small></div><em>READY</em></article>
+      <section class="workspace section-shell" aria-label="CLI Catalog 能力索引">
+        <div class="workspace-title">
+          <p class="eyebrow"><span></span> CLI CATALOG / 02</p>
+          <h2>把分散的 CLI，<br />整理成 Agent 可调用的能力索引。</h2>
+          <p class="catalogue-note">AGENT ROUTING INDEX<br /><span>先读轻量 summary，必要时再读取单条 JSON 详情</span></p>
+          <div class="catalogue-stats" aria-label="CLI Catalog 统计">
+            <div><b id="catalogTotal">2400</b><span>Total CLIs</span></div>
+            <div><b id="catalogAgent">136</b><span>Agent-friendly</span></div>
+            <div><b id="catalogCategories">50</b><span>Categories</span></div>
           </div>
-          <div class="command-line"><span>forge@cccc:~$</span><code id="typedCommand">cccc discover --intent "周末想吃得快一点"</code><i></i></div>
+        </div>
+        <div class="command-panel catalogue-panel">
+          <div class="panel-tabs">
+            <span class="window-dots"><i></i><i></i><i></i></span>
+            <b>catalog/cli-summary.json</b>
+            <small><span id="cliCount">读取中...</span> <button class="catalogue-toggle" id="cliToggle" aria-expanded="true">显示全部</button></small>
+          </div>
+          <div class="catalogue-controls" aria-label="CLI Catalog 检索控制">
+            <label class="catalogue-search">SEARCH
+              <input id="cliSearch" type="search" placeholder="搜索 CLI、功能或 id，例如 ripgrep / video / deploy" />
+            </label>
+            <label class="catalogue-score">SCORE
+              <select id="cliScoreFilter" aria-label="按 Agent 分数筛选">
+                <option value="all">全部分数</option>
+                <option value="3" selected>只看 ★★★</option>
+                <option value="2">只看 ★★</option>
+                <option value="1">只看 ★</option>
+              </select>
+            </label>
+          </div>
+          <div class="catalogue-browser">
+            <aside class="category-list" id="categoryList" aria-label="CLI 分类"></aside>
+            <div class="cli-results">
+              <div class="results-meta"><span id="activeCategory">AI & Agents</span><small id="resultMetaText">等待数据加载</small></div>
+              <div class="cli-grid catalogue-grid" id="cliGrid" aria-live="polite"></div>
+            </div>
+            <aside class="route-card" aria-label="Agent 路由详情">
+              <div class="route-kicker">AGENT READS</div>
+              <h3 id="routeName">选择一个 CLI</h3>
+              <p id="routeFunction">点击左侧工具后，这里会显示传给 Agent 的必要字段。</p>
+              <dl>
+                <div><dt>ID</dt><dd id="routeId">-</dd></div>
+                <div><dt>SCORE</dt><dd id="routeScore">-</dd></div>
+                <div><dt>DETAIL</dt><dd id="routeDetail">catalog/data/*.json</dd></div>
+              </dl>
+              <pre id="routeJson">{"id":"","cli":"","function":"","score":0}</pre>
+            </aside>
+          </div>
+          <div class="command-line"><span>forge@cccc:~$</span><code id="typedCommand">python3 -m cli_catalog search --agent-only</code><i></i></div>
         </div>
       </section>
 

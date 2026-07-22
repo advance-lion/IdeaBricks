@@ -37,14 +37,185 @@ function setRuntime(runtime, actor) {
 
 $$('.chip').forEach(chip => chip.addEventListener('click', () => chip.classList.toggle('selected')));
 
+const catalogState = {
+  summary: null,
+  activeCategory: 'AI & Agents',
+  query: '',
+  score: '3',
+  selected: null,
+};
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[char]));
+}
+
+function detailPath(id) {
+  return `catalog/data/${String(id).replaceAll('/', '__')}.json`;
+}
+
+function scoreStars(score) {
+  return '★'.repeat(Number(score) || 0);
+}
+
+function allCatalogRows() {
+  if (!catalogState.summary) return [];
+  return catalogState.summary.categories.flatMap(category => category.rows.map(row => ({
+    category: category.name,
+    id: row[0],
+    cli: row[1],
+    function: row[2],
+    score: row[3],
+  })));
+}
+
+function categoryRows() {
+  const categories = catalogState.summary?.categories || [];
+  const category = categories.find(item => item.name === catalogState.activeCategory) || categories[0];
+  if (!category) return [];
+  return category.rows.map(row => ({
+    category: category.name,
+    id: row[0],
+    cli: row[1],
+    function: row[2],
+    score: row[3],
+  }));
+}
+
+function filteredCatalogRows() {
+  const query = catalogState.query.trim().toLowerCase();
+  const rows = query ? allCatalogRows() : categoryRows();
+  return rows.filter(row => {
+    const scoreMatch = catalogState.score === 'all' || String(row.score) === catalogState.score;
+    if (!scoreMatch) return false;
+    if (!query) return true;
+    return [row.id, row.cli, row.function, row.category].some(value => String(value).toLowerCase().includes(query));
+  });
+}
+
+function renderCategoryList() {
+  const list = $('#categoryList');
+  const categories = catalogState.summary?.categories || [];
+  list.replaceChildren();
+  categories.forEach(category => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = category.name === catalogState.activeCategory ? 'active' : '';
+    button.innerHTML = `<span>${escapeHtml(category.name)}</span><b>${category.count}</b>`;
+    button.addEventListener('click', () => {
+      catalogState.activeCategory = category.name;
+      catalogState.query = '';
+      $('#cliSearch').value = '';
+      renderCatalog();
+      toast(`已切换到 ${category.name} 分类`);
+    });
+    list.append(button);
+  });
+}
+
+function renderRouteCard(row) {
+  if (!row) return;
+  catalogState.selected = row;
+  $('#routeName').textContent = row.cli;
+  $('#routeFunction').textContent = row.function;
+  $('#routeId').textContent = row.id;
+  $('#routeScore').textContent = `${scoreStars(row.score)} / ${row.score}`;
+  $('#routeDetail').textContent = detailPath(row.id);
+  $('#routeJson').textContent = JSON.stringify({
+    id: row.id,
+    cli: row.cli,
+    function: row.function,
+    score: row.score,
+    detail: detailPath(row.id),
+  }, null, 2);
+}
+
+function renderCliResults() {
+  const grid = $('#cliGrid');
+  const rows = filteredCatalogRows();
+  const visible = rows.slice(0, 18);
+  grid.replaceChildren();
+  visible.forEach((row, index) => {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = `cli-item${index === 0 ? ' active' : ''}`;
+    item.innerHTML = `
+      <span class="cli-icon">${row.score === 3 ? '★' : '⌘'}</span>
+      <div>
+        <b>${escapeHtml(row.cli)}</b>
+        <small>${escapeHtml(row.category)} · ${escapeHtml(row.id)}</small>
+        <p>${escapeHtml(row.function)}</p>
+      </div>
+      <em>${scoreStars(row.score)}</em>
+    `;
+    item.addEventListener('click', () => {
+      $$('.catalogue-grid .cli-item').forEach(node => node.classList.remove('active'));
+      item.classList.add('active');
+      renderRouteCard(row);
+    });
+    grid.append(item);
+  });
+  $('#activeCategory').textContent = catalogState.query ? 'Search Results' : catalogState.activeCategory;
+  $('#resultMetaText').textContent = `${rows.length} 条匹配 · 展示前 ${visible.length} 条`;
+  $('#cliCount').textContent = `${catalogState.summary?.counts?.total || 0} total / ${catalogState.summary?.counts?.agent_friendly || 0} agent-friendly`;
+  if (visible.length) renderRouteCard(visible[0]);
+  else {
+    $('#routeName').textContent = '没有匹配结果';
+    $('#routeFunction').textContent = '换一个关键词、分类或分数筛选试试。';
+    $('#routeId').textContent = '-';
+    $('#routeScore').textContent = '-';
+    $('#routeDetail').textContent = 'catalog/data/*.json';
+    $('#routeJson').textContent = '{"results":0}';
+  }
+}
+
+function renderCatalog() {
+  renderCategoryList();
+  renderCliResults();
+}
+
+async function loadCliCatalog() {
+  try {
+    const response = await fetch('data/cli-summary.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('cli-summary.json 读取失败');
+    catalogState.summary = await response.json();
+    catalogState.activeCategory = catalogState.summary.categories.find(item => item.name === catalogState.activeCategory)?.name || catalogState.summary.categories[0]?.name || '';
+    $('#catalogTotal').textContent = catalogState.summary.counts.total;
+    $('#catalogAgent').textContent = catalogState.summary.counts.agent_friendly;
+    $('#catalogCategories').textContent = catalogState.summary.counts.categories;
+    renderCatalog();
+  } catch (error) {
+    $('#cliCount').textContent = 'CLI Catalog 未连接';
+    $('#cliGrid').innerHTML = '<p class="catalogue-empty">无法读取 data/cli-summary.json，请确认静态服务从项目根目录启动。</p>';
+    toast(error.message || 'CLI Catalog 数据读取失败');
+  }
+}
+
 $('#cliToggle').addEventListener('click', () => {
-  const extras = $$('.cli-extra');
-  const expanded = $('#cliToggle').getAttribute('aria-expanded') === 'true';
-  extras.forEach(item => item.hidden = expanded);
-  $('#cliToggle').setAttribute('aria-expanded', String(!expanded));
-  $('#cliToggle').textContent = expanded ? '展开清单 +' : '收起清单 −';
-  $('#cliCount').textContent = expanded ? '已展示 6 / 12 个 CLI' : '已展示 12 / 12 个 CLI';
-  toast(expanded ? '已收起扩展 CLI 清单' : '已展开完整 CLI 能力清单');
+  const agentOnly = $('#cliToggle').getAttribute('aria-expanded') !== 'true';
+  $('#cliToggle').setAttribute('aria-expanded', String(agentOnly));
+  catalogState.score = agentOnly ? '3' : 'all';
+  $('#cliScoreFilter').value = catalogState.score;
+  $('#cliToggle').textContent = agentOnly ? '显示全部' : '只看 ★★★';
+  renderCliResults();
+  toast(agentOnly ? '当前只展示 Agent-friendly CLI' : '已显示全部分数的 CLI');
+});
+
+$('#cliSearch').addEventListener('input', event => {
+  catalogState.query = event.target.value;
+  renderCliResults();
+});
+
+$('#cliScoreFilter').addEventListener('change', event => {
+  catalogState.score = event.target.value;
+  $('#cliToggle').setAttribute('aria-expanded', String(catalogState.score === '3'));
+  $('#cliToggle').textContent = catalogState.score === '3' ? '显示全部' : '只看 ★★★';
+  renderCliResults();
 });
 
 function selectIdea(card) {
@@ -78,7 +249,7 @@ $('#mineBtn').addEventListener('click', () => {
 });
 
 function typeCommand() {
-  const command = 'cccc discover --intent "周末想吃得快一点"';
+  const command = 'python3 -m cli_catalog search --agent-only';
   const target = $('#typedCommand');
   target.textContent = '';
   [...command].forEach((char, index) => setTimeout(() => { target.textContent += char; }, index * 18));
@@ -368,6 +539,7 @@ function simulateBuild() {
 generateBtn.addEventListener('click', () => showMode ? createRealRun() : simulateBuild());
 
 typeCommand();
+loadCliCatalog();
 setSource($('.source-chip.selected'));
 applyStageSplit();
 if (showMode && activeRunId) {

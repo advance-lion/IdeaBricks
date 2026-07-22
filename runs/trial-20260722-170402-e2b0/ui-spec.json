@@ -1,0 +1,107 @@
+{
+  "run_id": "trial-20260722-170402-e2b0",
+  "app_type": "food_delivery",
+  "high_fidelity_structure": "The view is a mobile screen (390x844) with a modal overlay covering the bottom 40% of the viewport. The background shows a restaurant menu page with a hero banner and a list of food items. The modal is titled 'Select Pickup Method' and contains three distinct selection cards arranged horizontally. A full-width red confirmation button sits at the bottom of the modal. The background content is dimmed. The dominant color is a vibrant red (#E60012) used for the primary action button and accents.",
+  "replaced_source_assets": {
+    "brand_name": "QuickBite",
+    "restaurant_name": "Tech Park Bistro",
+    "hero_product": "Lychee Black Tea Ice Cream",
+    "menu_item": "Egg & Chicken Panini Combo",
+    "pickup_options": [
+      "Dine In",
+      "Takeout",
+      "Drive Thru"
+    ]
+  },
+  "visible_state": {
+    "modal_open": true,
+    "modal_title": "Please select pickup method",
+    "active_tab": "Classic Menu",
+    "selected_option": null
+  },
+  "components": [
+    {
+      "id": "modal-overlay",
+      "type": "modal",
+      "position": "bottom_sheet",
+      "children": [
+        {
+          "id": "modal-header",
+          "type": "text",
+          "content": "Please select pickup method"
+        },
+        {
+          "id": "pickup-options",
+          "type": "horizontal_list",
+          "children": [
+            {
+              "id": "option-dine-in",
+              "type": "card",
+              "label": "Dine In",
+              "sublabel": "Eat at the store"
+            },
+            {
+              "id": "option-takeout",
+              "type": "card",
+              "label": "Takeout",
+              "sublabel": "Pick up at store"
+            },
+            {
+              "id": "option-drive-thru",
+              "type": "card",
+              "label": "Drive Thru",
+              "sublabel": "Quick street pickup"
+            }
+          ]
+        },
+        {
+          "id": "confirm-button",
+          "type": "button",
+          "content": "Confirm",
+          "style": "primary_red"
+        }
+      ]
+    },
+    {
+      "id": "background-menu",
+      "type": "container",
+      "children": [
+        {
+          "id": "restaurant-header",
+          "type": "text",
+          "content": "Tech Park Bistro"
+        },
+        {
+          "id": "menu-item-card",
+          "type": "card",
+          "content": "Egg & Chicken Panini Combo"
+        }
+      ]
+    }
+  ],
+  "inferred_interactions": [
+    "User taps one of the three pickup option cards to select a mode (visual selection state change).",
+    "User taps the 'Confirm' button to close the modal and update the app state to the selected pickup method.",
+    "User taps the 'X' icon to dismiss the modal without changes."
+  ],
+  "design_tokens": {
+    "colors": {
+      "primary": "#E60012",
+      "background": "#FFFFFF",
+      "text_primary": "#333333",
+      "text_secondary": "#666666",
+      "overlay": "rgba(0, 0, 0, 0.5)"
+    },
+    "typography": {
+      "modal_title": "18px Bold",
+      "card_label": "16px Bold",
+      "card_sublabel": "12px Regular"
+    },
+    "spacing": {
+      "card_gap": "12px",
+      "button_height": "48px",
+      "modal_radius": "16px"
+    }
+  },
+  "generator": "local-vlm"
+}

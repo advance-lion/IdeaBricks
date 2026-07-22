@@ -1,0 +1,15 @@
+{
+  "run_id": "trial-20260722-170402-e2b0",
+  "worker": "mvp-worker",
+  "created_at": "2026-07-22T17:07:22+08:00",
+  "status": "PASS",
+  "artifacts": {
+    "source_dir": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-170402-e2b0\\app",
+    "ui_spec": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-170402-e2b0\\ui-spec.json",
+    "preview": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-170402-e2b0\\artifacts\\preview.png",
+    "acceptance_report": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-170402-e2b0\\artifacts\\acceptance-report.json"
+  },
+  "acceptance_status": "PASS",
+  "missing_required_files": [],
+  "github": "SKIPPED_BY_CONTRACT"
+}

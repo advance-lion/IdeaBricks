@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>WeekendPick</title><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app" data-testid="app-shell">
+    <section class="hero">
+      <div class="top"><button class="round">‹</button><label class="search">⌕ <input data-testid="search-input" placeholder="Search bites"></label><button class="round">♡</button></div>
+      <p class="eyebrow">WEEKEND FAVORITES</p><h1>Berry Cloud<br>Soft Serve</h1><p>Sweet plans, made simple.</p><button class="hero-btn">Explore treats</button>
+      <div class="cone">🍦</div>
+    </section>
+    <section class="store">
+      <div class="store-line"><div><h2>▥ Tech Park Bistro</h2><p>Pickup · Innovation Avenue · 185m</p></div><button class="book">Reserve</button></div>
+      <div class="tabs"><button class="active">Classic Menu</button><button>Weekend Set</button></div>
+    </section>
+    <section class="menu">
+      <aside><b>HOT<br>SELLERS</b><span>Breakfast</span><span>Lunch</span><span>Drinks</span></aside>
+      <div class="items"><p class="note">🌿 Choose well, waste less 🌿</p><h3>Popular picks</h3><div id="recommendations" data-testid="recommendation-list"></div></div>
+    </section>
+    <button class="floating" aria-label="cart">🛍 <i data-testid="cart-count">0</i></button>
+  </main>
+
+  <div class="shade" id="shade"></div>
+  <section class="sheet" id="sheet" aria-modal="true">
+    <header><h2>Please select pickup method</h2><button id="close">×</button></header>
+    <div class="options" id="options"></div>
+    <button id="confirm">Confirm</button>
+  </section>
+  <output id="qa-result" data-testid="qa-result" hidden></output>
+  <script src="app.js"></script>
+</body>
+</html>

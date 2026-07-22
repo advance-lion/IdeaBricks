@@ -1,0 +1,187 @@
+{
+  "run_id": "trial-20260722-185729-6c8c",
+  "app_type": "mobile shopping discovery home screen",
+  "high_fidelity_structure": "390×844 竖屏高密度商城首页，无弹窗或抽屉。顶部为浅暖白状态栏；其下是横向分类标签栏，当前第二项以橙色文字及短下划线高亮。紧接着是白底、橙色描边的圆角搜索框，左侧为扫码样式图标，中部输入词，右侧有相机图标与橙色实心搜索按钮。搜索下方是两行五列的圆形/拟物快捷功能入口，图标色彩鲜明、文字深灰。之后为三列等宽促销卡片，浅粉底，分别展示食品、游戏配件、迷你设备等虚构插画商品。促销区下方是一条通栏鲜红优惠横幅，左边喇叭图标和白字文案，右侧白色优惠券按钮。主体商品流为双列瀑布卡片，左列略宽且首卡较高，右列商品卡从同一高度开始；卡片使用圆角图片区、品牌色小标题、深色标题、橙色价格和灰色销量。底部固定白色五项导航，首项为醒目的橙色圆形徽标，其余为线性图标；消息项带橙色99+角标。主要交互入口为分类标签、搜索框/搜索按钮、商品卡、优惠券领取按钮、加购按钮和底部导航。",
+  "replaced_source_assets": {
+    "brand": "LumaMart",
+    "logo": "橙色圆形字母L徽标",
+    "search_term": "portable console",
+    "categories": [
+      "For You",
+      "Explore",
+      "Flash Picks",
+      "Home Lab",
+      "Style",
+      "Travel",
+      "Member Deals"
+    ],
+    "shortcut_labels": [
+      "Daily Gift",
+      "Try Center",
+      "Point Vault",
+      "Maker Hub",
+      "Parcel Desk",
+      "Pocket Garden",
+      "Leisure Bay",
+      "Global Picks",
+      "Quick Finds",
+      "Event Board"
+    ],
+    "promo_cards": [
+      {
+        "title": "Live Corner",
+        "product": "Crispy herb wrap",
+        "price": "$6"
+      },
+      {
+        "title": "Smart Saver",
+        "product": "Nova controller",
+        "price": "$31"
+      },
+      {
+        "title": "Quick Drop",
+        "product": "Pocket rover",
+        "price": "$18"
+      }
+    ],
+    "campaign": "Summer Snack Week · save up to 18%",
+    "coupon": "$2 Claim",
+    "products": [
+      {
+        "name": "Orbit Desk Bot Set",
+        "price": "$46",
+        "sales": "2.0k saved"
+      },
+      {
+        "name": "Arc Sound Mirror",
+        "price": "$64",
+        "sales": "890 saved"
+      }
+    ]
+  },
+  "visible_state": {
+    "active_top_tab": "Explore",
+    "search_query": "portable console",
+    "cart_count": 0,
+    "message_badge": "99+",
+    "coupon_claimed": false,
+    "bottom_nav_active": "Home",
+    "modal_or_drawer": "none",
+    "recommendation_feed": "default discovery products"
+  },
+  "components": [
+    {
+      "id": "app-shell",
+      "type": "mobile-shell",
+      "geometry": "full 390×844 viewport, warm-white page background, content extends beneath fixed bottom navigation"
+    },
+    {
+      "id": "top-tabs",
+      "type": "horizontal-tab-bar",
+      "items": [
+        "For You",
+        "Explore",
+        "Flash Picks",
+        "Home Lab",
+        "Style",
+        "Travel",
+        "Member Deals"
+      ],
+      "active": "Explore"
+    },
+    {
+      "id": "search-input",
+      "type": "search-bar",
+      "geometry": "44px high rounded orange outline; scanner left, editable central query, camera icon, orange search trigger right"
+    },
+    {
+      "id": "shortcut-grid",
+      "type": "icon-grid",
+      "geometry": "2 rows × 5 columns with colorful 38–44px icons and centered labels"
+    },
+    {
+      "id": "promo-row",
+      "type": "three-column-promo-cards",
+      "geometry": "three equal pale-pink cards with heading, product illustration, red/orange price pill"
+    },
+    {
+      "id": "campaign-banner",
+      "type": "coupon-banner",
+      "geometry": "full-width red rounded rectangle; announcement copy left and white coupon CTA right"
+    },
+    {
+      "id": "recommendation-list",
+      "type": "two-column-masonry-feed",
+      "geometry": "white rounded product cards; imagery occupies upper 70%, title and metadata below"
+    },
+    {
+      "id": "add-to-cart",
+      "type": "product-card-primary-button",
+      "geometry": "small orange rounded button in each product card footer; updates cart state"
+    },
+    {
+      "id": "cart-count",
+      "type": "bottom-nav-cart-badge",
+      "geometry": "orange numeric badge anchored to the cart navigation icon"
+    },
+    {
+      "id": "bottom-navigation",
+      "type": "fixed-five-item-nav",
+      "items": [
+        "Home",
+        "Clips",
+        "Inbox",
+        "Cart",
+        "Profile"
+      ],
+      "active": "Home"
+    },
+    {
+      "id": "qa-result",
+      "type": "visually-hidden-or-inline-status",
+      "content": "interaction feedback shown after search, coupon claim, or add-to-cart"
+    }
+  ],
+  "inferred_interactions": [
+    {
+      "trigger": "tap a top category tab",
+      "effect": "sets the orange underline and refreshes the two-column recommendations with that fictional category's products"
+    },
+    {
+      "trigger": "edit search-input then tap search",
+      "effect": "filters recommendation-list to matching fictional products and displays qa-result with the result count"
+    },
+    {
+      "trigger": "tap an add-to-cart button",
+      "effect": "increments cart-count, changes the selected card action to Added, and updates qa-result"
+    },
+    {
+      "trigger": "tap the coupon CTA",
+      "effect": "sets coupon_claimed true and changes the CTA to Claimed"
+    },
+    {
+      "trigger": "tap bottom navigation",
+      "effect": "updates the active navigation highlight; Home restores the discovery feed"
+    }
+  ],
+  "design_tokens": {
+    "viewport": "390px × 844px",
+    "background": "#FFF9F5",
+    "surface": "#FFFFFF",
+    "text_primary": "#24222A",
+    "text_secondary": "#777781",
+    "brand_orange": "#FF6500",
+    "brand_red": "#FF2218",
+    "accent_pink": "#FFF3F4",
+    "accent_green": "#23C97A",
+    "line": "#F0ECE9",
+    "radius_card": "12px",
+    "radius_search": "18px",
+    "radius_pill": "999px",
+    "shadow": "0 2px 9px rgba(35,24,18,0.08)",
+    "spacing_unit": "8px",
+    "font": "system sans-serif, medium-to-bold Chinese-capable fallback",
+    "nav_height": "76px"
+  },
+  "generator": "codex-cli"
+}

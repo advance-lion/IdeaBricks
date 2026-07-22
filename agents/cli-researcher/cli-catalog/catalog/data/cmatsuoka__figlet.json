@@ -1,0 +1,35 @@
+{
+  "id": "cmatsuoka/figlet",
+  "name": "FIGlet",
+  "aliases": [],
+  "description": "Not exactly a font manager, but a nice program for making large letters out of ordinary text; an astonishing number of different fonts is available.",
+  "repo_url": "https://github.com/cmatsuoka/figlet",
+  "homepage": "http://www.figlet.org/",
+  "install": {},
+  "category": "Utilities",
+  "tags": [
+    "font",
+    "font-management"
+  ],
+  "github_stars": 1637,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "font"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

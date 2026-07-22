@@ -1,0 +1,35 @@
+{
+  "id": "dmcg310/Rust-Traverse",
+  "name": "Rust-Traverse",
+  "aliases": [],
+  "description": "Rust traverse is a terminal based file explorer. It is inspired by the NNN file manager. It uses Ratatui for the terminal UI, with Crossterm for the terminal backend.",
+  "repo_url": "https://github.com/dmcg310/Rust-Traverse",
+  "homepage": "",
+  "install": {},
+  "category": "Files & Search",
+  "tags": [
+    "file-explorer",
+    "file-explorer-and-tree-visualization"
+  ],
+  "github_stars": 84,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "file-explorer"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

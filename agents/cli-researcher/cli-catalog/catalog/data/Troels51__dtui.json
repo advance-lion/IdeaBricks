@@ -1,0 +1,35 @@
+{
+  "id": "Troels51/dtui",
+  "name": "dtui",
+  "aliases": [],
+  "description": "Small TUI for introspecting the state of the system/session dbus.",
+  "repo_url": "https://github.com/Troels51/dtui",
+  "homepage": "",
+  "install": {},
+  "category": "DevOps & Cloud",
+  "tags": [
+    "system",
+    "system-tools"
+  ],
+  "github_stars": 315,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "system"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

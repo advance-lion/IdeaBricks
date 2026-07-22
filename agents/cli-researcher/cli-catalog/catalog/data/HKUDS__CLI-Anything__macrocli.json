@@ -1,0 +1,42 @@
+{
+  "id": "HKUDS/CLI-Anything/macrocli",
+  "name": "MacroCLI",
+  "aliases": [],
+  "description": "Layered macro runtime that converts GUI workflows into parameterized, agent-callable macros — record once, run anywhere via CLI with backend routing across native APIs, file transforms, accessibility controls, and visual template matching",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://github.com/HKUDS/CLI-Anything/tree/main/macrocli",
+  "install": {
+    "pip": "pip install git+https://github.com/HKUDS/CLI-Anything.git#subdirectory=macrocli/agent-harness"
+  },
+  "category": "AI & Agents",
+  "tags": [
+    "automation",
+    "cli-anything",
+    "registry"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/HKUDS/CLI-Anything/blob/main/macrocli/agent-harness/cli_anything/macrocli/skills/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "automation"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

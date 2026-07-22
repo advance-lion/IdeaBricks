@@ -1,0 +1,35 @@
+{
+  "id": "Textualize/toolong",
+  "name": "toolong",
+  "aliases": [],
+  "description": "A terminal application to view, tail, merge, and search log files (plus JSONL).",
+  "repo_url": "https://github.com/Textualize/toolong",
+  "homepage": "",
+  "install": {},
+  "category": "Text & Docs",
+  "tags": [
+    "json",
+    "text-processing"
+  ],
+  "github_stars": 3931,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "text-processing"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

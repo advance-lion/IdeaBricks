@@ -1,0 +1,35 @@
+{
+  "id": "theimpossibleastronaut/rmw",
+  "name": "rmw",
+  "aliases": [],
+  "description": "(ReMove to Waste) is a trashcan/recycle bin utility for the command line. It can move and restore files to and from directories specified in a configuration file.",
+  "repo_url": "https://github.com/theimpossibleastronaut/rmw",
+  "homepage": "https://remove-to-waste.info/",
+  "install": {},
+  "category": "Files & Search",
+  "tags": [
+    "file-deletion-and-trash-bin-(alternatives-to-rm)",
+    "rm"
+  ],
+  "github_stars": 101,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "rm"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

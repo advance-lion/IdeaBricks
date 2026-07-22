@@ -1,0 +1,886 @@
+from __future__ import annotations
+
+import cgi
+import html
+import json
+import mimetypes
+import os
+import re
+import shutil
+import subprocess
+import sys
+import urllib.error
+import urllib.request
+import uuid
+from datetime import datetime
+from http import HTTPStatus
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from pathlib import Path
+from typing import Any
+from urllib.parse import parse_qs, unquote, urlparse
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PYTHON = Path(sys.executable)
+MAX_UPLOAD_BYTES = 16 * 1024 * 1024
+ALLOWED_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
+DEFAULT_GROUP = "g_c3e3880e9f6c"
+
+
+def cccc_group_id() -> str:
+    configured = os.environ.get("MVP_WORKER_CCCC_GROUP", "").strip()
+    if configured:
+        return configured
+    config_path = ROOT / "config" / "cccc-team.local.json"
+    config = read_json(config_path) if "read_json" in globals() else None
+    return str((config or {}).get("group_id") or DEFAULT_GROUP)
+
+
+PAGE = r"""<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Worker 投递台 · 截图生成 MVP</title>
+  <style>
+    :root{--ink:#182721;--paper:#f6f2eb;--cream:#fffdfa;--lime:#c9f64a;--orange:#ff633a;--line:#d7d0c7;--muted:#69736e;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--sans:"Microsoft YaHei","PingFang SC",sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans)}button,input{font:inherit}button{cursor:pointer}.grain{position:fixed;inset:0;z-index:-1;opacity:.12;background-image:radial-gradient(#182721 0.65px,transparent .7px);background-size:7px 7px;pointer-events:none}.wrap{max-width:1120px;margin:auto;padding:28px 28px 60px}.top{display:flex;align-items:center;justify-content:space-between;padding-bottom:25px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;letter-spacing:-.6px}.brand i{display:grid;place-items:center;width:30px;height:30px;color:var(--ink);background:var(--lime);font-style:normal;font:700 15px var(--mono);transform:rotate(-8deg);box-shadow:3px 3px 0 var(--ink)}.state{display:flex;align-items:center;gap:7px;color:var(--muted);font:11px/1.5 var(--mono);max-width:480px}.state b{width:8px;height:8px;border-radius:50%;background:#a0a7a4;flex:none}.state.ready b{background:#78af21;box-shadow:0 0 0 4px #dbe9c8}.state.fallback{color:#9a351a}.state.fallback b{background:#ff633a;box-shadow:0 0 0 4px #ffe0d3}.state.offline{color:#9a351a}.state.offline b{background:#9a351a;box-shadow:0 0 0 4px #f5d4ca}.access{display:flex;gap:7px;margin-left:auto;margin-right:18px}.access a,.show-link{border-bottom:1px solid var(--orange);color:var(--ink);text-decoration:none;font:11px var(--mono);padding-bottom:3px}.access a[href="/show"],.access a[href*="screenshot-to-app-recording-001"]{display:none}.eyebrow{margin:52px 0 11px;color:#547242;font:11px var(--mono);letter-spacing:.7px}.intro{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;align-items:end}.intro h1{max-width:700px;margin:0;font-size:clamp(38px,6vw,67px);line-height:1.03;letter-spacing:-3px}.intro h1 em{font-style:normal;color:var(--orange)}.intro p{margin:0;color:var(--muted);font-size:14px;line-height:1.8}.desk{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;margin-top:42px}.card{background:var(--cream);border:1px solid var(--line);box-shadow:7px 7px 0 #dcd5cd}.intake{padding:22px}.card-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.card-title h2{margin:0;font-size:16px}.card-title span{color:var(--muted);font:10px var(--mono)}.drop{position:relative;display:grid;place-items:center;min-height:255px;border:2px dashed #a9b2a9;background:#eff3ea;transition:.2s;overflow:hidden}.drop.drag{border-color:var(--orange);background:#fff0e8}.drop.has-file{border-style:solid;border-color:var(--ink);background:#111f19}.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}.drop-main{text-align:center;pointer-events:none}.drop-mark{position:relative;width:68px;height:68px;margin:0 auto 15px;border:1px solid var(--ink);background:var(--lime);box-shadow:5px 5px 0 var(--ink)}.drop-mark:before,.drop-mark:after{content:"";position:absolute;background:var(--ink)}.drop-mark:before{width:28px;height:2px;left:19px;top:33px}.drop-mark:after{width:2px;height:28px;top:20px;left:32px}.drop h3{margin:0;font-size:18px}.drop p{margin:8px 0 0;color:var(--muted);font-size:12px}.file-preview{display:none;align-items:center;gap:15px;width:100%;height:100%;padding:18px;color:#f8f7f0}.has-file .drop-main{display:none}.has-file .file-preview{display:flex}.file-preview img{width:118px;height:190px;object-fit:cover;border:2px solid var(--lime)}.file-preview b{display:block;font-size:15px;word-break:break-all}.file-preview small{display:block;margin-top:7px;color:#b7c3b9;font:10px var(--mono)}.form-row{display:grid;grid-template-columns:1fr 150px;gap:12px;margin-top:18px}.field label{display:block;margin-bottom:7px;font-size:12px;font-weight:800}.field input{width:100%;border:1px solid var(--line);border-radius:0;padding:11px;background:#fff;color:var(--ink);outline-color:var(--orange)}.dispatch{display:flex;align-items:center;gap:9px;margin:19px 0;color:#45534b;font-size:12px}.dispatch input{accent-color:var(--orange);width:15px;height:15px}.submit{width:100%;display:flex;align-items:center;justify-content:space-between;border:0;background:var(--ink);color:#fff;padding:14px 16px;font-size:13px;font-weight:800}.submit span{color:var(--lime);font:18px var(--mono)}.submit:disabled{opacity:.55;cursor:wait}.rail{padding:21px 20px}.flow{margin:17px 0 24px;padding:0;list-style:none}.flow li{display:grid;grid-template-columns:26px 1fr;gap:10px;position:relative;padding-bottom:17px;font-size:12px}.flow li:not(:last-child):before{content:"";position:absolute;left:10px;top:24px;height:22px;border-left:1px dashed #aeb7b0}.flow b{display:grid;place-items:center;width:21px;height:21px;border-radius:50%;background:#e5e8e2;font:10px var(--mono)}.flow strong{display:block;margin-bottom:3px}.flow small{color:var(--muted);line-height:1.45}.note{border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:11px;line-height:1.65}.note b{color:var(--ink)}.model-health{margin-top:8px;padding:8px 10px;border-left:3px solid #a0a7a4;background:#eff1ed;color:#56615b;font:10px/1.55 var(--mono)}.model-health.online{border-color:#78af21;background:#eff8dc;color:#365900}.model-health.fallback{border-color:var(--orange);background:#fff0e8;color:#9a351a}.model-health.offline{border-color:#9a351a;background:#fce5dd;color:#782714}.evidence{margin-top:18px;padding:21px}.evidence-head{display:flex;align-items:center;justify-content:space-between}.evidence h2{margin:0;font-size:16px}.evidence button{border:1px solid var(--line);background:#fff;padding:6px 8px;color:var(--ink);font-size:11px}.empty{padding:30px 0 9px;color:var(--muted);font-size:13px;text-align:center}.run{display:grid;grid-template-columns:1.45fr .7fr .7fr 1fr auto;gap:10px;align-items:center;border-top:1px solid var(--line);padding:13px 0;font-size:12px}.run b{font:700 11px var(--mono)}.run small{color:var(--muted);font:10px var(--mono)}.pill{width:max-content;padding:4px 6px;background:#eceeea;color:#56615b;font:10px var(--mono)}.pill.pass{background:#e5f7b8;color:#365900}.pill.working{background:#ffe6d2;color:#a53d14}.pill.fallback{background:#fbe0d3;color:#9a351a}.links{display:flex;gap:5px;flex-wrap:wrap}.links a{padding:5px 7px;background:var(--ink);color:#fff;text-decoration:none;font:10px var(--mono)}.links a.live{background:#39704f}.toast{position:fixed;right:22px;bottom:22px;max-width:360px;padding:12px 14px;background:var(--ink);color:#fff;box-shadow:5px 5px 0 var(--orange);font-size:12px;transform:translateY(130%);transition:.25s}.toast.show{transform:translateY(0)}.statusline{display:none;margin-top:15px;padding:9px 10px;background:#e9f7c8;color:#365900;font:11px var(--mono)}.statusline.error{background:#ffe5dc;color:#9a351a}@media(max-width:760px){.wrap{padding:20px 16px}.intro,.desk{grid-template-columns:1fr}.intro{gap:18px}.intro h1{letter-spacing:-2px}.eyebrow{margin-top:35px}.form-row{grid-template-columns:1fr}.run{grid-template-columns:1fr 1fr}.links{grid-column:1/-1}.top{align-items:flex-start}.state{margin-top:6px}.access{margin-left:0;margin-right:0;flex-wrap:wrap}}
+  </style>
+</head>
+<body><div class="grain"></div><main class="wrap">
+  <header class="top"><div class="brand"><i>⇣</i>截图生成 MVP · Worker 投递台</div><nav class="access"><a href="/apps/screenshot-to-app-recording-001-malllite/index.html" target="_blank">运行网页 ↗</a><a href="http://127.0.0.1:8848/ui/" target="_blank">CCCC GUI ↗</a><a href="/repo" target="_blank">仓库状态 ↗</a><a href="/show">运行舞台 →</a></nav><div class="state" id="actor-state"><b></b><span>正在检查 CCCC Worker</span></div></header>
+  <p class="eyebrow">UPLOAD → CONTRACT → WORKER → BROWSER QA</p>
+  <section class="intro"><h1>不用终端路径。<br><em>把截图放在这里。</em></h1><p>这是 Worker 的输入台：选择或直接拖入一张授权截图，系统会创建独立契约并把任务交给 CCCC。输出始终保留在本地 run 目录中。</p></section>
+  <section class="desk"><form class="card intake" id="intake-form"><div class="card-title"><h2>投递参考截图</h2><span>JPG · PNG · WEBP / 最大 16 MB</span></div><label class="drop" id="drop-zone"><input id="screenshot" name="screenshot" type="file" accept="image/jpeg,image/png,image/webp" required><div class="drop-main"><div class="drop-mark"></div><h3>拖放截图，或点击选择</h3><p>图片只用于理解布局与交互意图</p></div><div class="file-preview"><img id="preview" alt="待投递截图预览"><div><b id="file-name"></b><small id="file-meta"></small><small>已就绪，可创建 Worker 契约</small></div></div></label><div class="model-health" id="model-health" role="status">正在检查本地模型与远程兜底…</div><div class="form-row"><div class="field"><label for="app-name">虚构应用名称</label><input id="app-name" name="app_name" maxlength="32" value="SparkMVP" required></div><div class="field"><label for="kind">页面类型</label><input id="kind" name="kind" maxlength="32" value="mobile app" required></div></div><label class="dispatch"><input id="dispatch" name="dispatch" type="checkbox" checked>创建契约后立即发送到 CCCC 的 <b>mvp-worker</b></label><button class="submit" id="submit" type="submit">创建本次试跑 <span>→</span></button><div class="statusline" id="statusline"></div></form>
+  <aside class="card rail"><div class="card-title"><h2>这次试跑会发生什么</h2><span>本地执行</span></div><ol class="flow"><li><b>1</b><div><strong>保存截图</strong><small>复制到独立 run；不覆盖任何已完成样例。</small></div></li><li><b>2</b><div><strong>生成 MVP 契约</strong><small>包含应用名、验收规则和交付清单。</small></div></li><li><b>3</b><div><strong>派发给 CCCC Worker</strong><small>Worker 在终端输出中文阶段日志。</small></div></li><li><b>4</b><div><strong>浏览器自动验收</strong><small>交付源码、PNG 预览、JSON 报告与回执。</small></div></li></ol><p class="note"><b>安全边界：</b>参考图只用于布局与交互理解。Worker 必须产生虚构品牌与自制素材，不能复用 Logo、商品图或品牌文案。</p></aside></section>
+  <section class="card evidence"><div class="evidence-head"><h2>最近试跑与可视化证据</h2><button type="button" id="refresh">刷新</button></div><div id="runs"><p class="empty">正在读取本地 run…</p></div></section>
+</main><div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);const zone=$('#drop-zone'),input=$('#screenshot'),preview=$('#preview'),toast=$('#toast');
+function say(message,error=false){const el=$('#statusline');el.textContent=message;el.className='statusline'+(error?' error':'');el.style.display='block';toast.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3600)}
+function renderFile(file){if(!file)return;$('#file-name').textContent=file.name;$('#file-meta').textContent=`${Math.ceil(file.size/1024)} KB · ${file.type||'image'}`;preview.src=URL.createObjectURL(file);zone.classList.add('has-file')}
+input.addEventListener('change',()=>renderFile(input.files[0]));['dragenter','dragover'].forEach(type=>zone.addEventListener(type,e=>{e.preventDefault();zone.classList.add('drag')}));['dragleave','drop'].forEach(type=>zone.addEventListener(type,e=>{e.preventDefault();zone.classList.remove('drag')}));zone.addEventListener('drop',e=>{const file=e.dataTransfer.files[0];if(!file)return;const dt=new DataTransfer();dt.items.add(file);input.files=dt.files;renderFile(file)});
+async function refresh(){try{const data=await fetch('/api/runs').then(r=>r.json());const actor=$('#actor-state'),engine=data.backend||{label:'未识别',detail:'请检查 Worker 配置'},team=data.team||{},local=engine.local||{},health=$('#model-health');const ready=Boolean(engine.can_dispatch),localActive=engine.id==='local-openai';const healthText=localActive?`本地模型已连接：${local.model||'local-agent'}。截图理解与前端生成将由 Local LLM/VLM 执行。`:engine.fallback?`本地模型不可连接；当前自动切换到 ${engine.label}，任务不会空转。`:`当前执行引擎：${engine.label||'Codex CLI'}。`;health.textContent=healthText;health.className='model-health '+(localActive?'online':engine.fallback?'fallback':ready?'online':'offline');actor.className='state '+(ready&&data.actor.running?'ready':'offline');actor.innerHTML=`<b></b><span>${data.actor.running?'CCCC Worker 已运行':'CCCC Worker 当前停止；投递时会自动启动'} · 已绑定 Team：${team.title||'未识别'} · ${healthText}</span>`;const host=$('#runs');if(!data.runs.length){host.innerHTML='<p class="empty">还没有新的试跑。投递一张截图后，契约会同步给 Team 的 Foreman 与 Worker。</p>';return}host.innerHTML=data.runs.map(run=>{const execution=run.execution||{},runEngine=execution.label||engine.label||'未记录执行引擎';return `<article class="run"><div><b>${run.run_id}</b><small>${run.created_at||'已创建，等待 Worker'}</small></div><span class="pill ${run.status==='PASS'?'pass':run.status==='处理中'?'working':''}">${run.status}</span><span class="pill ${run.dispatched?'working':''}">${run.dispatched?'已派发':'仅已准备'}</span><span class="pill">${runEngine}</span><div class="links">${run.ui_spec?`<a target="_blank" href="${run.ui_spec}">视觉规格</a>`:''}${run.app_url?`<a class="live" target="_blank" href="${run.app_url}">运行网页</a>`:''}${run.pipeline_log?`<a target="_blank" href="${run.pipeline_log}">流水线日志</a>`:''}${run.preview?`<a target="_blank" href="${run.preview}">预览图</a>`:''}${run.report?`<a target="_blank" href="${run.report}">验收</a>`:''}${run.delivery?`<a target="_blank" href="${run.delivery}">回执</a>`:''}<a target="_blank" href="/stage?run=${run.run_id}">舞台</a><a target="_blank" href="http://127.0.0.1:8848/ui/">CCCC</a><a target="_blank" href="/repo">仓库</a></div></article>`}).join('')}catch(e){$('#runs').innerHTML='<p class="empty">无法读取本地状态，请确认投递台仍在运行。</p>'}}
+$('#refresh').addEventListener('click',refresh);setInterval(refresh,5000);refresh();
+$('#intake-form').addEventListener('submit',async e=>{e.preventDefault();if(!input.files[0])return say('请先选择一张截图。',true);const btn=$('#submit');btn.disabled=true;btn.innerHTML='正在创建… <span>⋯</span>';try{const fd=new FormData(e.currentTarget);fd.set('dispatch',$('#dispatch').checked?'true':'false');const result=await fetch('/api/intake',{method:'POST',body:fd}).then(async r=>{const json=await r.json();if(!r.ok)throw new Error(json.error||'创建失败');return json});say(result.message);await refresh()}catch(err){say(err.message,true)}finally{btn.disabled=false;btn.innerHTML='创建本次试跑 <span>→</span>'}});
+</script></body></html>"""
+
+
+def json_response(handler: SimpleHTTPRequestHandler, status: int, payload: dict[str, Any]) -> None:
+    body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    handler.send_response(status)
+    handler.send_header("Content-Type", "application/json; charset=utf-8")
+    handler.send_header("Content-Length", str(len(body)))
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
+def send_static_file(handler: SimpleHTTPRequestHandler, path: Path) -> None:
+    """Send one explicitly approved static file without exposing the workspace."""
+    if not path.is_file():
+        handler.send_error(HTTPStatus.NOT_FOUND)
+        return
+    content_type, _ = mimetypes.guess_type(str(path))
+    body = path.read_bytes()
+    handler.send_response(HTTPStatus.OK)
+    handler.send_header("Content-Type", content_type or "application/octet-stream")
+    handler.send_header("Content-Length", str(len(body)))
+    handler.send_header("Cache-Control", "no-store")
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
+def safe_name(value: str, fallback: str) -> str:
+    cleaned = re.sub(r"[^\w\-\u4e00-\u9fff ]", "", value, flags=re.UNICODE).strip()
+    return cleaned[:32] or fallback
+
+
+def cccc_command() -> str | None:
+    return shutil.which("cccc") or shutil.which("cccc.exe")
+
+
+def team_binding_info() -> dict[str, Any]:
+    """Public, credential-free description of the Team wired to this desk."""
+    stage = cccc_stage_events()
+    return {
+        "group_id": stage["group_id"],
+        "title": stage["title"],
+        "actors": stage["actors"],
+        "intake_url": "http://127.0.0.1:4181/",
+        "stage_url": "http://127.0.0.1:4181/stage",
+        "cccc_gui": "http://127.0.0.1:8848/ui/",
+    }
+
+
+def notify_team_intake(run_id: str, contract: Path, screenshot: Path, app_name: str) -> str | None:
+    """Announce a real intake to the Team without creating a stale CCCC task."""
+    command = cccc_command()
+    if not command:
+        return "CCCC 命令不可用，未同步 Team 输入通知"
+    message = (
+        f"[投递台输入] run={run_id}｜应用={app_name}｜状态=契约已创建｜"
+        f"契约={contract.resolve()}｜截图={screenshot.resolve()}｜"
+        "执行=Worker Pipeline 已启动，具体引擎以 run-execution.json 为准。"
+        "Foreman 可读取该契约作为本次 Worker 交付的输入依据；无需重复创建 run。"
+    )
+    env = os.environ.copy()
+    env.update({"CCCC_EXE": command, "CCCC_TEXT": message, "CCCC_GROUP": cccc_group_id()})
+    result = subprocess.run([
+        "powershell", "-NoProfile", "-Command",
+        "& $env:CCCC_EXE send $env:CCCC_TEXT --group $env:CCCC_GROUP --by user --to idea-foreman,mvp-worker",
+    ], cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
+    if result.returncode:
+        return "未同步 Team 输入通知：" + (result.stderr or result.stdout).strip()[-300:]
+    return None
+
+
+def git_output(*args: str) -> str:
+    try:
+        result = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=10)
+        return result.stdout.strip() if result.returncode == 0 else ""
+    except (OSError, subprocess.SubprocessError):
+        return ""
+
+
+def repository_info() -> dict[str, str | None]:
+    remote = git_output("remote", "get-url", "origin")
+    return {
+        "commit": git_output("rev-parse", "--short", "HEAD") or None,
+        "subject": git_output("log", "-1", "--pretty=%s") or None,
+        "remote": remote or None,
+        "github_url": remote if remote.startswith(("https://github.com/", "http://github.com/")) else None,
+    }
+
+
+def repository_page() -> bytes:
+    info = repository_info()
+    commit = html.escape(info["commit"] or "无提交")
+    subject = html.escape(info["subject"] or "本地仓库尚未初始化")
+    remote = info["remote"]
+    remote_view = f'<a href="{html.escape(remote, quote=True)}" target="_blank">{html.escape(remote)}</a>' if remote and remote.startswith("http") else "未配置远程 GitHub 仓库"
+    body = f"""<!doctype html><html lang=\"zh-CN\"><meta charset=\"utf-8\"><title>Worker 仓库状态</title>
+    <style>body{{margin:0;background:#f6f2eb;color:#182721;font-family:\"Microsoft YaHei\",sans-serif}}main{{max-width:760px;margin:70px auto;padding:28px;background:#fffdfa;border:1px solid #d7d0c7;box-shadow:8px 8px #dcd5cd}}small{{font-family:Consolas,monospace;color:#69736e}}h1{{margin:8px 0 30px}}dl{{display:grid;grid-template-columns:140px 1fr;gap:14px;border-top:1px solid #d7d0c7;padding-top:20px}}dt{{font-size:12px;color:#69736e}}dd{{margin:0;word-break:break-all}}a{{color:#182721;text-decoration-color:#ff633a}}.note{{margin-top:28px;padding:14px;background:#eff3ea;font-size:13px;line-height:1.7}}</style>
+    <main><small>LOCAL GIT REPOSITORY / DELIVERY EVIDENCE</small><h1>Worker 仓库状态</h1><dl><dt>最新提交</dt><dd><code>{commit}</code> · {subject}</dd><dt>远程仓库</dt><dd>{remote_view}</dd><dt>GitHub 交付</dt><dd>{'已连接，可在 Worker 契约允许时推送。' if info['github_url'] else '未配置。为了不创建意外的公开仓库，当前 Worker 只创建本地 Git 提交。'}</dd></dl><p class=\"note\">录制可展示这个页面作为“源码已提交”的证据。若要真正显示 GitHub 链接，请先配置团队的 GitHub remote；Worker 不会自行创建或公开推送仓库。</p></main></html>"""
+    return body.encode("utf-8")
+
+
+def read_json(path: Path) -> dict[str, Any] | None:
+    try:
+        return json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def incubation_actor_states() -> list[dict[str, Any]]:
+    """Small, public runtime view for the platform's Idea Mining section."""
+    command = cccc_command()
+    if not command:
+        return []
+    try:
+        result = subprocess.run([command, "actor", "list", "--group", cccc_group_id()], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=10)
+        payload = json.loads(result.stdout)
+        return [{
+            "id": item.get("id"), "title": item.get("title"), "role": item.get("role"),
+            "running": bool(item.get("running")), "state": item.get("effective_working_state", "unknown"),
+        } for item in payload.get("result", {}).get("actors", [])]
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError):
+        return []
+
+
+def incubation_run_data(run_dir: Path) -> dict[str, Any]:
+    request = read_json(run_dir / "request.json") or {}
+    cli_form = read_json(run_dir / "cli-capability-form.json") or {}
+    shortlist = read_json(run_dir / "idea-shortlist.json") or {}
+    contract = read_json(run_dir / "mvp-contract.json") or {}
+    worker_handoff = read_json(run_dir / "worker-handoff.json") or {}
+    worker_run_id = str(worker_handoff.get("worker_run_id") or "")
+    worker_delivery = (read_json(ROOT / "runs" / worker_run_id / "worker-delivery.json") or {}) if worker_run_id else {}
+    if worker_delivery.get("status") == "PASS":
+        status = "MVP_DELIVERED"
+    elif worker_handoff:
+        status = "WORKER_DISPATCHED"
+    elif contract:
+        status = "MVP_CONTRACT_READY"
+    elif shortlist:
+        status = "IDEAS_RANKED"
+    elif cli_form:
+        status = "WAITING_FOR_IDEA_AGENT"
+    else:
+        status = "FOREMAN_QUEUED"
+    return {
+        "run_id": run_dir.name,
+        "status": status,
+        "brief": request.get("raw_request") or request.get("brief") or "",
+        "normalized_request": request.get("normalized_request", {}),
+        "cli_form": cli_form,
+        "shortlist": shortlist,
+        "mvp_contract": contract,
+        "worker_handoff": worker_handoff,
+        "worker_delivery": worker_delivery,
+        "created_at": datetime.fromtimestamp(run_dir.stat().st_mtime).astimezone().isoformat(timespec="seconds"),
+        "links": {
+            "request": f"/handoffs/{run_dir.name}/request.json",
+            "cli_form": f"/handoffs/{run_dir.name}/cli-capability-form.json" if cli_form else None,
+            "shortlist": f"/handoffs/{run_dir.name}/idea-shortlist.json" if shortlist else None,
+            "mvp_contract": f"/handoffs/{run_dir.name}/mvp-contract.json" if contract else None,
+            "worker_handoff": f"/handoffs/{run_dir.name}/worker-handoff.json" if worker_handoff else None,
+            "worker_stage": f"/stage?run={worker_run_id}" if worker_run_id else None,
+            "orchestration_log": f"/handoffs/{run_dir.name}/orchestration.log" if (run_dir / "orchestration.log").is_file() else None,
+        },
+    }
+
+
+def incubation_data() -> dict[str, Any]:
+    root = ROOT / "handoffs"
+    runs = [path for path in root.glob("incubation-*") if path.is_dir()] if root.is_dir() else []
+    runs.sort(key=lambda path: path.name, reverse=True)
+    latest = incubation_run_data(runs[0]) if runs else None
+    return {"team": {"title": team_binding_info()["title"], "actors": incubation_actor_states()}, "latest": latest}
+
+
+def start_incubation_test(brief: str) -> dict[str, Any]:
+    """Create a Foreman run from the already maintained CLI catalog snapshot."""
+    cleaned = " ".join(brief.split())[:600]
+    if not cleaned:
+        raise ValueError("请先写下要孵化的需求。")
+    created = datetime.now().astimezone()
+    run_id = f"incubation-{created.strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:4]}"
+    handoff = ROOT / "handoffs" / run_id
+    request = {
+        "run_id": run_id,
+        "raw_request": cleaned,
+        "normalized_request": {
+            "domain": "screenshot-to-app",
+            "target_users": ["需要快速验证产品界面的团队"],
+            "constraints": {"local_first": True, "target_platform": "web/mobile frontend", "requirements": ["视觉表达", "通用", "痛点", "创新"]},
+        },
+        "test_mode": True,
+    }
+    write_json(handoff / "request.json", request)
+    # Materialize a run-scoped reference synchronously so the first UI paint
+    # already shows the persistent capability library. This is a local read;
+    # it does not start CLI Researcher or refresh the catalog.
+    snapshot = subprocess.run(
+        [str(PYTHON), "scripts/build_cli_handoff.py", "--run-id", run_id], cwd=ROOT,
+        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20,
+    )
+    if snapshot.returncode:
+        raise ValueError("持久化 CLI 能力快照不可用；请先执行 CLI Agent 维护任务：" + (snapshot.stderr or snapshot.stdout).strip()[-400:])
+    command = cccc_command()
+    if not command:
+        raise ValueError("CCCC 命令不可用，已保存测试输入但未派发。")
+    task = (
+        f"[平台孵化] run={run_id}。读取 {handoff / 'request.json'} 与已保存能力快照引用 {handoff / 'cli-capability-form.json'}。"
+        "你是全局 Foreman：本轮不要唤起 cli-researcher；CLI Agent 只在后台维护长期能力库。"
+        "现在直接向 idea-agent 派发创意挖掘任务，等待其写入 "
+        f"{handoff / 'idea-shortlist.json'} 与 {handoff / 'mvp-contract.json'}，然后核对并向用户汇报。"
+        "你不代替 Idea Agent 生成创意，也不在授权截图就绪前启动 mvp-worker。"
+    )
+    result = subprocess.run([
+        command, "send", task, "--group", cccc_group_id(), "--by", "user", "--to", "idea-foreman", "--priority", "attention",
+    ], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
+    if result.returncode:
+        raise ValueError("无法派发给 Foreman：" + (result.stderr or result.stdout).strip()[-500:])
+    process_log = handoff / "orchestration.process.log"
+    with process_log.open("a", encoding="utf-8") as output:
+        subprocess.Popen(
+            [str(PYTHON), "scripts/run_incubation_pipeline.py", "--run-id", run_id],
+            cwd=ROOT,
+            stdout=output,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding="utf-8",
+            creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),
+        )
+    return incubation_run_data(handoff)
+
+
+def worker_events(run_id: str) -> list[dict[str, Any]]:
+    """Read the append-only Worker feed and retain only one trial's events."""
+    events: list[dict[str, Any]] = []
+    for path in (ROOT / "runs").glob("*/worker-progress.jsonl"):
+        try:
+            for line in path.read_text(encoding="utf-8-sig").splitlines():
+                event = json.loads(line)
+                if event.get("run_id") == run_id:
+                    events.append(event)
+        except (OSError, json.JSONDecodeError):
+            continue
+    return sorted(events, key=lambda event: str(event.get("timestamp", "")))[-32:]
+
+
+def compact_worker_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Keep the final successful phase chain for the stage while raw JSONL remains intact."""
+    compact: list[dict[str, Any]] = []
+    for phase in ("visual", "scaffold", "browser", "delivery"):
+        phase_events = [event for event in events if event.get("phase") == phase]
+        passed = next((event for event in reversed(phase_events) if event.get("status") == "PASS"), None)
+        if passed:
+            started = next((event for event in reversed(phase_events) if event.get("status") == "STARTED" and str(event.get("timestamp", "")) <= str(passed.get("timestamp", ""))), None)
+            if started:
+                compact.append(started)
+            compact.append(passed)
+        elif phase_events:
+            compact.append(phase_events[-1])
+    return sorted(compact, key=lambda event: str(event.get("timestamp", "")))
+
+
+def runtime_info() -> dict[str, Any]:
+    """State only what the operator has configured this machine to prove."""
+    configured = os.environ.get("FORGE_RUNTIME_LABEL", "").strip()
+    label = configured or "本机演示环境"
+    platform = "dgx-spark" if configured.lower() == "dgx spark" else "local"
+    return {
+        "label": label,
+        "platform": platform,
+        "verified": platform == "dgx-spark",
+        "hint": "在 DGX Spark 上启动时设置 FORGE_RUNTIME_LABEL=DGX Spark；未设置时绝不冒充平台运行。",
+    }
+
+
+def cccc_stage_events(run_id: str | None = None) -> dict[str, Any]:
+    """Read only the structured Worker status mirrors needed by the stage UI."""
+    preferred_home = Path.home() / ".cccc"
+    roaming_home = Path(os.environ.get("APPDATA", str(Path.home() / "AppData" / "Roaming"))) / "cccc"
+    cccc_home = preferred_home if preferred_home.is_dir() else roaming_home
+    group_root = cccc_home / "groups" / cccc_group_id()
+    ledger_path = group_root / "ledger.jsonl"
+    pattern = re.compile(r"^\[Worker 状态同步\] run=([^｜]+)｜阶段=([^｜]+)｜状态=([^｜]+)｜执行引擎=(.+)$")
+    events: list[dict[str, str]] = []
+    latest_run_id: str | None = None
+    try:
+        for line in ledger_path.read_text(encoding="utf-8-sig").splitlines():
+            event = json.loads(line)
+            if event.get("kind") != "chat.message":
+                continue
+            text = str(event.get("data", {}).get("text", ""))
+            match = pattern.match(text)
+            if not match:
+                continue
+            found_run, phase, status, engine = match.groups()
+            latest_run_id = found_run
+            if run_id and found_run != run_id:
+                continue
+            events.append({
+                "timestamp": str(event.get("ts", "")),
+                "run_id": found_run,
+                "phase": phase,
+                "status": status,
+                "engine": engine,
+                "actor": str(event.get("by", "mvp-worker")),
+            })
+    except (OSError, json.JSONDecodeError):
+        pass
+    events.sort(key=lambda item: item["timestamp"])
+
+    title = "CCCC Team"
+    actors: list[dict[str, str]] = []
+    try:
+        group_yaml = (group_root / "group.yaml").read_text(encoding="utf-8-sig")
+        title_match = re.search(r"^title:\s*(.+)$", group_yaml, flags=re.MULTILINE)
+        if title_match:
+            title = title_match.group(1).strip(" '\"")
+        for match in re.finditer(r"^\s{2}id:\s*([^\n]+)\n\s{2}title:\s*([^\n]+)", group_yaml, flags=re.MULTILINE):
+            actors.append({"id": match.group(1).strip(), "title": match.group(2).strip(" '\"")})
+    except OSError:
+        pass
+    return {"group_id": cccc_group_id(), "title": title, "actors": actors, "events": events[-16:], "latest_run_id": latest_run_id}
+
+
+def cli_command(name: str) -> str | None:
+    configured = os.environ.get(f"{name.upper()}_BIN", "").strip()
+    if configured:
+        return configured
+    return shutil.which(name) or shutil.which(f"{name}.exe")
+
+
+def worker_backend_info(requested_backend: str | None = None) -> dict[str, Any]:
+    """Select DGX local inference first, with Codex/Claude as honest fallbacks."""
+    runtime = read_json(ROOT / "config" / "worker-runtime.local.json") or {}
+    test_mode = read_json(ROOT / "config" / "worker-test-mode.local.json") or {}
+    forced_backend = str(test_mode.get("force_backend") or "").strip().lower()
+    # An explicit per-run selection from the stage is authoritative. The test
+    # mode setting still provides the default for older callers that omit it.
+    requested = str(requested_backend or forced_backend or os.environ.get("MVP_WORKER_BACKEND") or runtime.get("backend") or "codex").strip().lower()
+    configured_order = runtime.get("fallback_order") or ["codex", "claude"]
+    fallback_order = [str(item).strip().lower() for item in configured_order if str(item).strip().lower() in {"codex", "claude"}]
+    if not fallback_order:
+        fallback_order = ["codex", "claude"]
+    config = read_json(ROOT / "config" / "local-model.local.json") or {}
+    model = os.environ.get("LOCAL_MODEL_NAME") or str(config.get("model") or "未配置模型")
+    local = {"available": False, "status": "unconfigured", "model": model, "message": "未配置本地模型"}
+    codex_path = ROOT / ".tools" / "codex-cli" / "node_modules" / ".pnpm" / "@openai+codex@0.144.6" / "node_modules" / "@openai" / "codex" / "bin" / "codex.js"
+    available = {
+        "codex": codex_path.is_file() and bool(shutil.which("node")),
+        "claude": bool(cli_command("claude")),
+    }
+    labels = {"codex": "Codex CLI", "claude": "Claude Code"}
+
+    if requested == "local-openai":
+        base_url = str(os.environ.get("LOCAL_MODEL_BASE_URL") or config.get("base_url") or "").rstrip("/")
+        api_key = str(os.environ.get("LOCAL_MODEL_API_KEY") or config.get("api_key") or "")
+        if base_url and model:
+            request = urllib.request.Request(f"{base_url}/models", headers={"Authorization": f"Bearer {api_key}"} if api_key else {})
+            try:
+                with urllib.request.urlopen(request, timeout=3) as response:
+                    json.loads(response.read().decode("utf-8"))
+                local = {"available": True, "status": "online", "model": model, "message": "本地 VLM/LLM 服务已连接"}
+            except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError):
+                local = {"available": False, "status": "offline", "model": model, "message": "本地 VLM/LLM 服务不可连接"}
+        if local["available"]:
+            return {"id": "local-openai", "requested": requested, "label": "DGX Spark Local LLM / VLM", "detail": f"{model} · 本地视觉理解 + 前端生成", "fallback": False, "fallback_order": fallback_order, "local": local, "can_dispatch": True}
+        fallback = next((backend for backend in fallback_order if available[backend]), None)
+        if fallback:
+            return {"id": fallback, "requested": requested, "label": f"{labels[fallback]} 兜底", "detail": f"Local LLM 不可连接；新任务自动切换 {labels[fallback]}", "fallback": True, "fallback_order": fallback_order, "local": local, "can_dispatch": True}
+        return {"id": "local-openai", "requested": requested, "label": "DGX Spark Local LLM / VLM 不可用", "detail": "Local LLM 不可连接，且 Codex CLI 与 Claude Code 都不可用", "fallback": False, "fallback_order": fallback_order, "local": local, "can_dispatch": False}
+
+    if requested in available:
+        if not available[requested]:
+            fallback = next((backend for backend in fallback_order if available[backend]), None)
+            if fallback:
+                return {"id": fallback, "requested": requested, "label": f"{labels[fallback]} 兜底", "detail": f"{labels[requested]} 不可用；新任务自动切换 {labels[fallback]}", "fallback": True, "fallback_order": fallback_order, "local": {**local, "status": "not-probed", "message": "CLI 模式未探测 Local LLM"}, "can_dispatch": True}
+        mode_detail = "测试阶段默认使用 Codex CLI；未探测 Local LLM" if not requested_backend and forced_backend == "codex" else f"{labels[requested]} 视觉理解 + 前端生成"
+        return {"id": requested, "requested": requested, "label": labels[requested], "detail": mode_detail, "fallback": False, "fallback_order": fallback_order, "local": {**local, "status": "not-probed", "message": "CLI 模式未探测 Local LLM"}, "can_dispatch": available[requested]}
+    return {"id": requested, "requested": requested, "label": "未识别执行引擎", "detail": f"不支持的 Worker 引擎：{requested}", "fallback": False, "fallback_order": fallback_order, "local": local, "can_dispatch": False}
+
+
+def team_summary(contract: dict[str, Any]) -> dict[str, Any]:
+    """Summarize the upstream CCCC handoffs attached to one Worker contract."""
+    handoff = contract.get("handoff", {}) if isinstance(contract, dict) else {}
+    parent_run_id = str(handoff.get("parent_run_id") or "")
+    if not re.fullmatch(r"incubation-[\w-]+", parent_run_id):
+        return {}
+    root = ROOT / "handoffs" / parent_run_id
+    cli_path, shortlist_path, mvp_path = root / "cli-capability-form.json", root / "idea-shortlist.json", root / "mvp-contract.json"
+    cli, shortlist, mvp = read_json(cli_path) or {}, read_json(shortlist_path) or {}, read_json(mvp_path) or {}
+    ideas = shortlist.get("ranked_options") or shortlist.get("ideas") or []
+    recommended = shortlist.get("recommended_idea") or {}
+    selected_id = str(mvp.get("idea_id") or mvp.get("selected_idea_id") or recommended.get("idea_id") or "")
+    selected = next((idea for idea in ideas if str(idea.get("idea_id") or idea.get("id")) == selected_id), recommended)
+    scores = selected.get("four_criterion_scores") or {}
+
+    def timestamp(path: Path) -> str:
+        try:
+            return datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat(timespec="seconds")
+        except OSError:
+            return ""
+
+    try:
+        request_timestamp = datetime.strptime(parent_run_id.removeprefix("incubation-").rsplit("-", 1)[0], "%Y%m%d-%H%M%S").replace(tzinfo=datetime.now().astimezone().tzinfo).isoformat(timespec="seconds")
+    except ValueError:
+        request_timestamp = timestamp(root / "request.json")
+
+    counts = cli.get("catalog_counts") or {}
+    validation = cli.get("validation") or {}
+    events = [
+        {
+            "timestamp": request_timestamp, "actor": "FOREMAN", "status": "PASS",
+            "message": "已标准化用户需求 · screenshot-to-app",
+        },
+        {
+            "timestamp": timestamp(cli_path), "actor": "FOREMAN", "status": "PASS",
+            "message": f"读取持久 CLI 能力库 {counts.get('records', '—')} 条 · 匹配 {len(cli.get('capabilities') or [])} 项 · 本轮未唤起 CLI Agent",
+        },
+        {
+            "timestamp": timestamp(shortlist_path), "actor": "IDEA", "status": "PASS",
+            "message": f"评估 {len(ideas)} 个方向 · 推荐 {recommended.get('name') or mvp.get('name') or 'Screenshot MVP'}",
+        },
+        {
+            "timestamp": timestamp(mvp_path), "actor": "FOREMAN", "status": "PASS",
+            "message": f"冻结 {selected_id or 'selected idea'} · 交接 mvp-worker",
+        },
+    ]
+    return {
+        "parent_run_id": parent_run_id,
+        "cli": {
+            "status": validation.get("status") or "PASS",
+            "records": counts.get("records"),
+            "categories": counts.get("categories"),
+            "selected_capabilities": len(cli.get("capabilities") or []),
+            "validation": validation.get("output") or "validated",
+            "supply_mode": cli.get("supply_mode") or "persistent-catalog-snapshot",
+        },
+        "idea": {
+            "status": "PASS" if ideas else "WAIT",
+            "options": len(ideas),
+            "recommended": recommended.get("name") or mvp.get("name"),
+            "scores": scores,
+        },
+        "foreman": {
+            "status": "FROZEN" if mvp else "WAIT",
+            "idea_id": selected_id,
+            "contract": mvp.get("name") or recommended.get("name"),
+        },
+        "events": [event for event in events if event["timestamp"]],
+    }
+
+
+def run_data(run_dir: Path) -> dict[str, Any]:
+    run_id = run_dir.name
+    delivery = read_json(run_dir / "worker-delivery.json") or {}
+    context = read_json(run_dir / "run-context.json") or {}
+    contract = read_json(run_dir / "mvp-contract.json") or {}
+    ui_spec_data = read_json(run_dir / "ui-spec.json") or {}
+    events = compact_worker_events(worker_events(run_id))
+    input_file = next((item for item in (run_dir / "input").glob("reference.*") if item.is_file()), None)
+    artifacts = delivery.get("artifacts", {}) if isinstance(delivery, dict) else {}
+    execution = read_json(run_dir / "run-execution.json") or {}
+    recorded_github = delivery.get("github") if isinstance(delivery, dict) else None
+    github_url = None
+    if delivery.get("status") == "PASS":
+        github_url = recorded_github if isinstance(recorded_github, str) and recorded_github.startswith("https://github.com/") else repository_info().get("github_url")
+    dispatched = (ROOT / "contracts" / "live-trials" / f"{run_id}.dispatch.json").is_file()
+    return {
+        "run_id": run_id,
+        "created_at": delivery.get("created_at") or context.get("prepared_at"),
+        "status": "历史模板（不计入验证）" if ui_spec_data.get("generator") == "deterministic-template-baseline" else (delivery.get("status") or ("处理中" if dispatched else "已准备")),
+        "dispatched": dispatched,
+        "app": contract.get("app", {}),
+        "events": events,
+        "source": f"/files/{run_id}/input/{input_file.name}" if input_file else None,
+        "preview": f"/files/{run_id}/artifacts/preview.png" if (run_dir / "artifacts" / "preview.png").is_file() else None,
+        "report": f"/files/{run_id}/artifacts/acceptance-report.json" if (run_dir / "artifacts" / "acceptance-report.json").is_file() else None,
+        "delivery": f"/files/{run_id}/worker-delivery.json" if (run_dir / "worker-delivery.json").is_file() else None,
+        "github_url": github_url,
+        "app_url": f"/apps/{run_id}/index.html" if (run_dir / "app" / "index.html").is_file() else None,
+        "pipeline_log": f"/files/{run_id}/worker-pipeline.log" if (run_dir / "worker-pipeline.log").is_file() else None,
+        "artifact_summary": artifacts,
+        "execution": execution,
+        "team_summary": team_summary(contract),
+        "ui_spec": f"/files/{run_id}/ui-spec.json" if (run_dir / "ui-spec.json").is_file() else None,
+    }
+
+
+def actor_status() -> dict[str, bool]:
+    command = cccc_command()
+    if not command:
+        return {"running": False}
+    try:
+        process = subprocess.run([command, "actor", "list"], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=10)
+        payload = json.loads(process.stdout)
+        actors = payload.get("result", {}).get("actors", [])
+        actor = next((item for item in actors if item.get("id") == "mvp-worker"), {})
+        return {"running": bool(actor.get("running"))}
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError):
+        return {"running": False}
+
+
+def launch_pipeline(contract: Path, run_dir: Path, run_id: str, backend: dict[str, Any]) -> Path:
+    """Start a single controller process; phase progression is not delegated to chat."""
+    log_path = run_dir / "worker-pipeline.log"
+    command = [str(PYTHON), "scripts/worker_pipeline.py", "--contract", str(contract), "--batch", "live-trials", "--backend", str(backend["id"])]
+    (run_dir / "run-execution.json").write_text(json.dumps({
+        "requested_backend": backend.get("requested"),
+        "active_backend": backend.get("id"),
+        "label": backend.get("label"),
+        "fallback": bool(backend.get("fallback")),
+        "fallback_order": backend.get("fallback_order", []),
+        "local_health": backend.get("local"),
+        "started_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    creationflags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+    with log_path.open("w", encoding="utf-8") as log:
+        child_env = os.environ.copy()
+        child_env["PYTHONUTF8"] = "1"
+        subprocess.Popen(
+            command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, text=True,
+            encoding="utf-8", errors="replace", creationflags=creationflags, env=child_env,
+        )
+    return log_path
+
+
+class IntakeHandler(SimpleHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+
+    def log_message(self, _format: str, *_args: Any) -> None:
+        return
+
+    def do_GET(self) -> None:
+        parsed = urlparse(self.path)
+        if parsed.path == "/":
+            body = PAGE.encode("utf-8")
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if parsed.path in {"/show", "/show/"}:
+            self.send_error(HTTPStatus.GONE, "The incubator showcase is disabled for worker verification.")
+            return
+        if parsed.path in {"/stage", "/stage/"}:
+            send_static_file(self, ROOT / "index.html")
+            return
+        if parsed.path == "/repo":
+            body = repository_page()
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        show_assets = {
+            "/stage/styles.css": ROOT / "styles.css",
+            "/stage/app.js": ROOT / "app.js",
+            "/show/styles.css": ROOT / "styles.css",
+            "/show/app.js": ROOT / "app.js",
+            # /show?run=... treats relative URLs as root-relative in browsers.
+            "/styles.css": ROOT / "styles.css",
+            "/app.js": ROOT / "app.js",
+        }
+        if parsed.path in show_assets:
+            send_static_file(self, show_assets[parsed.path])
+            return
+        if parsed.path.startswith("/apps/"):
+            parts = [unquote(part) for part in parsed.path.split("/") if part]
+            if len(parts) < 2:
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            run_id = parts[1]
+            relative = Path(*parts[2:]) if len(parts) > 2 else Path("index.html")
+            app_root = (ROOT / "runs" / run_id / "app").resolve()
+            candidate = (app_root / relative).resolve()
+            if not re.fullmatch(r"[A-Za-z0-9_-]+", run_id) or ".." in relative.parts or not candidate.is_file() or app_root not in candidate.parents:
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            send_static_file(self, candidate)
+            return
+        if parsed.path.startswith("/assets/"):
+            relative = Path(*[unquote(part) for part in parsed.path.removeprefix("/assets/").split("/")])
+            candidate = (ROOT / relative).resolve()
+            allowed_suffixes = {".jpg", ".jpeg", ".png", ".webp"}
+            if ROOT.resolve() not in candidate.parents or candidate.suffix.lower() not in allowed_suffixes:
+                self.send_error(HTTPStatus.FORBIDDEN)
+                return
+            send_static_file(self, candidate)
+            return
+        if parsed.path == "/api/runs":
+            runs_root = ROOT / "runs"
+            runs = [run_data(path) for path in runs_root.glob("trial-*") if path.is_dir()]
+            runs.sort(key=lambda item: item.get("created_at") or "", reverse=True)
+            json_response(self, HTTPStatus.OK, {"actor": actor_status(), "backend": worker_backend_info(), "runtime": runtime_info(), "team": team_binding_info(), "runs": runs[:12]})
+            return
+        if parsed.path == "/api/stage":
+            requested_run = parse_qs(parsed.query).get("run", [None])[0]
+            stage = cccc_stage_events(requested_run)
+            json_response(self, HTTPStatus.OK, {
+                "stage": stage,
+                "actor": actor_status(),
+                "backend": worker_backend_info(),
+                "runtime": runtime_info(),
+            })
+            return
+        if parsed.path == "/api/project":
+            json_response(self, HTTPStatus.OK, {"repository": repository_info(), "team": team_binding_info()})
+            return
+        if parsed.path == "/api/catalog":
+            summary = read_json(ROOT / "agents" / "cli-researcher" / "cli-catalog" / "catalog" / "cli-summary.json")
+            if not summary:
+                json_response(self, HTTPStatus.SERVICE_UNAVAILABLE, {"error": "CLI capability catalog is unavailable"})
+                return
+            json_response(self, HTTPStatus.OK, summary)
+            return
+        if parsed.path == "/api/incubation":
+            json_response(self, HTTPStatus.OK, incubation_data())
+            return
+        if parsed.path.startswith("/api/runs/"):
+            run_id = unquote(parsed.path.removeprefix("/api/runs/"))
+            if not re.fullmatch(r"trial-[\w-]+", run_id):
+                json_response(self, HTTPStatus.BAD_REQUEST, {"error": "无效的 run ID"})
+                return
+            run_dir = ROOT / "runs" / run_id
+            if not run_dir.is_dir():
+                json_response(self, HTTPStatus.NOT_FOUND, {"error": "找不到这个试跑"})
+                return
+            json_response(self, HTTPStatus.OK, {"runtime": runtime_info(), "actor": actor_status(), "backend": worker_backend_info(), "team": team_binding_info(), "run": run_data(run_dir)})
+            return
+        if parsed.path.startswith("/files/"):
+            parts = [unquote(part) for part in parsed.path.split("/") if part]
+            if len(parts) < 3:
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            run_id, relative = parts[1], Path(*parts[2:])
+            if not re.fullmatch(r"trial-[\w-]+", run_id) or ".." in relative.parts:
+                self.send_error(HTTPStatus.FORBIDDEN)
+                return
+            candidate = (ROOT / "runs" / run_id / relative).resolve()
+            root = (ROOT / "runs" / run_id).resolve()
+            if not candidate.is_file() or root not in candidate.parents:
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            return super().do_GET()
+        if parsed.path.startswith("/handoffs/"):
+            relative = Path(*[unquote(part) for part in parsed.path.removeprefix("/handoffs/").split("/")])
+            candidate = (ROOT / "handoffs" / relative).resolve()
+            handoff_root = (ROOT / "handoffs").resolve()
+            if ".." in relative.parts or not candidate.is_file() or handoff_root not in candidate.parents:
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            return super().do_GET()
+        self.send_error(HTTPStatus.NOT_FOUND)
+
+    def translate_path(self, path: str) -> str:
+        parsed = urlparse(path)
+        if parsed.path.startswith("/files/"):
+            parts = [unquote(part) for part in parsed.path.split("/") if part]
+            return str(ROOT / "runs" / parts[1] / Path(*parts[2:]))
+        if parsed.path.startswith("/handoffs/"):
+            parts = [unquote(part) for part in parsed.path.split("/") if part]
+            return str(ROOT / "handoffs" / Path(*parts[1:]))
+        return str(ROOT)
+
+    def do_POST(self) -> None:
+        endpoint = urlparse(self.path).path
+        if endpoint == "/api/incubation/test":
+            try:
+                content_length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < content_length <= 16 * 1024:
+                    raise ValueError("测试需求不能为空，且不能超过 16 KB。")
+                payload = json.loads(self.rfile.read(content_length).decode("utf-8"))
+                latest = start_incubation_test(str(payload.get("brief", "")))
+                json_response(self, HTTPStatus.CREATED, {"message": "Foreman 已接收需求并读取持久能力库，正在派发 Idea Agent。", "latest": latest})
+            except (ValueError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
+                json_response(self, HTTPStatus.BAD_REQUEST, {"error": str(exc)})
+            except Exception as exc:
+                json_response(self, HTTPStatus.INTERNAL_SERVER_ERROR, {"error": f"创建创意测试失败：{exc}"})
+            return
+        if endpoint != "/api/intake":
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        content_length = int(self.headers.get("Content-Length", "0"))
+        if not 0 < content_length <= MAX_UPLOAD_BYTES:
+            json_response(self, HTTPStatus.BAD_REQUEST, {"error": "图片不能为空，且必须小于 16 MB。"})
+            return
+        content_type = self.headers.get("Content-Type", "")
+        if "multipart/form-data" not in content_type:
+            json_response(self, HTTPStatus.BAD_REQUEST, {"error": "请通过投递台上传图片。"})
+            return
+        try:
+            form = cgi.FieldStorage(fp=self.rfile, headers=self.headers, environ={"REQUEST_METHOD": "POST", "CONTENT_TYPE": content_type})
+            field = form["screenshot"]
+            if isinstance(field, list) or not getattr(field, "filename", ""):
+                raise ValueError("请选择一张图片。")
+            suffix = Path(field.filename).suffix.lower()
+            if suffix not in ALLOWED_SUFFIXES:
+                raise ValueError("只支持 JPG、PNG 或 WEBP 图片。")
+            raw = field.file.read(MAX_UPLOAD_BYTES + 1)
+            if len(raw) > MAX_UPLOAD_BYTES:
+                raise ValueError("图片超过 16 MB。")
+            if not raw:
+                raise ValueError("图片内容为空。")
+            app_name = safe_name(form.getfirst("app_name", "SparkMVP"), "SparkMVP")
+            kind = safe_name(form.getfirst("kind", "mobile app"), "mobile app")
+            dispatch = form.getfirst("dispatch", "false") == "true"
+            requested_backend = str(form.getfirst("backend", "")).strip().lower()
+            if requested_backend and requested_backend not in {"codex", "local-openai"}:
+                raise ValueError("不支持的生成引擎。请选择 Codex CLI 或 Local LLM。")
+            incubation_run_id = str(form.getfirst("incubation_run_id", "")).strip()
+            parent_contract: dict[str, Any] = {}
+            parent_contract_path: Path | None = None
+            if incubation_run_id:
+                if not re.fullmatch(r"incubation-[\w-]+", incubation_run_id):
+                    raise ValueError("无效的孵化 run ID。")
+                parent_contract_path = ROOT / "handoffs" / incubation_run_id / "mvp-contract.json"
+                parent_contract = read_json(parent_contract_path)
+                if not parent_contract:
+                    raise ValueError("Idea Agent 的 MVP 契约尚未就绪，请稍后再生成。")
+            created = datetime.now().astimezone()
+            run_id = f"trial-{created.strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:4]}"
+            upload_dir = ROOT / "inputs" / "live-uploads"
+            contract_dir = ROOT / "contracts" / "live-trials"
+            upload_dir.mkdir(parents=True, exist_ok=True)
+            contract_dir.mkdir(parents=True, exist_ok=True)
+            screenshot = upload_dir / f"{run_id}{suffix}"
+            screenshot.write_bytes(raw)
+            sample = read_json(ROOT / "contracts" / "mvp-contract.sample.json")
+            if not sample:
+                raise ValueError("找不到 Worker 契约模板。")
+            sample["run_id"] = run_id
+            if parent_contract:
+                sample["handoff"] = {
+                    "from": "idea-foreman", "to": "mvp-worker",
+                    "parent_run_id": incubation_run_id,
+                    "source_contract": str(parent_contract_path.resolve()),
+                }
+                sample["selected_idea"] = {
+                    "idea_id": parent_contract.get("idea_id") or parent_contract.get("selected_idea_id"),
+                    "name": parent_contract.get("name"),
+                    "target_user": parent_contract.get("target_user"),
+                    "pain_point": parent_contract.get("pain_point"),
+                }
+                if parent_contract.get("primary_interaction"):
+                    sample["app"]["goal"] = parent_contract["primary_interaction"]
+            else:
+                sample["handoff"] = {"from": "worker-intake-desk", "to": "mvp-worker"}
+            sample["source_screenshot"]["path"] = str(screenshot.resolve())
+            sample["source_screenshot"]["authorized_for_demo"] = True
+            sample["app"]["name"] = app_name
+            sample["app"]["kind"] = kind
+            if requested_backend:
+                sample["execution"] = {"requested_backend": requested_backend}
+            contract = contract_dir / f"{run_id}.json"
+            contract.write_text(json.dumps(sample, ensure_ascii=False, indent=2), encoding="utf-8")
+            if parent_contract:
+                write_json(ROOT / "handoffs" / incubation_run_id / "worker-handoff.json", {
+                    "parent_run_id": incubation_run_id,
+                    "worker_run_id": run_id,
+                    "source_contract": str(parent_contract_path.resolve()),
+                    "worker_contract": str(contract.resolve()),
+                    "authorized_screenshot": str(screenshot.resolve()),
+                    "authorized_for_demo": True,
+                    "created_at": created.isoformat(timespec="seconds"),
+                    "handoff": {"from": "idea-foreman", "to": "mvp-worker", "status": "DISPATCHED" if dispatch else "READY"},
+                })
+            launcher = PYTHON
+            prepared = subprocess.run([str(launcher), str(ROOT / "scripts" / "prepare_run.py"), "--contract", str(contract)], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30)
+            if prepared.returncode:
+                raise ValueError(f"创建独立 run 失败：{prepared.stderr or prepared.stdout}")
+            message = "截图已创建独立契约，等待 Worker。"
+            if dispatch:
+                backend = worker_backend_info(requested_backend or None)
+                if not backend.get("can_dispatch"):
+                    raise ValueError(backend.get("detail") or "当前执行引擎不可用；请检查 DGX Local LLM、Codex CLI 或 Claude Code。")
+                command = cccc_command()
+                if not command:
+                    raise ValueError("CCCC 命令不可用；截图已准备，但未派发。")
+                start = subprocess.run([command, "actor", "start", "mvp-worker", "--group", cccc_group_id()], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
+                if start.returncode:
+                    raise ValueError(f"无法启动 mvp-worker：{start.stderr or start.stdout}")
+                pipeline_log = launch_pipeline(contract, ROOT / "runs" / run_id, run_id, backend)
+                (contract_dir / f"{run_id}.dispatch.json").write_text(json.dumps({"run_id": run_id, "sent_at": datetime.now().astimezone().isoformat(timespec="seconds"), "controller": "deterministic-pipeline", "pipeline_log": str(pipeline_log), "backend": backend["id"], "fallback": bool(backend.get("fallback"))}, ensure_ascii=False, indent=2), encoding="utf-8")
+                team_sync_warning = notify_team_intake(run_id, contract, screenshot, app_name)
+                message = f"Pipeline 已启动：{backend['label']}。它会连续完成视觉理解、脚手架、验收和交付。"
+                if team_sync_warning:
+                    message += " " + team_sync_warning
+            stage_url = f"/stage?run={run_id}"
+            json_response(self, HTTPStatus.CREATED, {"run_id": run_id, "message": message, "contract": str(contract.resolve()), "run_dir": str((ROOT / "runs" / run_id).resolve()), "dispatched": dispatch, "team": team_binding_info(), "stage_url": stage_url})
+        except (ValueError, KeyError, subprocess.TimeoutExpired) as exc:
+            json_response(self, HTTPStatus.BAD_REQUEST, {"error": str(exc)})
+        except Exception as exc:  # Keep browser feedback usable in a demo.
+            json_response(self, HTTPStatus.INTERNAL_SERVER_ERROR, {"error": f"投递失败：{exc}"})
+
+
+def main() -> int:
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run the local Screenshot-to-App Worker upload desk.")
+    parser.add_argument("--port", type=int, default=4181)
+    args = parser.parse_args()
+    server = ThreadingHTTPServer(("127.0.0.1", args.port), IntakeHandler)
+    print(f"Worker upload desk: http://127.0.0.1:{args.port}", flush=True)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        return 0
+    finally:
+        server.server_close()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,33 @@
+{
+  "id": "vitaly-zdanevich/geeknote",
+  "name": "geeknote",
+  "aliases": [],
+  "description": "",
+  "repo_url": "https://github.com/vitaly-zdanevich/geeknote",
+  "homepage": "",
+  "install": {},
+  "category": "Note Taking, Lists, Task Management",
+  "tags": [
+    "awesome-list"
+  ],
+  "github_stars": 14,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "awesome-cli-apps",
+      "repo": "agarrharr/awesome-cli-apps",
+      "commit": "598390e9ca817ab33b7821c7a0e4af676975fc25"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

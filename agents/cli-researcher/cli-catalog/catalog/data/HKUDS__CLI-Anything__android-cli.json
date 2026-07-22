@@ -1,0 +1,41 @@
+{
+  "id": "HKUDS/CLI-Anything/android-cli",
+  "name": "Android CLI",
+  "aliases": [],
+  "description": "Official Android terminal interface for SDK setup, project creation, emulator/device management, app run/deploy workflows, docs access, and skill management for any agent",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://developer.android.com/tools/agents/android-cli",
+  "install": {},
+  "category": "Other",
+  "tags": [
+    "cli-anything",
+    "mobile",
+    "public_registry",
+    "requires-deps"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://developer.android.com/tools/agents/android-skills"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "mobile"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

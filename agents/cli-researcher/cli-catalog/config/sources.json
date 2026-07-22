@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "priority": 1,
+      "role": "primary",
+      "branch": "master",
+      "files": ["data/apps.csv", "data/categories.csv"],
+      "parser": "toolleeo_csv"
+    },
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "priority": 2,
+      "role": "agent-filter",
+      "branch": "main",
+      "files": ["registry.json", "public_registry.json"],
+      "parser": "cli_anything_registry"
+    },
+    {
+      "id": "awesome-ai-cli",
+      "repo": "luoyuctl/awesome-ai-cli",
+      "priority": 2,
+      "role": "agent-filter",
+      "branch": "main",
+      "files": ["README.md"],
+      "parser": "ai_cli_readme"
+    },
+    {
+      "id": "modern-unix",
+      "repo": "ibraheemdev/modern-unix",
+      "priority": 3,
+      "role": "anchor",
+      "branch": "master",
+      "files": ["README.md"],
+      "parser": "awesome_readme"
+    },
+    {
+      "id": "composio-agent-clis",
+      "repo": "ComposioHQ/awesome-agent-clis",
+      "priority": 2,
+      "role": "agent-filter",
+      "branch": "master",
+      "files": ["README.md"],
+      "parser": "composio_readme"
+    },
+    {
+      "id": "awesome-cli-apps",
+      "repo": "agarrharr/awesome-cli-apps",
+      "priority": 3,
+      "role": "breadth",
+      "branch": "master",
+      "files": ["readme.md"],
+      "parser": "awesome_readme"
+    }
+  ],
+  "merge_rules": {
+    "dedupe_key": "repo_url",
+    "fallback_key": "normalized_name",
+    "name_aliases": {
+      "rg": "ripgrep",
+      "exa": "eza"
+    }
+  }
+}

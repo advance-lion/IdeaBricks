@@ -1,0 +1,4 @@
+interface:
+  display_name: "A2 CLI Idea Workflow"
+  short_description: "Generate, evaluate, and rank CLI-grounded ideas"
+  default_prompt: "Use $a2 to generate, evaluate, and rank CLI-grounded product ideas for a real user workflow."

@@ -1,0 +1,56 @@
+{
+  "actor_id": "cli-researcher",
+  "display_name": "CLI Researcher",
+  "role": "peer",
+  "stage": "stage-1-cli-research",
+  "purpose": "Research, synchronize, classify, validate, and hand off a structured CLI catalog for downstream idea generation.",
+  "working_directory": "stage1-cli-researcher/cli-catalog",
+  "guidance_files": [
+    "stage1-cli-researcher/cli-catalog/AGENTS.md",
+    "stage1-cli-researcher/cccc-agent-capsule/actor.md"
+  ],
+  "entrypoint": {
+    "command": "python3 -m cli_catalog",
+    "common_commands": [
+      "python3 -m cli_catalog sync",
+      "python3 -m cli_catalog render",
+      "python3 -m cli_catalog summary",
+      "python3 -m cli_catalog validate",
+      "python3 -m cli_catalog stats"
+    ]
+  },
+  "required_capabilities": [
+    "local_filesystem_read_write",
+    "python_command_execution"
+  ],
+  "optional_capabilities": [
+    "network_access_for_sync",
+    "github_token_for_star_refresh"
+  ],
+  "inputs": {
+    "research_scope": "CLI tools relevant to AI coding, agent workflows, developer automation, and terminal productivity.",
+    "schema": "stage1-cli-researcher/cli-catalog/schema/cli.schema.json",
+    "source_config": "stage1-cli-researcher/cli-catalog/config/sources.json"
+  },
+  "outputs": {
+    "summary_index": "stage1-cli-researcher/cli-catalog/catalog/cli-summary.json",
+    "full_records": "stage1-cli-researcher/cli-catalog/catalog/data/*.json",
+    "human_catalog": "stage1-cli-researcher/cli-catalog/catalog/cli-catalog.md",
+    "schema": "stage1-cli-researcher/cli-catalog/schema/cli.schema.json",
+    "field_docs": "stage1-cli-researcher/cli-catalog/docs/FIELDS.md",
+    "source_docs": "stage1-cli-researcher/cli-catalog/docs/SOURCES.md",
+    "changelog": "stage1-cli-researcher/cli-catalog/meta/changelog.md"
+  },
+  "validation": {
+    "working_directory": "stage1-cli-researcher/cli-catalog",
+    "command": "python3 -m cli_catalog validate",
+    "expected_result": "Validation passed"
+  },
+  "non_goals": [
+    "Do not generate product ideas as the main deliverable.",
+    "Do not score ideas.",
+    "Do not select or implement the final project.",
+    "Do not redesign schema/cli.schema.json unless explicitly instructed by the leader."
+  ],
+  "downstream_consumer": "ideation-actor"
+}

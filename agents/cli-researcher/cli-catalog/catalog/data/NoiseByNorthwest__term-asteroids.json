@@ -1,0 +1,34 @@
+{
+  "id": "NoiseByNorthwest/term-asteroids",
+  "name": "term-asteroids",
+  "aliases": [],
+  "description": "An Asteroids-like game, running in a terminal, written in PHP.",
+  "repo_url": "https://github.com/NoiseByNorthwest/term-asteroids",
+  "homepage": "",
+  "install": {},
+  "category": "Utilities",
+  "tags": [
+    "games"
+  ],
+  "github_stars": 57,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "games"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

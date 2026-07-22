@@ -1,0 +1,35 @@
+{
+  "id": "Hummer12007/brightnessctl",
+  "name": "brightnessctl",
+  "aliases": [],
+  "description": "Read and control device brightness. Devices, by default, include backlight and LEDs - searched for in corresponding classes.",
+  "repo_url": "https://github.com/Hummer12007/brightnessctl",
+  "homepage": "",
+  "install": {},
+  "category": "DevOps & Cloud",
+  "tags": [
+    "system",
+    "system-tools"
+  ],
+  "github_stars": 1250,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "system"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

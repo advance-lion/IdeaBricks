@@ -1,0 +1,43 @@
+{
+  "id": "slauger/suno-cli",
+  "name": "Suno CLI",
+  "aliases": [],
+  "description": "CLI for generating music with Suno AI from lyrics and style prompts, with batch generation, status polling, downloads, and automatic MP3 tagging",
+  "repo_url": "https://github.com/slauger/suno-cli",
+  "homepage": "https://github.com/slauger/suno-cli",
+  "install": {
+    "shell": "python3 -m pip install git+https://github.com/slauger/suno-cli.git"
+  },
+  "category": "Media & Graphics",
+  "tags": [
+    "cli-anything",
+    "music",
+    "public_registry",
+    "requires-deps"
+  ],
+  "github_stars": 13,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/slauger/suno-cli/blob/main/docs/USAGE.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "music"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "ashaiful/cli-anything-openwebui",
+  "name": "OpenWebUI",
+  "aliases": [],
+  "description": "Operate a running OpenWebUI backend through an agent-friendly CLI",
+  "repo_url": "https://github.com/ashaiful/cli-anything-openwebui",
+  "homepage": "https://openwebui.com",
+  "install": {
+    "pip": "pip install git+https://github.com/ashaiful/cli-anything-openwebui.git"
+  },
+  "category": "AI & Agents",
+  "tags": [
+    "ai",
+    "cli-anything",
+    "registry",
+    "requires-deps"
+  ],
+  "github_stars": 0,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/ashaiful/cli-anything-openwebui/blob/main/cli_anything/openwebui/skills/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "ai"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "lavv17/lftp",
+  "name": "lftp",
+  "aliases": [],
+  "description": "\"Sophisticated FTP/HTTP client, and a file transfer program supporting a number of network protocols\"; support for bookmarks and mirroring features.",
+  "repo_url": "https://github.com/lavv17/lftp",
+  "homepage": "https://lftp.yar.ru/",
+  "install": {},
+  "category": "Network & API",
+  "tags": [
+    "data-transfer",
+    "transfer"
+  ],
+  "github_stars": 1285,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "transfer"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

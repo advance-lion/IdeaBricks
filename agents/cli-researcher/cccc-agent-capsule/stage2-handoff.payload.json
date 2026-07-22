@@ -1,0 +1,30 @@
+{
+  "from_actor": "cli-researcher",
+  "to_actor": "ideation-actor",
+  "stage_completed": "stage-1-cli-research",
+  "handoff_type": "artifact-contract",
+  "source_of_truth": {
+    "summary_index": "stage1-cli-researcher/cli-catalog/catalog/cli-summary.json",
+    "full_records": "stage1-cli-researcher/cli-catalog/catalog/data/*.json"
+  },
+  "human_review": {
+    "catalog_markdown": "stage1-cli-researcher/cli-catalog/catalog/cli-catalog.md",
+    "changelog": "stage1-cli-researcher/cli-catalog/meta/changelog.md"
+  },
+  "schema_and_docs": {
+    "schema": "stage1-cli-researcher/cli-catalog/schema/cli.schema.json",
+    "field_docs": "stage1-cli-researcher/cli-catalog/docs/FIELDS.md",
+    "source_docs": "stage1-cli-researcher/cli-catalog/docs/SOURCES.md"
+  },
+  "verified_state": {
+    "validation_command": "python3 -m cli_catalog validate",
+    "stats_command": "python3 -m cli_catalog stats"
+  },
+  "instructions_for_ideation_actor": [
+    "Use cli-summary.json for broad scanning and category-level idea discovery.",
+    "Use catalog/data/*.json for detailed evidence about specific CLI tools.",
+    "Use schema/cli.schema.json and docs/FIELDS.md to interpret fields.",
+    "Generate ideas from observed capabilities, categories, gaps, and workflow patterns.",
+    "Do not treat the catalog itself as idea scoring or final selection."
+  ]
+}

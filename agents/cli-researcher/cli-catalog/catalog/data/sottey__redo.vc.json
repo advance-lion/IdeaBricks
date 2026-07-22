@@ -1,0 +1,36 @@
+{
+  "id": "sottey/redo.vc",
+  "name": "Redo.vc",
+  "aliases": [],
+  "description": "Redo.vc is a tool for command line fans that allows you to track your tasks. It is a full-featured todo manager with tagging, projects, recurring tasks and much more, all stored in a JSON file so it is super portable and tooling new apps for the data format is super easy.",
+  "repo_url": "https://github.com/sottey/redo.vc",
+  "homepage": "https://redo.vc",
+  "install": {},
+  "category": "Productivity",
+  "tags": [
+    "json",
+    "todo-manager",
+    "todo-managers"
+  ],
+  "github_stars": 4,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "todo-manager"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

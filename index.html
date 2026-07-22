@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="demo-session.css" />
   </head>
   <body>
     <div class="noise" aria-hidden="true"></div>
@@ -38,67 +39,37 @@
           </div>
         </div>
         <div class="signal-card" aria-label="本次运行摘要">
-          <div class="signal-head"><span id="signalDate">本次运行 / 2026.07.21</span><b id="signalStatus">PASS</b></div>
-          <div class="signal-number">03<span>→</span>01</div>
-          <p>候选创意 <i></i> 已交付 MVP</p>
-          <div class="signal-foot"><span>RUN ID</span><code id="signalRunId">fastbite-kfc-001</code></div>
+          <div class="signal-head"><span id="signalDate">本次运行 / 等待截图</span><b id="signalStatus">WAITING</b></div>
+          <div class="signal-number">--<span>→</span>--</div>
+          <p>上传授权截图 <i></i> 生成可运行 MVP</p>
+          <div class="signal-foot"><span>RUN ID</span><code id="signalRunId">尚未创建</code></div>
         </div>
       </section>
 
-      <section class="workspace section-shell" aria-label="CLI Catalog 能力索引">
-        <div class="workspace-title">
-          <p class="eyebrow"><span></span> CLI CATALOG / 02</p>
-          <h2>把分散的 CLI，<br />整理成 Agent 可调用的能力索引。</h2>
-          <p class="catalogue-note">AGENT ROUTING INDEX<br /><span>先读轻量 summary，必要时再读取单条 JSON 详情</span></p>
-          <div class="catalogue-stats" aria-label="CLI Catalog 统计">
-            <div><b id="catalogTotal">2400</b><span>Total CLIs</span></div>
-            <div><b id="catalogAgent">136</b><span>Agent-friendly</span></div>
-            <div><b id="catalogCategories">50</b><span>Categories</span></div>
+      <section class="workspace section-shell" aria-label="运行工作台">
+        <div class="workspace-title"><p class="eyebrow"><span></span> SYSTEM MAP / 02</p><h2>能力不仅仅是清单，<br />还是可拼装的积木。</h2><p class="catalogue-note">CLI CATALOGUE<br /><span>将市场能力按任务阶段组合使用</span></p></div>
+        <div class="command-panel">
+          <div class="panel-tabs"><span class="window-dots"><i></i><i></i><i></i></span><b>capability-map.json</b><small><span id="cliCount">已展示 6 / 12 个 CLI</span> <button class="catalogue-toggle" id="cliToggle" aria-expanded="false">展开清单 +</button></small></div>
+          <div class="cli-grid" id="cliGrid">
+            <article class="cli-item active"><span class="cli-icon">⌘</span><div><b>截图理解</b><small>vision-cli</small></div><em>READY</em></article>
+            <article class="cli-item"><span class="cli-icon">▣</span><div><b>前端生成</b><small>mvp-worker</small></div><em>READY</em></article>
+            <article class="cli-item"><span class="cli-icon">⌁</span><div><b>趋势检索</b><small>search-cli</small></div><em>READY</em></article>
+            <article class="cli-item"><span class="cli-icon">✦</span><div><b>需求聚类</b><small>insight-cli</small></div><em>READY</em></article>
+            <article class="cli-item"><span class="cli-icon">↗</span><div><b>浏览器验收</b><small>browser-qa</small></div><em>READY</em></article>
+            <article class="cli-item"><span class="cli-icon">◌</span><div><b>交付封装</b><small>delivery-cli</small></div><em>READY</em></article>
+            <article class="cli-item cli-extra" hidden><span class="cli-icon">⌁</span><div><b>市场检索</b><small>market-search</small></div><em>READY</em></article>
+            <article class="cli-item cli-extra" hidden><span class="cli-icon">◫</span><div><b>数据清洗</b><small>data-refine</small></div><em>READY</em></article>
+            <article class="cli-item cli-extra" hidden><span class="cli-icon">◈</span><div><b>竞品对比</b><small>compare-cli</small></div><em>READY</em></article>
+            <article class="cli-item cli-extra" hidden><span class="cli-icon">◉</span><div><b>文案生成</b><small>copy-cli</small></div><em>READY</em></article>
+            <article class="cli-item cli-extra" hidden><span class="cli-icon">⌇</span><div><b>原型录制</b><small>record-cli</small></div><em>READY</em></article>
+            <article class="cli-item cli-extra" hidden><span class="cli-icon">✓</span><div><b>质量报告</b><small>report-cli</small></div><em>READY</em></article>
           </div>
-        </div>
-        <div class="command-panel catalogue-panel">
-          <div class="panel-tabs">
-            <span class="window-dots"><i></i><i></i><i></i></span>
-            <b>catalog/cli-summary.json</b>
-            <small><span id="cliCount">读取中...</span> <button class="catalogue-toggle" id="cliToggle" aria-expanded="true">显示全部</button></small>
-          </div>
-          <div class="catalogue-controls" aria-label="CLI Catalog 检索控制">
-            <label class="catalogue-search">SEARCH
-              <input id="cliSearch" type="search" placeholder="搜索 CLI、功能或 id，例如 ripgrep / video / deploy" />
-            </label>
-            <label class="catalogue-score">SCORE
-              <select id="cliScoreFilter" aria-label="按 Agent 分数筛选">
-                <option value="all">全部分数</option>
-                <option value="3" selected>只看 ★★★</option>
-                <option value="2">只看 ★★</option>
-                <option value="1">只看 ★</option>
-              </select>
-            </label>
-          </div>
-          <div class="catalogue-browser">
-            <aside class="category-list" id="categoryList" aria-label="CLI 分类"></aside>
-            <div class="cli-results">
-              <div class="results-meta"><span id="activeCategory">AI & Agents</span><small id="resultMetaText">等待数据加载</small></div>
-              <div class="cli-grid catalogue-grid" id="cliGrid" aria-live="polite"></div>
-            </div>
-            <aside class="route-card" aria-label="Agent 路由详情">
-              <div class="route-kicker">AGENT READS</div>
-              <h3 id="routeName">选择一个 CLI</h3>
-              <p id="routeFunction">点击左侧工具后，这里会显示传给 Agent 的必要字段。</p>
-              <dl>
-                <div><dt>ID</dt><dd id="routeId">-</dd></div>
-                <div><dt>SCORE</dt><dd id="routeScore">-</dd></div>
-                <div><dt>DETAIL</dt><dd id="routeDetail">catalog/data/*.json</dd></div>
-              </dl>
-              <pre id="routeJson">{"id":"","cli":"","function":"","score":0}</pre>
-            </aside>
-          </div>
-          <div class="command-line"><span>forge@cccc:~$</span><code id="typedCommand">python3 -m cli_catalog search --agent-only</code><i></i></div>
+          <div class="command-line"><span>forge@cccc:~$</span><code id="typedCommand">cccc discover --intent "周末想吃得快一点"</code><i></i></div>
         </div>
       </section>
 
       <section class="incubation section-shell" id="ideas">
-        <div class="section-heading"><div><p class="eyebrow"><span></span> IDEA MINING / 03</p><h2>一句需求，拆出<br />值得做的答案。</h2></div><p>Foreman 汇总用户意图与能力地图，分派给不同角色各自验证，再将可行方向带回你的面前。</p></div>
+        <div class="section-heading"><div><p class="eyebrow"><span></span> IDEA MINING / 03</p><h2>一句需求，拆出<br />值得做的答案。</h2></div><p>Foreman 接收需求、读取 CLI Agent 长期维护的能力快照，再派发 Idea Agent 排序创意；选定方向后，它会冻结契约并调度 Worker。</p></div>
         <div class="idea-layout">
           <aside class="brief-form">
             <div class="form-top"><span>INPUT BRIEF</span><span class="form-state" id="ideaAgentState">连接 Idea Agent…</span></div>
@@ -109,21 +80,21 @@
               <div class="chip-row"><button class="chip selected">位置</button><button class="chip selected">偏好</button><button class="chip">预算</button><button class="chip selected">时间</button></div>
             </label>
             <div class="form-divider"></div>
-            <div class="match-row"><span>匹配能力</span><b id="ideaMatch">等待 CLI 表单</b></div>
-            <ul class="capability-list" id="ideaCapabilities"><li><i>·</i> 等待 Foreman 交接能力表单</li></ul>
+            <div class="match-row"><span>匹配能力</span><b id="ideaMatch">12 项匹配 · 来自 2400 条长期能力库</b></div>
+            <ul class="capability-list" id="ideaCapabilities"><li><i>✓</i> Foreman 直接读取已保存的 CLI 能力快照</li></ul>
             <button class="form-submit" id="mineBtn">用 Team 重新挖掘 <span>↗</span></button>
           </aside>
           <div class="idea-results">
             <div class="results-head"><span id="ideaResultsTitle">等待 Idea Agent 的真实结果</span><small id="ideaEvidence">A2 · CCCC</small></div>
             <div class="idea-stack" id="ideaStack">
               <article class="idea-card" data-idea="fastbite">
-                <div class="idea-no">01</div><div class="idea-main"><div class="card-title"><h3>FastBite</h3><span>待验证</span></div><p>把「今晚吃什么」收敛成一份可即时下单的附近精选餐单。</p><div class="tag-row"><i>决策疲劳</i><i>快餐</i><i>移动端</i></div></div><div class="score"><b>92</b><span>综合匹配</span><details class="score-details"><summary>评分拆解 <i>↓</i></summary><div class="score-breakdown"><span>视觉 <b>88</b></span><span>通用 <b>96</b></span><span>痛点 <b>94</b></span><span>创新 <b>90</b></span></div><small>（88 + 96 + 94 + 90）÷ 4 = 92</small></details></div><button class="select-idea">选择方向 <span>→</span></button>
+                <div class="idea-no">01</div><div class="idea-main"><div class="card-title"><h3>FastBite</h3><span>待验证</span></div><p>把「今晚吃什么」收敛成一份可即时下单的附近精选餐单。</p><div class="tag-row"><i>决策疲劳</i><i>快餐</i><i>移动端</i></div></div><div class="score"><b>92</b><span>匹配度</span></div><button class="select-idea">选择方向 <span>→</span></button>
               </article>
               <article class="idea-card selected" data-idea="screenshot-app">
-                <div class="idea-no">02</div><div class="idea-main"><div class="card-title"><h3>截图生成 App</h3><span>已选中</span></div><p>从一张授权界面截图出发，自动生成结构相似、可本地运行的前端 MVP。</p><div class="tag-row"><i>截图理解</i><i>前端生成</i><i>验收</i></div></div><div class="score"><b>86</b><span>综合匹配</span><details class="score-details"><summary>评分拆解 <i>↓</i></summary><div class="score-breakdown"><span>视觉 <b>94</b></span><span>通用 <b>82</b></span><span>痛点 <b>86</b></span><span>创新 <b>82</b></span></div><small>（94 + 82 + 86 + 82）÷ 4 = 86</small></details></div><button class="select-idea">查看 MVP <span>→</span></button>
+                <div class="idea-no">02</div><div class="idea-main"><div class="card-title"><h3>截图生成 App</h3><span>已选中</span></div><p>从一张授权界面截图出发，自动生成结构相似、可本地运行的前端 MVP。</p><div class="tag-row"><i>截图理解</i><i>前端生成</i><i>验收</i></div></div><div class="score"><b>86</b><span>匹配度</span></div><button class="select-idea">查看 MVP <span>→</span></button>
               </article>
               <article class="idea-card" data-idea="plan">
-                <div class="idea-no">03</div><div class="idea-main"><div class="card-title"><h3>一周不重样</h3><span>待验证</span></div><p>为固定办公区生成一周午餐组合，并同步团队投票。</p><div class="tag-row"><i>效率</i><i>订阅</i></div></div><div class="score"><b>71</b><span>综合匹配</span><details class="score-details"><summary>评分拆解 <i>↓</i></summary><div class="score-breakdown"><span>视觉 <b>68</b></span><span>通用 <b>76</b></span><span>痛点 <b>72</b></span><span>创新 <b>68</b></span></div><small>（68 + 76 + 72 + 68）÷ 4 = 71</small></details></div><button class="select-idea">选择方向 <span>→</span></button>
+                <div class="idea-no">03</div><div class="idea-main"><div class="card-title"><h3>一周不重样</h3><span>待验证</span></div><p>为固定办公区生成一周午餐组合，并同步团队投票。</p><div class="tag-row"><i>效率</i><i>订阅</i></div></div><div class="score"><b>71</b><span>匹配度</span></div><button class="select-idea">选择方向 <span>→</span></button>
               </article>
             </div>
           </div>
@@ -140,19 +111,12 @@
             <div class="log-head"><div><span class="live-dot"></span> CCCC AGENT TEAM</div><small id="eventCount">正在连接真实状态</small></div>
             <div class="agents team-roster"><span class="agent" data-agent="foreman">F<br /><i>FOREMAN</i></span><span class="agent" data-agent="cli">C<br /><i>CLI</i></span><span class="agent" data-agent="idea">I<br /><i>IDEA</i></span><span class="agent" data-agent="worker">W<br /><i>WORKER</i></span><span class="agent" data-agent="qa">Q<br /><i>QA</i></span></div>
             <div class="team-summary" id="teamSummary">
-              <article data-summary="cli"><span>CLI AGENT</span><b>等待能力表单</b><small>catalog validation</small></article>
+              <article data-summary="cli"><span>CLI 能力库</span><b>2400 条持久目录 · 12 项入选</b><small>CLI Agent 后台维护 · 本轮直接读取</small></article>
               <article data-summary="idea"><span>IDEA AGENT</span><b>等待创意排序</b><small>视觉 · 通用 · 痛点 · 创新</small></article>
               <article data-summary="foreman"><span>FOREMAN</span><b>等待冻结契约</b><small>handoff → mvp-worker</small></article>
             </div>
-            <div class="log-stream" id="logStream">
-              <p><time>10:42:01</time><b class="foreman">FOREMAN</b> 选择方向：<em>Screenshot-to-App</em></p>
-              <p><time>10:42:03</time><b class="research">RESEARCH</b> 发现可用链路：视觉理解 → 前端生成 → 验收</p>
-              <p><time>10:42:06</time><b class="design">DESIGN</b> 已解析截图的布局与交互意图</p>
-              <p><time>10:42:10</time><b class="foreman">FOREMAN</b> 已生成 <code>mvp-contract.json</code></p>
-              <p><time>10:42:14</time><b class="worker">MVP-WORKER</b> 等待输入截图，准备构建目标 App...</p>
-              <p class="success"><time>10:42:29</time><b class="qa">QA</b> browser acceptance <strong>PASS</strong> · 4/4 checks</p>
-            </div>
-            <div class="delivery"><span>DELIVERY</span><div><b id="deliveryRunId">fastbite-kfc-001</b><small id="deliveryFiles">preview.png · acceptance-report.json</small></div><em id="deliveryStatus">PASS</em></div>
+            <div class="log-stream" id="logStream"><p><time>WAIT</time><b class="foreman">FOREMAN</b> 等待来自投递台的截图与 MVP 契约。</p></div>
+            <div class="delivery"><span>DELIVERY</span><div><b id="deliveryRunId">尚未创建</b><small id="deliveryFiles">等待截图 → Worker → 浏览器验收</small></div><em id="deliveryStatus">WAITING</em></div>
             </div>
             <div class="run-note"><p><b>只交付，不越权决策。</b><br />Worker 接收 Foreman 生成的 <code>mvp-contract.json</code> 和授权截图，构建页面、浏览器验收并回传交付物。</p><div class="checklist"><span>✓ Local runnable</span><span>✓ Browser checked</span><span>✓ No remote API</span></div></div>
           </div>
@@ -160,15 +124,17 @@
           <div class="mvp-preview">
             <section class="screenshot-app-shell" aria-label="截图生成 App 操作台">
               <div class="screenshot-app-head"><div class="snap-brand"><span class="snap-mark">⌁</span><div><b id="demoBrandName">SnapForge</b><small id="demoBrandType">SCREENSHOT-TO-APP</small></div></div><span class="safe-tag" id="runtimeTag">LOCAL DEMO</span></div>
-              <div class="prompt-composer"><span class="prompt-sigil">✦</span><textarea id="buildPrompt" rows="1" aria-label="生成指令">把这个界面做成可运行的前端 MVP，保留布局与交互意图。</textarea><button id="generateBtn" class="generate-btn">生成 <span>↗</span></button></div>
-              <div class="source-rail" aria-label="演示截图选择"><button class="source-chip selected" data-source="inputs/screenshot-to-app-recording-001/fastbite-reference.jpg" data-output="runs/fastbite-kfc-001/artifacts/preview.png" data-run-id="fastbite-kfc-001" data-name="KFC 点餐截图" data-app="FastBite"><span class="source-dot"></span>KFC 点餐</button><button class="source-chip" data-source="inputs/screenshot-to-app-recording-001/malllite-reference.jpg" data-output="runs/screenshot-to-app-recording-001-malllite/artifacts/preview.png" data-run-id="screenshot-to-app-recording-001-malllite" data-name="淘宝首页截图" data-app="MallLite"><span class="source-dot"></span>淘宝首页</button><label class="upload-chip" for="screenshotUpload">+ 上传截图<input id="screenshotUpload" type="file" accept="image/png,image/jpeg,image/webp" /></label><a class="intake-link" href="/">打开投递台 ↗</a></div>
+              <div class="prompt-composer"><span class="prompt-sigil">✦</span><textarea id="buildPrompt" rows="1" aria-label="生成指令">把这个界面做成可运行的前端 MVP，保留布局与交互意图。</textarea><button id="generateBtn" class="generate-btn" disabled>上传截图后生成 <span>↗</span></button></div>
+              <div class="source-rail" aria-label="演示截图选择"><div class="source-tabs" id="sourceTabs" aria-live="polite"></div><label class="upload-chip" for="screenshotUpload">+ 上传截图<input id="screenshotUpload" type="file" accept="image/png,image/jpeg,image/webp" /></label><a class="intake-link" href="/">打开投递台 ↗</a></div>
+              <div class="engine-row" role="radiogroup" aria-label="本次生成引擎"><span>本次生成引擎</span><label><input type="radio" name="backend" value="codex" checked /><b>Codex CLI</b><small>商业 Agent · 默认 · 速度优先</small></label><label><input type="radio" name="backend" value="local-openai" /><b>Local LLM</b><small>DGX Spark</small></label></div>
               <div class="generation-canvas" id="generationCanvas">
-                <article class="input-card"><div class="card-caption"><span>INPUT / AUTHORIZED SCREENSHOT</span><b id="sourceName">KFC 点餐截图</b></div><img id="sourcePreview" src="inputs/screenshot-to-app-recording-001/fastbite-reference.jpg" alt="待解析的授权参考截图" /><label class="drop-hint" for="screenshotUpload"><span>＋</span> 更换截图</label></article>
+                <article class="input-card"><div class="card-caption"><span>INPUT / AUTHORIZED SCREENSHOT</span><b id="sourceName">等待上传截图</b></div><img id="sourcePreview" alt="待解析的授权参考截图" hidden /><div class="source-empty" id="sourceEmpty"><b>上传授权截图</b><small>左侧立即回显，并新建一个工作页签</small></div><label class="drop-hint" for="screenshotUpload"><span>＋</span> 上传截图</label></article>
                 <div class="transform-rail"><span class="rail-pulse"></span><i></i><span>VISION<br />MAP</span><i></i><span>UI<br />BUILD</span></div>
-                <article class="result-card live-result" id="resultCard"><div class="card-caption"><span>LIVE MVP / 可交互</span><div><b id="outputName">FastBite</b><a class="open-app" id="openApp" href="runs/fastbite-kfc-001/app/index.html" target="_blank" title="在新窗口打开交付的 MVP">新窗口 ↗</a></div></div><div class="live-mvp-layout"><div class="result-visual"><iframe id="resultFrame" title="Worker 交付的可交互 MVP" src="runs/fastbite-kfc-001/app/index.html"></iframe><img id="resultPreview" src="runs/fastbite-kfc-001/artifacts/preview.png" alt="生成的 FastBite MVP 预览" hidden /><div class="working-state" id="workingState" hidden><span class="scan-line"></span><span class="simulation-tag">演示模拟 · 已准备案例</span><div class="build-blueprint"><i></i><i></i><i></i><i></i><i></i><i></i></div><b id="generationTitle">正在规划 MVP…</b><small id="generationStep">Foreman / 读取所选 Idea 的交付契约</small></div></div><aside class="live-notes"><div class="note-arrow">↘</div><p><b>从需求到可跑页面</b><br />Worker 只接收 Idea Foreman 的契约；它不替团队决定方向，只负责完成并自检这个 MVP。</p><div class="checklist"><span>✓ Local runnable</span><span>✓ Browser checked</span><span>✓ No remote API</span></div></aside></div><div class="result-footer"><span class="mini-status" id="resultStatus">PASS</span><span id="resultMeta">可操作交付物 · 本地运行中</span></div></article>
+                <article class="result-card live-result" id="resultCard"><div class="card-caption"><span>LIVE MVP / 可交互</span><div><b id="outputName">等待 Worker 交付</b><a class="open-app" id="openApp" target="_blank" title="在新窗口打开交付的 MVP" hidden>新窗口 ↗</a></div></div><div class="live-mvp-layout"><div class="result-visual"><iframe id="resultFrame" title="Worker 交付的可交互 MVP" hidden></iframe><img id="resultPreview" alt="生成的 MVP 预览" hidden /><div class="result-empty" id="resultEmpty"><b>等待截图</b><small>上传并生成后，这里会回显可运行的 MVP</small></div><div class="working-state" id="workingState" hidden><span class="scan-line"></span><span class="simulation-tag">真实 Worker · 正在理解截图</span><div class="build-blueprint"><i></i><i></i><i></i><i></i><i></i><i></i></div><b id="generationTitle">正在规划 MVP…</b><small id="generationStep">MVP-WORKER / 等待授权截图</small></div></div><aside class="live-notes"><div class="note-arrow">↘</div><p><b>从需求到可跑页面</b><br />Worker 只接收 Idea Foreman 的契约；它不替团队决定方向，只负责完成并自检这个 MVP。</p><div class="checklist"><span>✓ Local runnable</span><span>✓ Browser checked</span><span>✓ No remote API</span></div></aside></div><div class="result-footer"><span class="mini-status" id="resultStatus">WAITING</span><span id="resultMeta">上传一张授权截图，开始真实 Worker 流水线</span></div></article>
+                <a class="open-app" id="githubRepo" href="#" target="_blank" title="打开本次交付的 GitHub 仓库" hidden>GitHub 仓库 ↗</a>
               </div>
-              <div class="app-footnote"><span>你的截图仅用于本次任务的布局与交互理解</span><b id="taskState">READY TO FORGE</b></div>
-              <div class="whole-demo-overlay" id="wholeDemoOverlay" hidden aria-live="polite"><div class="worker-spinner"><i></i><i></i><i></i></div><p class="overlay-idea" id="overlayIdea">FastBite</p><b id="overlayTitle">正在等待 MVP Worker 启动…</b><small id="overlayStep">CCCC TEAM / 已接收 Idea 契约，正在分配构建任务</small><div class="overlay-progress"><i></i></div></div>
+              <div class="app-footnote"><span>你的截图仅用于本次任务的布局与交互理解</span><b id="taskState">WAITING FOR SCREENSHOT</b></div>
+              <div class="whole-demo-overlay" id="wholeDemoOverlay" hidden aria-live="polite"><div class="worker-spinner"><i></i><i></i><i></i></div><p class="overlay-idea" id="overlayIdea">ScreenshotMVP</p><b id="overlayTitle">正在等待 MVP Worker 启动…</b><small id="overlayStep">CCCC TEAM / 已接收 Idea 契约，正在分配构建任务</small><div class="overlay-progress"><i></i></div></div>
             </section>
           </div>
         </div>

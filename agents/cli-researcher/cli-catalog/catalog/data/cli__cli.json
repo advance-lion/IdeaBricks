@@ -1,0 +1,44 @@
+{
+  "id": "cli/cli",
+  "name": "gh",
+  "aliases": [],
+  "description": "GitHub's official tool to manage repos, issues, projects, gists and much more.",
+  "repo_url": "https://github.com/cli/cli",
+  "homepage": "https://cli.github.com/",
+  "install": {},
+  "category": "Development",
+  "tags": [
+    "composio-list",
+    "git",
+    "git-and-accessories"
+  ],
+  "github_stars": 45342,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "composio-agent-clis",
+      "curated-agent-list"
+    ],
+    "skill_url": "github-cli/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "git"
+    },
+    {
+      "id": "composio-agent-clis",
+      "repo": "ComposioHQ/awesome-agent-clis",
+      "commit": "9f765d2dbe8d91e956311dd6a6b364bde3e902b3"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

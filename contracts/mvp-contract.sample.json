@@ -1,0 +1,67 @@
+{
+  "contract_version": "1.0",
+  "run_id": "screenshot-mvp-001",
+  "handoff": {
+    "from": "idea-foreman",
+    "to": "mvp-worker"
+  },
+  "source_screenshot": {
+    "path": "REPLACE_WITH_ABSOLUTE_SCREENSHOT_PATH",
+    "authorized_for_demo": true,
+    "reference_only": true
+  },
+  "app": {
+    "name": "SparkMVP",
+    "kind": "mobile interface inferred from screenshot",
+    "goal": "Analyze the authorized screenshot first, then generate a runnable frontend that closely reconstructs its layout, component hierarchy, dominant visual rhythm and visible UI state without reproducing branding or protected assets.",
+    "reference_fidelity": {
+      "priority": "high",
+      "preserve": ["viewport rhythm", "section order", "component geometry", "dominant colour blocks", "navigation placement", "visible modal or drawer state", "interaction entry points"],
+      "replace": ["brand", "logo", "product photography", "product names", "prices", "source wording", "user data"]
+    },
+    "visual_requirements": [
+      "infer section order from screenshot",
+      "infer main component geometry from screenshot",
+      "infer dominant colour blocks from screenshot",
+      "infer visible modal or drawer state from screenshot",
+      "infer navigation and primary interaction entry points from screenshot"
+    ],
+    "required_interactions": [
+      "one screenshot-derived filter, category, tab or search interaction changes visible content",
+      "one screenshot-derived primary action updates visible state"
+    ],
+    "out_of_scope": [
+      "account", "payment", "order", "backend", "remote API", "external images"
+    ]
+  },
+  "acceptance": {
+    "viewport": { "width": 390, "height": 844 },
+    "required_testids": [
+      "app-shell",
+      "search-input",
+      "recommendation-list",
+      "cart-count",
+      "add-to-cart",
+      "qa-result"
+    ],
+    "required_checks": [
+      "page-load",
+      "required-sections",
+      "search-or-filter",
+      "primary-action"
+    ],
+    "maximum_repair_attempts": 1
+  },
+  "delivery": {
+    "github_enabled": true,
+    "required_files": [
+      "ui-spec.json",
+      "app/index.html",
+      "app/styles.css",
+      "app/app.js",
+      "artifacts/preview.png",
+      "artifacts/acceptance-report.json",
+      "worker-delivery.json"
+    ]
+  }
+}

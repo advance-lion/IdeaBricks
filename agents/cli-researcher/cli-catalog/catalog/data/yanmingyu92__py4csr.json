@@ -1,0 +1,43 @@
+{
+  "id": "yanmingyu92/py4csr",
+  "name": "TraceCSR / Py4CSR CLI",
+  "aliases": [],
+  "description": "GxP-compliant agent harness for CDISC Clinical Study Report (CSR) and Tables/Figures/Listings (TFL) generation",
+  "repo_url": "https://github.com/yanmingyu92/py4csr",
+  "homepage": "https://github.com/yanmingyu92/py4csr",
+  "install": {
+    "pip": "pip install py4csr"
+  },
+  "category": "Other",
+  "tags": [
+    "cli-anything",
+    "data-science",
+    "public_registry",
+    "requires-deps"
+  ],
+  "github_stars": 0,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/yanmingyu92/py4csr"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "data-science"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

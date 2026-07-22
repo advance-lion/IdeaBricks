@@ -1,0 +1,4 @@
+{
+  "backend": "codex",
+  "fallback_order": ["codex", "claude"]
+}

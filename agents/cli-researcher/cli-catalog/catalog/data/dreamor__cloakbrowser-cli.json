@@ -1,0 +1,43 @@
+{
+  "id": "dreamor/cloakbrowser-cli",
+  "name": "CloakBrowser CLI",
+  "aliases": [],
+  "description": "Agent-friendly CLI for CloakBrowser — stealth Chromium that passes every bot detection test. Covers fingerprint flags, humanize behaviors, page operations, content extraction, cookies, storage, network, multi-page sessions, and CDP gateway.",
+  "repo_url": "https://github.com/dreamor/cloakbrowser-cli",
+  "homepage": "https://github.com/dreamor/cloakbrowser-cli",
+  "install": {
+    "npm": "npm install -g @dreamor/cloakbrowser-cli cloakbrowser playwright-core"
+  },
+  "category": "Network & API",
+  "tags": [
+    "cli-anything",
+    "public_registry",
+    "requires-deps",
+    "web"
+  ],
+  "github_stars": 2,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/dreamor/cloakbrowser-cli/blob/main/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "web"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

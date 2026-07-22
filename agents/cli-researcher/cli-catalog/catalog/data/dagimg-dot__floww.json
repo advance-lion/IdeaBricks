@@ -1,0 +1,34 @@
+{
+  "id": "dagimg-dot/floww",
+  "name": "floww",
+  "aliases": [],
+  "description": "Streamline your workflow setup on Linux desktops, defining workspace layouts and application sets in simple configuration files and automate the process of switching workspaces and launching applications.",
+  "repo_url": "https://github.com/dagimg-dot/floww",
+  "homepage": "",
+  "install": {},
+  "category": "Productivity",
+  "tags": [
+    "productivity"
+  ],
+  "github_stars": 22,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "productivity"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

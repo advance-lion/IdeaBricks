@@ -1,0 +1,43 @@
+{
+  "id": "WecomTeam/wecom-cli",
+  "name": "WeCom CLI",
+  "aliases": [],
+  "description": "Official WeCom open-platform CLI for contacts, todos, meetings, messages, calendars, docs, and smart sheets",
+  "repo_url": "https://github.com/WecomTeam/wecom-cli",
+  "homepage": "https://open.work.weixin.qq.com/",
+  "install": {
+    "npm": "npm install -g @wecom/cli"
+  },
+  "category": "Other",
+  "tags": [
+    "cli-anything",
+    "communication",
+    "public_registry",
+    "requires-deps"
+  ],
+  "github_stars": 2514,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/HKUDS/CLI-Anything/blob/main/npx skills add WeComTeam/wecom-cli -y -g"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "communication"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

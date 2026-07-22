@@ -1,0 +1,35 @@
+{
+  "id": "chr15m/aish",
+  "name": "aish",
+  "aliases": [],
+  "description": "A program that retrieve shell script one-liners, ready to be executed in the terminal.",
+  "repo_url": "https://github.com/chr15m/aish",
+  "homepage": "",
+  "install": {},
+  "category": "AI & Agents",
+  "tags": [
+    "co-pilot",
+    "copilot"
+  ],
+  "github_stars": 36,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "copilot"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

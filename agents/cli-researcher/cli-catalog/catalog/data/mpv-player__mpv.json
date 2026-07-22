@@ -1,0 +1,34 @@
+{
+  "id": "mpv-player/mpv",
+  "name": "mpv",
+  "aliases": [],
+  "description": "A cross-platform media player with many features such as frame timing, MKV chapters and subtitles. It is a responsive video player with minimal layout customizable with themes. A good alternative media player to VLC since it can handle almost all the media formats as VLC, but using much less resources.",
+  "repo_url": "https://github.com/mpv-player/mpv",
+  "homepage": "https://mpv.io/",
+  "install": {},
+  "category": "Files & Search",
+  "tags": [
+    "viewers"
+  ],
+  "github_stars": 36094,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "viewers"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

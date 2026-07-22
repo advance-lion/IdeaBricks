@@ -1,0 +1,38 @@
+{
+  "format": "cccc-agent-export/v1",
+  "agent": {
+    "id": "mvp-worker",
+    "title": "MVP Worker - Local VLM Screenshot to App",
+    "runtime": "codex",
+    "command": "codex -c shell_environment_policy.inherit=all --dangerously-bypass-approvals-and-sandbox --search",
+    "submit": "enter"
+  },
+  "worker": {
+    "entrypoint": "scripts/worker_intake_server.py",
+    "pipeline": "scripts/worker_pipeline.py",
+    "backend": "local-openai",
+    "model_config": "config/local-model.local.json",
+    "cccc_sync": true,
+    "status_contract": "[Worker 状态同步] run=<id>｜阶段=<阶段>｜状态=<状态>｜执行引擎=<引擎>"
+  },
+  "capabilities": [
+    "screenshot-to-ui-spec",
+    "ui-spec-to-frontend",
+    "browser-acceptance",
+    "local-git-delivery"
+  ],
+  "required_env": [
+    "MVP_WORKER_CCCC_GROUP=<target-team-group-id>",
+    "LOCAL_MODEL_BASE_URL=<local-vlm-endpoint>",
+    "LOCAL_MODEL_API_KEY=<local-secret>",
+    "LOCAL_MODEL_NAME=<vision-capable-model>"
+  ],
+  "safety": {
+    "does_not_export": [
+      "API keys",
+      "local model endpoint credentials",
+      "CCCC ledger/history",
+      "screenshots or generated runs"
+    ]
+  }
+}

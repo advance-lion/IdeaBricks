@@ -23,7 +23,15 @@ PYTHON = Path(sys.executable)
 MAX_UPLOAD_BYTES = 16 * 1024 * 1024
 ALLOWED_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 DEFAULT_GROUP = "g_c3e3880e9f6c"
-CCCC_GROUP = os.environ.get("MVP_WORKER_CCCC_GROUP", DEFAULT_GROUP)
+
+
+def cccc_group_id() -> str:
+    configured = os.environ.get("MVP_WORKER_CCCC_GROUP", "").strip()
+    if configured:
+        return configured
+    config_path = ROOT / "config" / "cccc-team.local.json"
+    config = read_json(config_path) if "read_json" in globals() else None
+    return str((config or {}).get("group_id") or DEFAULT_GROUP)
 
 
 PAGE = r"""<!doctype html>
@@ -158,7 +166,7 @@ def cccc_stage_events(run_id: str | None = None) -> dict[str, Any]:
     preferred_home = Path.home() / ".cccc"
     roaming_home = Path(os.environ.get("APPDATA", str(Path.home() / "AppData" / "Roaming"))) / "cccc"
     cccc_home = preferred_home if preferred_home.is_dir() else roaming_home
-    group_root = cccc_home / "groups" / CCCC_GROUP
+    group_root = cccc_home / "groups" / cccc_group_id()
     ledger_path = group_root / "ledger.jsonl"
     pattern = re.compile(r"^\[Worker 状态同步\] run=([^｜]+)｜阶段=([^｜]+)｜状态=([^｜]+)｜执行引擎=(.+)$")
     events: list[dict[str, str]] = []
@@ -199,7 +207,7 @@ def cccc_stage_events(run_id: str | None = None) -> dict[str, Any]:
             actors.append({"id": match.group(1).strip(), "title": match.group(2).strip(" '\"")})
     except OSError:
         pass
-    return {"group_id": CCCC_GROUP, "title": title, "actors": actors, "events": events[-16:], "latest_run_id": latest_run_id}
+    return {"group_id": cccc_group_id(), "title": title, "actors": actors, "events": events[-16:], "latest_run_id": latest_run_id}
 
 
 def worker_backend_info() -> dict[str, str]:
@@ -452,7 +460,7 @@ class IntakeHandler(SimpleHTTPRequestHandler):
                 command = cccc_command()
                 if not command:
                     raise ValueError("CCCC 命令不可用；截图已准备，但未派发。")
-                start = subprocess.run([command, "actor", "start", "mvp-worker", "--group", DEFAULT_GROUP], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
+                start = subprocess.run([command, "actor", "start", "mvp-worker", "--group", cccc_group_id()], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
                 if start.returncode:
                     raise ValueError(f"无法启动 mvp-worker：{start.stderr or start.stdout}")
                 pipeline_log = launch_pipeline(contract, ROOT / "runs" / run_id, run_id)

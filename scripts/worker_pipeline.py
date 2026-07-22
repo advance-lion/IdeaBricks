@@ -28,7 +28,20 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON = Path(sys.executable)
 CODEX = ROOT / ".tools" / "codex-cli" / "node_modules" / ".pnpm" / "@openai+codex@0.144.6" / "node_modules" / "@openai" / "codex" / "bin" / "codex.js"
-CCCC_GROUP = os.environ.get("MVP_WORKER_CCCC_GROUP", "g_c3e3880e9f6c")
+
+
+def cccc_group_id() -> str:
+    """Use the local Team binding when the Worker joins another CCCC Team."""
+    configured = os.environ.get("MVP_WORKER_CCCC_GROUP", "").strip()
+    if configured:
+        return configured
+    config_path = ROOT / "config" / "cccc-team.local.json"
+    try:
+        value = json.loads(config_path.read_text(encoding="utf-8-sig"))
+        configured = str(value.get("group_id", "")).strip()
+    except (OSError, json.JSONDecodeError):
+        configured = ""
+    return configured or "g_c3e3880e9f6c"
 
 
 def emit(line: str) -> None:
@@ -65,7 +78,7 @@ def sync_cccc_status(run_id: str, phase: str, status: str) -> None:
     engine = {"local-openai": "本地 LLM / VLM · local-agent", "codex": "Codex", "cccc-codex": "CCCC + Codex"}.get(backend, backend)
     text = f"[Worker 状态同步] run={run_id}｜阶段={phases.get(phase, phase)}｜状态={states.get(status, status)}｜执行引擎={engine}"
     priority = "attention" if status == "FAIL" else "normal"
-    result = call(command, "send", text, "--group", CCCC_GROUP, "--by", "mvp-worker", "--to", "user", "--priority", priority, timeout=20)
+    result = call(command, "send", text, "--group", cccc_group_id(), "--by", "mvp-worker", "--to", "user", "--priority", priority, timeout=20)
     if result.returncode:
         emit("CCCC status sync skipped: " + (result.stderr or result.stdout).strip()[-300:])
 

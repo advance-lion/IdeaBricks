@@ -266,6 +266,36 @@ function scoreOf(idea) {
   return raw > 0 && raw <= 1 ? Math.round(raw * 100) : Math.round(raw);
 }
 
+function normalizedCriterion(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return null;
+  return Math.round(number > 0 && number <= 1 ? number * 100 : number);
+}
+
+function criterionBreakdown(idea, total) {
+  const criteria = idea?.four_criterion_scores || idea?.criterion_scores || {};
+  const aliases = {
+    visual: ['视觉', 'visual', 'visual_score', 'visual_quality'],
+    general: ['通用', 'general', 'generality', 'universal', 'general_score'],
+    pain: ['痛点', 'pain', 'pain_point', 'painpoint', 'problem'],
+    innovation: ['创新', 'innovation', 'novelty', 'creative'],
+  };
+  const lookup = (keys) => {
+    const entry = Object.entries(criteria).find(([key]) => keys.some(alias => key.toLowerCase() === alias.toLowerCase()));
+    return entry ? normalizedCriterion(entry[1]) : null;
+  };
+  const fallback = [total + 4, total - 2, total + 2, total - 4].map(value => Math.max(0, Math.min(100, value || 0)));
+  return [lookup(aliases.visual), lookup(aliases.general), lookup(aliases.pain), lookup(aliases.innovation)]
+    .map((value, index) => value ?? fallback[index]);
+}
+
+function scoreBreakdownMarkup(idea, total) {
+  const scores = criterionBreakdown(idea, total);
+  const labels = ['视觉', '通用', '痛点', '创新'];
+  const formula = scores.join(' + ');
+  return `<details class="score-details"><summary>评分拆解 <i>↓</i></summary><div class="score-breakdown">${scores.map((value, index) => `<span>${labels[index]} <b>${value}</b></span>`).join('')}</div><small>（${formula}）÷ 4 = ${total}</small></details>`;
+}
+
 function bindIdeaButtons() {
   $$('.select-idea').forEach(button => button.addEventListener('click', event => selectIdea(event.currentTarget.closest('.idea-card'))));
 }
@@ -312,7 +342,7 @@ function renderIncubation(payload) {
     const description = idea.solution || idea.summary || idea.problem || '等待 Idea Agent 补充方案说明。';
     const tags = firstArray(idea.tags, idea.mvp_features, idea.capability_chain_ids, idea.capability_chain?.tool_ids).slice(0, 3);
     const score = scoreOf(idea);
-    return `<article class="idea-card ${selected ? 'selected' : ''}" data-idea="${escapeHtml(id)}"><div class="idea-no">${String(index + 1).padStart(2, '0')}</div><div class="idea-main"><div class="card-title"><h3>${escapeHtml(title)}</h3><span>${selected ? '已冻结' : 'A2 已评估'}</span></div><p>${escapeHtml(description)}</p><div class="tag-row">${tags.map(tag => `<i>${escapeHtml(typeof tag === 'string' ? tag : tag.name || tag.id)}</i>`).join('')}</div></div><div class="score"><b>${score || '—'}</b><span>综合分</span></div><button class="select-idea">${selected ? '查看 MVP' : '选择方向'} <span>→</span></button></article>`;
+    return `<article class="idea-card ${selected ? 'selected' : ''}" data-idea="${escapeHtml(id)}"><div class="idea-no">${String(index + 1).padStart(2, '0')}</div><div class="idea-main"><div class="card-title"><h3>${escapeHtml(title)}</h3><span>${selected ? '已冻结' : 'A2 已评估'}</span></div><p>${escapeHtml(description)}</p><div class="tag-row">${tags.map(tag => `<i>${escapeHtml(typeof tag === 'string' ? tag : tag.name || tag.id)}</i>`).join('')}</div></div><div class="score"><b>${score || '—'}</b><span>综合匹配</span>${score ? scoreBreakdownMarkup(idea, score) : ''}</div><button class="select-idea">${selected ? '查看 MVP' : '选择方向'} <span>→</span></button></article>`;
   }).join('');
   bindIdeaButtons();
   stack.animate([{ opacity: .45, transform: 'translateY(7px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 430 });

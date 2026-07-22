@@ -1,4 +1,4 @@
-# 🧱 IdeaBricks 智积木：你的创业助手——专业产品孵化器
+# 🧱 IdeaBricks 智积木：你的创业助手——专业创意产品孵化器
 
 ### From Capabilities to Ideas, From Ideas to MVPs
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local VLM Verified Path</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app-shell" data-testid="app-shell">
+        <header class="topbar">
+            <h1>Recommend</h1>
+            <span id="cart-count" data-testid="cart-count">0</span>
+        </header>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search products..." data-testid="search-input">
+        </div>
+        <main>
+            <div id="qa-result" data-testid="qa-result">Verified Path</div>
+            <div id="recommendation-list" data-testid="recommendation-list">
+                <article class="product-card">
+                    <h3>Generic Robot</h3>
+                    <p>¥5</p>
+                    <button class="primary-action" data-testid="add-to-cart">Add to Cart</button>
+                </article>
+                <article class="product-card">
+                    <h3>Vinyl Player</h3>
+                    <p>¥303</p>
+                    <button class="primary-action" data-testid="add-to-cart">Add to Cart</button>
+                </article>
+                <article class="product-card">
+                    <h3>Smart Watch</h3>
+                    <p>¥169</p>
+                    <button class="primary-action" data-testid="add-to-cart">Add to Cart</button>
+                </article>
+            </div>
+        </main>
+        <nav class="bottom-nav">
+            <span>Home</span>
+            <span>Shop</span>
+            <span>Favorites</span>
+            <span>Cart</span>
+            <span>Profile</span>
+        </nav>
+    </div>
+    <script src="app.js" defer></script>
+</body>
+</html>

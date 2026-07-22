@@ -1,0 +1,64 @@
+{
+  "status": "PASS",
+  "url": "http://127.0.0.1:52342/index.html",
+  "qa_url": "http://127.0.0.1:52342/index.html?qa=1",
+  "browser": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "checks": [
+    {
+      "id": "page-load",
+      "status": "PASS",
+      "evidence": "dump-dom exit=0"
+    },
+    {
+      "id": "required-testids",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "qa-result",
+      "status": "PASS",
+      "result": {
+        "status": "PASS",
+        "checks": [
+          {
+            "id": "page-load",
+            "status": "PASS"
+          },
+          {
+            "id": "required-sections",
+            "status": "PASS"
+          },
+          {
+            "id": "search-or-filter",
+            "status": "PASS",
+            "filtered": 3
+          },
+          {
+            "id": "primary-action",
+            "status": "PASS",
+            "before": 0,
+            "after": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "required-interactions",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "preview",
+      "status": "PASS",
+      "path": "C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-163307-91ef\\artifacts\\preview.png"
+    }
+  ],
+  "browser_stderr": {
+    "screenshot": "[44064:6188:0722/163420.244:ERROR:components\\edge_auth\\edge_auth_errors.cc:540] EDGE_IDENTITY: Get Default OS Account failed: Error: Primary Error: kImplicitSignInFailure, Secondary Error: kAccountProviderFetchError, Platform error: 0, Error string: [empty]\n\n[44064:48072:0722/163420.570:ERROR:chrome\\browser\\importer\\edge_china_browsers\\edge_qqbrowser_importer_utils_win.cc:163] QQBrowser user data path not found.\n[44064:6188:0722/163421.105:ERROR:chrome\\browser\\task_manager\\providers\\fallback_task_provider.cc:126] Every renderer should have at least one task provided by a primary task provider. If a \"Renderer\" fallback task is shown, it is a bug. If you have repro steps, please file a new bug and tag it as a dependency of crbug.com/739782.\n30683 bytes written to file C:\\Users\\wanganxin\\Documents\\黑客松demo演示\\runs\\trial-20260722-163307-91ef\\artifacts\\preview.png\n",
+    "dump_dom": "[41504:37392:0722/163422.623:ERROR:components\\edge_auth\\edge_auth_errors.cc:540] EDGE_IDENTITY: Get Default OS Account failed: Error: Primary Error: kImplicitSignInFailure, Secondary Error: kAccountProviderFetchError, Platform error: 0, Error string: [empty]\n\n[41504:22704:0722/163422.862:ERROR:chrome\\browser\\importer\\edge_china_browsers\\edge_qqbrowser_importer_utils_win.cc:163] QQBrowser user data path not found.\n"
+  }
+}

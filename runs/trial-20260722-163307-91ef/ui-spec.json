@@ -1,0 +1,44 @@
+{
+  "run_id": "trial-20260722-163307-91ef",
+  "app_type": "ecommerce_marketplace",
+  "high_fidelity_structure": "Vertical scroll layout. Top status bar. Horizontal scrollable tab bar (Follow, Recommend, Flash Sale). Sticky search bar with camera icon. Two-row grid of circular icon shortcuts (Red Packet, Try, Coins, etc.). Horizontal scrollable card carousel (Live, Subsidy, Flash Sale). Full-width red promotional banner. Two-column masonry grid for product feed. Fixed bottom navigation bar with 5 tabs.",
+  "replaced_source_assets": {
+    "branding": "Generic Orange App",
+    "logo": "Abstract Orange Circle",
+    "search_query": "steamdeck游戏机",
+    "product_names": "Generic Robot, Vinyl Player",
+    "prices": "¥5, ¥303, ¥169, ¥454"
+  },
+  "visible_state": {
+    "active_tab": "Recommend",
+    "search_bar_focus": false,
+    "bottom_nav_active": "Home",
+    "notification_badge": "99+"
+  },
+  "components": [
+    "status_bar",
+    "tab_bar",
+    "search_bar",
+    "icon_grid",
+    "promo_carousel",
+    "promo_banner",
+    "product_grid",
+    "bottom_nav"
+  ],
+  "inferred_interactions": [
+    "tap_search_bar_to_open_keyboard",
+    "tap_icon_grid_item_to_navigate",
+    "tap_product_card_to_view_details",
+    "tap_bottom_nav_tab_to_switch_view"
+  ],
+  "design_tokens": {
+    "primary_color": "#FF5000",
+    "secondary_color": "#FF9000",
+    "background_color": "#F5F5F5",
+    "text_primary": "#333333",
+    "text_secondary": "#999999",
+    "border_radius": "8px",
+    "font_family": "System Sans"
+  },
+  "generator": "local-vlm"
+}

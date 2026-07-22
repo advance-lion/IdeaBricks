@@ -1,0 +1,119 @@
+:root {
+  --primary: #FF5000;
+  --secondary: #FF9000;
+  --bg: #F5F5F5;
+  --text: #333333;
+  --text-sec: #999999;
+  --radius: 8px;
+  --nav-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "System Sans", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app-shell {
+  max-width: 390px;
+  margin: 0 auto;
+  background: #fff;
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: var(--nav-h);
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar h1 {
+  font-size: 18px;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.search-bar {
+  background: var(--bg);
+  margin: 0 16px 12px;
+  padding: 10px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#search-input {
+  border: none;
+  background: transparent;
+  flex: 1;
+  font-size: 14px;
+  outline: none;
+  color: var(--text);
+}
+
+.camera-icon {
+  width: 20px;
+  height: 20px;
+  background: var(--primary);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 10px;
+}
+
+.chip-row {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chip {
+  padding: 6px 12px;
+  background: var(--bg);
+  border-radius: 16px;
+  font-size: 12px;
+  color: var(--text-sec);
+  white-space: nowrap;
+}
+
+.chip.active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  font-weight: 600;
+}
+
+.hero {
+  margin: 0 16px 16px;
+  height: 120px;
+  background: linear-gradient(135deg, #FF5000, #FF9000);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(255, 80, 0, 0.3);
+}
+
+.product-card {
+  background: #fff;
+  border-radius

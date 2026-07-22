@@ -71,7 +71,7 @@
         <div class="section-heading"><div><p class="eyebrow"><span></span> IDEA MINING / 03</p><h2>一句需求，拆出<br />值得做的答案。</h2></div><p>Foreman 汇总用户意图与能力地图，分派给不同角色各自验证，再将可行方向带回你的面前。</p></div>
         <div class="idea-layout">
           <aside class="brief-form">
-            <div class="form-top"><span>INPUT BRIEF</span><span class="form-state">已分析</span></div>
+            <div class="form-top"><span>INPUT BRIEF</span><span class="form-state" id="ideaAgentState">连接 Idea Agent…</span></div>
             <label>你想解决的事
               <textarea id="briefInput" rows="3">周末和朋友想吃得快一点，但总是挑不出吃什么。</textarea>
             </label>
@@ -79,12 +79,12 @@
               <div class="chip-row"><button class="chip selected">位置</button><button class="chip selected">偏好</button><button class="chip">预算</button><button class="chip selected">时间</button></div>
             </label>
             <div class="form-divider"></div>
-            <div class="match-row"><span>匹配能力</span><b>6 / 12</b></div>
-            <ul class="capability-list"><li><i>✓</i> 场景拆解</li><li><i>✓</i> 市场商户检索</li><li><i>✓</i> 移动端界面生成</li></ul>
-            <button class="form-submit" id="mineBtn">重新挖掘创意 <span>↗</span></button>
+            <div class="match-row"><span>匹配能力</span><b id="ideaMatch">等待 CLI 表单</b></div>
+            <ul class="capability-list" id="ideaCapabilities"><li><i>·</i> 等待 Foreman 交接能力表单</li></ul>
+            <button class="form-submit" id="mineBtn">用 Team 重新挖掘 <span>↗</span></button>
           </aside>
           <div class="idea-results">
-            <div class="results-head"><span>生成 3 个可行方向</span><small>置信度由高到低</small></div>
+            <div class="results-head"><span id="ideaResultsTitle">等待 Idea Agent 的真实结果</span><small id="ideaEvidence">A2 · CCCC</small></div>
             <div class="idea-stack" id="ideaStack">
               <article class="idea-card" data-idea="fastbite">
                 <div class="idea-no">01</div><div class="idea-main"><div class="card-title"><h3>FastBite</h3><span>待验证</span></div><p>把「今晚吃什么」收敛成一份可即时下单的附近精选餐单。</p><div class="tag-row"><i>决策疲劳</i><i>快餐</i><i>移动端</i></div></div><div class="score"><b>92</b><span>匹配度</span></div><button class="select-idea">选择方向 <span>→</span></button>

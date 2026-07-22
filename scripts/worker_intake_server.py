@@ -169,6 +169,118 @@ def read_json(path: Path) -> dict[str, Any] | None:
         return None
 
 
+def write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def incubation_actor_states() -> list[dict[str, Any]]:
+    """Small, public runtime view for the platform's Idea Mining section."""
+    command = cccc_command()
+    if not command:
+        return []
+    try:
+        result = subprocess.run([command, "actor", "list", "--group", cccc_group_id()], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=10)
+        payload = json.loads(result.stdout)
+        return [{
+            "id": item.get("id"), "title": item.get("title"), "role": item.get("role"),
+            "running": bool(item.get("running")), "state": item.get("effective_working_state", "unknown"),
+        } for item in payload.get("result", {}).get("actors", [])]
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError):
+        return []
+
+
+def incubation_run_data(run_dir: Path) -> dict[str, Any]:
+    request = read_json(run_dir / "request.json") or {}
+    cli_form = read_json(run_dir / "cli-capability-form.json") or {}
+    shortlist = read_json(run_dir / "idea-shortlist.json") or {}
+    contract = read_json(run_dir / "mvp-contract.json") or {}
+    if contract:
+        status = "MVP_CONTRACT_READY"
+    elif shortlist:
+        status = "IDEAS_RANKED"
+    elif cli_form:
+        status = "WAITING_FOR_IDEA_AGENT"
+    else:
+        status = "FOREMAN_QUEUED"
+    return {
+        "run_id": run_dir.name,
+        "status": status,
+        "brief": request.get("raw_request") or request.get("brief") or "",
+        "normalized_request": request.get("normalized_request", {}),
+        "cli_form": cli_form,
+        "shortlist": shortlist,
+        "mvp_contract": contract,
+        "created_at": datetime.fromtimestamp(run_dir.stat().st_mtime).astimezone().isoformat(timespec="seconds"),
+        "links": {
+            "request": f"/handoffs/{run_dir.name}/request.json",
+            "cli_form": f"/handoffs/{run_dir.name}/cli-capability-form.json" if cli_form else None,
+            "shortlist": f"/handoffs/{run_dir.name}/idea-shortlist.json" if shortlist else None,
+            "mvp_contract": f"/handoffs/{run_dir.name}/mvp-contract.json" if contract else None,
+        },
+    }
+
+
+def incubation_data() -> dict[str, Any]:
+    root = ROOT / "handoffs"
+    runs = [path for path in root.glob("incubation-*") if path.is_dir()] if root.is_dir() else []
+    runs.sort(key=lambda path: path.stat().st_mtime, reverse=True)
+    latest = incubation_run_data(runs[0]) if runs else None
+    return {"team": {"title": team_binding_info()["title"], "actors": incubation_actor_states()}, "latest": latest}
+
+
+def start_incubation_test(brief: str) -> dict[str, Any]:
+    """Create an explicitly labelled platform test; it never impersonates teammate A."""
+    cleaned = " ".join(brief.split())[:600]
+    if not cleaned:
+        raise ValueError("请先写下要孵化的需求。")
+    created = datetime.now().astimezone()
+    run_id = f"incubation-{created.strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:4]}"
+    handoff = ROOT / "handoffs" / run_id
+    request = {
+        "run_id": run_id,
+        "raw_request": cleaned,
+        "normalized_request": {
+            "domain": "screenshot-to-app",
+            "target_users": ["需要快速验证产品界面的团队"],
+            "constraints": {"local_first": True, "target_platform": "web/mobile frontend", "requirements": ["视觉表达", "通用", "痛点", "创新"]},
+        },
+        "test_mode": True,
+    }
+    cli_form = {
+        "run_id": run_id,
+        "source": "platform-test-simulation",
+        "demo_only": True,
+        "warning": "同学 A 的 CLI Agent 尚未接入；这是用于验证 Foreman → Idea Agent 接口的模拟能力表单，不是正式市场调研结果。",
+        "capabilities": [
+            {"id": "vision-layout", "name": "界面截图理解", "input": "authorized screenshot", "output": "layout and interaction spec"},
+            {"id": "frontend-scaffold", "name": "前端脚手架", "input": "UI spec", "output": "runnable local frontend"},
+            {"id": "browser-qa", "name": "浏览器验收", "input": "frontend", "output": "acceptance report"},
+            {"id": "local-git", "name": "本地 Git 交付", "input": "source files", "output": "commit evidence"},
+        ],
+    }
+    write_json(handoff / "request.json", request)
+    write_json(handoff / "cli-capability-form.json", cli_form)
+    command = cccc_command()
+    if not command:
+        raise ValueError("CCCC 命令不可用，已保存测试输入但未派发。")
+    task = (
+        f"[平台集成测试] run={run_id}。读取 {handoff / 'request.json'} 与 {handoff / 'cli-capability-form.json'}。"
+        "该 CLI 表单明确是 test simulation：不要把它说成同学 A 的正式产出。"
+        "你只做 Foreman：把相同 run 的需求和表单转交给 idea-agent，等待其写入 "
+        f"{handoff / 'idea-shortlist.json'} 与 {handoff / 'mvp-contract.json'}，然后核对并向用户汇报。"
+        "不要自己生成 Idea，不要启动 mvp-worker。"
+    )
+    result = subprocess.run([
+        command, "tracked-send", task, "--group", cccc_group_id(), "--by", "user", "--to", "idea-foreman",
+        "--title", f"Incubation test: {run_id}", "--outcome", "Foreman forwards the test handoff to idea-agent; idea-shortlist.json and mvp-contract.json exist.",
+        "--handoff-to", "idea-agent", "--idempotency-key", f"platform-incubation-{run_id}",
+    ], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20)
+    if result.returncode:
+        raise ValueError("无法派发给 Foreman：" + (result.stderr or result.stdout).strip()[-500:])
+    return incubation_run_data(handoff)
+
+
 def worker_events(run_id: str) -> list[dict[str, Any]]:
     """Read the append-only Worker feed and retain only one trial's events."""
     events: list[dict[str, Any]] = []
@@ -430,6 +542,9 @@ class IntakeHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/project":
             json_response(self, HTTPStatus.OK, {"repository": repository_info(), "team": team_binding_info()})
             return
+        if parsed.path == "/api/incubation":
+            json_response(self, HTTPStatus.OK, incubation_data())
+            return
         if parsed.path.startswith("/api/runs/"):
             run_id = unquote(parsed.path.removeprefix("/api/runs/"))
             if not re.fullmatch(r"trial-[\w-]+", run_id):
@@ -456,6 +571,14 @@ class IntakeHandler(SimpleHTTPRequestHandler):
                 self.send_error(HTTPStatus.NOT_FOUND)
                 return
             return super().do_GET()
+        if parsed.path.startswith("/handoffs/"):
+            relative = Path(*[unquote(part) for part in parsed.path.removeprefix("/handoffs/").split("/")])
+            candidate = (ROOT / "handoffs" / relative).resolve()
+            handoff_root = (ROOT / "handoffs").resolve()
+            if ".." in relative.parts or not candidate.is_file() or handoff_root not in candidate.parents:
+                self.send_error(HTTPStatus.NOT_FOUND)
+                return
+            return super().do_GET()
         self.send_error(HTTPStatus.NOT_FOUND)
 
     def translate_path(self, path: str) -> str:
@@ -463,10 +586,27 @@ class IntakeHandler(SimpleHTTPRequestHandler):
         if parsed.path.startswith("/files/"):
             parts = [unquote(part) for part in parsed.path.split("/") if part]
             return str(ROOT / "runs" / parts[1] / Path(*parts[2:]))
+        if parsed.path.startswith("/handoffs/"):
+            parts = [unquote(part) for part in parsed.path.split("/") if part]
+            return str(ROOT / "handoffs" / Path(*parts[1:]))
         return str(ROOT)
 
     def do_POST(self) -> None:
-        if urlparse(self.path).path != "/api/intake":
+        endpoint = urlparse(self.path).path
+        if endpoint == "/api/incubation/test":
+            try:
+                content_length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < content_length <= 16 * 1024:
+                    raise ValueError("测试需求不能为空，且不能超过 16 KB。")
+                payload = json.loads(self.rfile.read(content_length).decode("utf-8"))
+                latest = start_incubation_test(str(payload.get("brief", "")))
+                json_response(self, HTTPStatus.CREATED, {"message": "Foreman 已接收集成测试，正在交接给 Idea Agent。", "latest": latest})
+            except (ValueError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
+                json_response(self, HTTPStatus.BAD_REQUEST, {"error": str(exc)})
+            except Exception as exc:
+                json_response(self, HTTPStatus.INTERNAL_SERVER_ERROR, {"error": f"创建创意测试失败：{exc}"})
+            return
+        if endpoint != "/api/intake":
             self.send_error(HTTPStatus.NOT_FOUND)
             return
         content_length = int(self.headers.get("Content-Length", "0"))

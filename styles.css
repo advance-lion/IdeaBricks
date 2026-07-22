@@ -13,6 +13,7 @@
 
 /* Real-run affordances: keep the evidence controls visually quiet until needed. */
 .run-status.is-idle .live-dot{background:#af8a24;box-shadow:0 0 0 4px #f0e3bd}.failed{border-left:2px solid var(--orange);padding-left:7px}.working-state[hidden],.result-visual>img[hidden]{display:none!important}.intake-link{margin-left:auto;color:#315c42;font:9px var(--mono);text-decoration:none;border-bottom:1px solid #90a995;padding-bottom:2px;white-space:nowrap}.intake-link:hover{color:var(--orange);border-color:var(--orange)}
+.form-state.wait{color:#aa5d21}.idea-results .idea-card .tag-row:empty{display:none}
 @media(max-width:600px){.intake-link{width:100%;margin-left:0;text-align:right}}
 
 /* 04 / The evidence board is adjustable: logs remain legible while the live MVP gets the stage. */

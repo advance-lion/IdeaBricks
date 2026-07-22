@@ -70,17 +70,105 @@ function selectIdea(card) {
 
 $$('.select-idea').forEach(button => button.addEventListener('click', event => selectIdea(event.currentTarget.closest('.idea-card'))));
 
-$('#mineBtn').addEventListener('click', () => {
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+}
+
+function firstArray(...values) {
+  return values.find(Array.isArray) || [];
+}
+
+function scoreOf(idea) {
+  const criteria = idea?.four_criterion_scores || idea?.criterion_scores || {};
+  const criterionValues = Object.values(criteria).map(Number).filter(Number.isFinite);
+  if (criterionValues.length) return Math.round(criterionValues.reduce((sum, value) => sum + value, 0) / criterionValues.length);
+  const raw = Number(idea?.score ?? idea?.total_score ?? idea?.match_score ?? idea?.rank_score ?? 0);
+  return raw > 0 && raw <= 1 ? Math.round(raw * 100) : Math.round(raw);
+}
+
+function bindIdeaButtons() {
+  $$('.select-idea').forEach(button => button.addEventListener('click', event => selectIdea(event.currentTarget.closest('.idea-card'))));
+}
+
+function renderIncubation(payload) {
+  const latest = payload?.latest;
+  const actors = payload?.team?.actors || [];
+  const ideaAgent = actors.find(actor => actor.id === 'idea-agent');
+  const state = $('#ideaAgentState');
+  if (!latest) {
+    state.textContent = ideaAgent?.running ? 'A2 就绪' : '等待 Idea Agent';
+    return;
+  }
+  const form = latest.cli_form || {};
+  const shortlist = latest.shortlist || {};
+  const contract = latest.mvp_contract || {};
+  const capabilities = firstArray(form.capabilities, form.items, form.tools);
+  const ideas = firstArray(shortlist.ideas, shortlist.ranked_ideas, shortlist.ranked_options, shortlist.results, shortlist.candidates);
+  const statusMap = {
+    FOREMAN_QUEUED: 'Foreman 已接收',
+    WAITING_FOR_IDEA_AGENT: '等待 Idea Agent',
+    IDEAS_RANKED: 'A2 已完成排序',
+    MVP_CONTRACT_READY: 'MVP 契约已冻结',
+  };
+  state.textContent = statusMap[latest.status] || latest.status;
+  state.classList.toggle('wait', latest.status === 'FOREMAN_QUEUED' || latest.status === 'WAITING_FOR_IDEA_AGENT');
+  if (latest.brief) $('#briefInput').value = latest.brief;
+  $('#ideaMatch').textContent = capabilities.length ? `${capabilities.length} 项可用能力` : '等待 CLI 表单';
+  $('#ideaCapabilities').innerHTML = capabilities.length
+    ? capabilities.slice(0, 4).map(item => `<li><i>✓</i> ${escapeHtml(item.name || item.capability || item.id)}</li>`).join('')
+    : '<li><i>·</i> 等待 Foreman 交接能力表单</li>';
+  $('#ideaResultsTitle').textContent = ideas.length ? `A2 排序出的 ${ideas.length} 个方向` : 'Foreman → Idea Agent 正在交接';
+  $('#ideaEvidence').textContent = form.demo_only ? 'CLI 表单：集成测试模拟' : 'CLI 表单：正式输入';
+  if (!ideas.length) return;
+  const selectedId = contract.idea_id || contract.selected_idea_id || shortlist.recommended_idea_id || shortlist.selected_idea_id;
+  const stack = $('#ideaStack');
+  stack.innerHTML = ideas.slice(0, 4).map((idea, index) => {
+    const id = idea.idea_id || idea.id || `idea-${index + 1}`;
+    const selected = selectedId && id === selectedId;
+    const title = idea.name || idea.title || `创意方向 ${index + 1}`;
+    const description = idea.solution || idea.summary || idea.problem || '等待 Idea Agent 补充方案说明。';
+    const tags = firstArray(idea.tags, idea.mvp_features, idea.capability_chain_ids, idea.capability_chain?.tool_ids).slice(0, 3);
+    const score = scoreOf(idea);
+    return `<article class="idea-card ${selected ? 'selected' : ''}" data-idea="${escapeHtml(id)}"><div class="idea-no">${String(index + 1).padStart(2, '0')}</div><div class="idea-main"><div class="card-title"><h3>${escapeHtml(title)}</h3><span>${selected ? '已冻结' : 'A2 已评估'}</span></div><p>${escapeHtml(description)}</p><div class="tag-row">${tags.map(tag => `<i>${escapeHtml(typeof tag === 'string' ? tag : tag.name || tag.id)}</i>`).join('')}</div></div><div class="score"><b>${score || '—'}</b><span>综合分</span></div><button class="select-idea">${selected ? '查看 MVP' : '选择方向'} <span>→</span></button></article>`;
+  }).join('');
+  bindIdeaButtons();
+  stack.animate([{ opacity: .45, transform: 'translateY(7px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 430 });
+}
+
+async function loadIncubation() {
+  try {
+    const response = await fetch('/api/incubation', { cache: 'no-store' });
+    if (!response.ok) return;
+    renderIncubation(await response.json());
+  } catch (_) {
+    // The static file preview remains usable when the local Team service is off.
+  }
+}
+
+async function startIncubationTest() {
   const button = $('#mineBtn');
-  button.innerHTML = '正在组合 CLI... <span>···</span>';
   button.disabled = true;
-  setTimeout(() => {
-    button.innerHTML = '重新挖掘创意 <span>↗</span>';
+  button.innerHTML = 'Foreman 正在交接… <span>···</span>';
+  try {
+    const response = await fetch('/api/incubation/test', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brief: $('#briefInput').value }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '无法创建创意测试');
+    renderIncubation({ team: { actors: [] }, latest: data.latest });
+    toast(`${data.latest.run_id} 已交给 Foreman；A2 结果会自动回填到这里。`);
+    clearInterval(window.incubationTimer);
+    window.incubationTimer = setInterval(loadIncubation, 3500);
+  } catch (error) {
+    toast(error.message || '创意测试未能启动');
+  } finally {
     button.disabled = false;
-    $('#ideaStack').animate([{ opacity: .45, transform: 'translateY(7px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 430 });
-    toast('已基于新的输入，重新生成 3 个可行方向');
-  }, 850);
-});
+    button.innerHTML = '用 Team 重新挖掘 <span>↗</span>';
+  }
+}
+
+$('#mineBtn').addEventListener('click', startIncubationTest);
 
 function typeCommand() {
   const command = 'cccc discover --intent "周末想吃得快一点"';
@@ -420,6 +508,8 @@ generateBtn.addEventListener('click', () => showMode ? createRealRun() : simulat
 typeCommand();
 setSource($('.source-chip.selected'));
 applyStageSplit();
+loadIncubation();
+window.incubationTimer = setInterval(loadIncubation, 5000);
 if (showMode && activeRunId) {
   loadRun();
   loadStage();

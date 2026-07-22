@@ -122,7 +122,7 @@ function renderIncubation(payload) {
   if (!ideas.length) return;
   const selectedId = contract.idea_id || contract.selected_idea_id || shortlist.recommended_idea_id || shortlist.selected_idea_id;
   const stack = $('#ideaStack');
-  stack.innerHTML = ideas.slice(0, 4).map((idea, index) => {
+  stack.innerHTML = ideas.slice(0, 5).map((idea, index) => {
     const id = idea.idea_id || idea.id || `idea-${index + 1}`;
     const selected = selectedId && id === selectedId;
     const title = idea.name || idea.title || `创意方向 ${index + 1}`;

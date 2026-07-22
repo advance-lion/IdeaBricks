@@ -1,0 +1,35 @@
+{
+  "id": "ellie/atuin",
+  "name": "atuin",
+  "aliases": [],
+  "description": "Atuin replaces your existing shell history with a SQLite database, and records additional context for your commands. Additionally, it provides optional and fully encrypted synchronization of your history between machines, via an Atuin server.",
+  "repo_url": "https://github.com/ellie/atuin",
+  "homepage": "",
+  "install": {},
+  "category": "Productivity",
+  "tags": [
+    "history",
+    "history-management"
+  ],
+  "github_stars": 20,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "history"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

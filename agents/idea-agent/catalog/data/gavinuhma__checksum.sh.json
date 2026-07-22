@@ -1,0 +1,35 @@
+{
+  "id": "gavinuhma/checksum.sh",
+  "name": "checksum.sh",
+  "aliases": [],
+  "description": "Checksum.sh is a simple way to download, review, and verify install scripts. If the checksum is OK the script will be printed to stdout, which can be piped to sh or elsewhere.",
+  "repo_url": "https://github.com/gavinuhma/checksum.sh",
+  "homepage": "https://checksum.sh/",
+  "install": {},
+  "category": "DevOps & Cloud",
+  "tags": [
+    "system",
+    "system-tools"
+  ],
+  "github_stars": 44,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "system"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

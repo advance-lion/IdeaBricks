@@ -1,0 +1,35 @@
+{
+  "id": "bcpierce00/unison",
+  "name": "Unison",
+  "aliases": [],
+  "description": "File synchronizer. It allows two replicas of a collection of files and directories to be stored on different hosts (or different disks on the same host), modified separately, and then brought up to date by propagating the changes in each replica to the other.",
+  "repo_url": "https://github.com/bcpierce00/unison",
+  "homepage": "https://www.cis.upenn.edu/~bcpierce/unison/",
+  "install": {},
+  "category": "Network & API",
+  "tags": [
+    "data-transfer",
+    "transfer"
+  ],
+  "github_stars": 5410,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "transfer"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

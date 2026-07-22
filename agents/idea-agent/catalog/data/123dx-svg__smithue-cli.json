@@ -1,0 +1,43 @@
+{
+  "id": "123dx-svg/smithue-cli",
+  "name": "SmithUE CLI",
+  "aliases": [],
+  "description": "CLI tool for controlling Unreal Engine editor via SmithUE plugin. Enables AI agents to execute editor commands, list tools, search capabilities, and monitor editor status.",
+  "repo_url": "https://github.com/123dx-svg/smithue-cli",
+  "homepage": "https://github.com/123dx-svg/smithue-cli",
+  "install": {
+    "npm": "npm install -g smithue-cli"
+  },
+  "category": "Other",
+  "tags": [
+    "cli-anything",
+    "devtools",
+    "public_registry",
+    "requires-deps"
+  ],
+  "github_stars": 7,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://raw.githubusercontent.com/123dx-svg/smithue-cli/970f4b86b8b0671728585979b3c974829b4f47d0/skills/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "devtools"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

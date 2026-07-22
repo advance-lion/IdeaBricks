@@ -1,0 +1,35 @@
+{
+  "id": "adammpkins/llama-terminal-completion",
+  "name": "Llama Terminal Completion",
+  "aliases": [],
+  "description": "Application that interacts with the llama.cpp library to provide virtual assistant capabilities through the command line. It allows you to ask questions and receive intelligent responses, as well as generate Linux commands based on your prompts.",
+  "repo_url": "https://github.com/adammpkins/llama-terminal-completion",
+  "homepage": "",
+  "install": {},
+  "category": "AI & Agents",
+  "tags": [
+    "co-pilot",
+    "copilot"
+  ],
+  "github_stars": 194,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "copilot"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

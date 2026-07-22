@@ -1,0 +1,43 @@
+{
+  "id": "HKUDS/CLI-Anything/intelwatch",
+  "name": "Intelwatch",
+  "aliases": [],
+  "description": "Competitive intelligence, M&A due diligence, and OSINT directly from your terminal.",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://github.com/ashroth/intelwatch",
+  "install": {
+    "pip": "pip install git+https://github.com/HKUDS/CLI-Anything.git#subdirectory=intelwatch/agent-harness"
+  },
+  "category": "Other",
+  "tags": [
+    "cli-anything",
+    "osint",
+    "registry",
+    "requires-deps"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/HKUDS/CLI-Anything/blob/main/skills/cli-anything-intelwatch/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "osint"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

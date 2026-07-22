@@ -1,0 +1,43 @@
+{
+  "id": "mr-karan/doggo",
+  "name": "doggo",
+  "aliases": [],
+  "description": "DNS client for humans. Features include: colors, tabular and JSON formats, and reverse DNS lookup.",
+  "repo_url": "https://github.com/mr-karan/doggo",
+  "homepage": "https://doggo.mrkaran.dev/",
+  "install": {},
+  "category": "Network & API",
+  "tags": [
+    "json",
+    "modern-unix",
+    "networking"
+  ],
+  "github_stars": 4389,
+  "agent": {
+    "score": 2,
+    "friendly": false,
+    "signals": [
+      "modern-unix"
+    ],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "networking"
+    },
+    {
+      "id": "modern-unix",
+      "repo": "ibraheemdev/modern-unix",
+      "commit": "67ee5aba0e5660b76cc1a437c64ad165212148d1"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

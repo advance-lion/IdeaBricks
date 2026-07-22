@@ -1,0 +1,35 @@
+{
+  "id": "magic-wormhole/magic-wormhole",
+  "name": "Magic Wormhole",
+  "aliases": [],
+  "description": "The program allows transfer arbitrary-sized files and directories (or short pieces of text) from one computer to another The two endpoints are identified by using identical human-readable codes.",
+  "repo_url": "https://github.com/magic-wormhole/magic-wormhole",
+  "homepage": "",
+  "install": {},
+  "category": "Network & API",
+  "tags": [
+    "data-transfer",
+    "transfer"
+  ],
+  "github_stars": 22732,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "transfer"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "HKUDS/CLI-Anything/unrealinsights",
+  "name": "Unreal Insights",
+  "aliases": [],
+  "description": "Windows-first Unreal trace capture, background session control, engine-matched UnrealInsights builds, and headless Timing Insights export workflows",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-insights-in-unreal-engine",
+  "install": {
+    "pip": "pip install git+https://github.com/HKUDS/CLI-Anything.git#subdirectory=unrealinsights/agent-harness"
+  },
+  "category": "Other",
+  "tags": [
+    "cli-anything",
+    "debugging",
+    "registry",
+    "requires-deps"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/HKUDS/CLI-Anything/blob/main/unrealinsights/agent-harness/cli_anything/unrealinsights/skills/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "debugging"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

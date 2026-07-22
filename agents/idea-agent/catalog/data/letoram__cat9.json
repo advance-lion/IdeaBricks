@@ -1,0 +1,34 @@
+{
+  "id": "letoram/cat9",
+  "name": "Cat9",
+  "aliases": [],
+  "description": "Cat9 is a user shell script for LASH - a command-line shell that discriminates against terminal emulators, written in Lua.",
+  "repo_url": "https://github.com/letoram/cat9",
+  "homepage": "",
+  "install": {},
+  "category": "Shell & Terminal",
+  "tags": [
+    "shells"
+  ],
+  "github_stars": 529,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "shells"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

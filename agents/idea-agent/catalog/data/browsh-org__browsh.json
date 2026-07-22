@@ -1,0 +1,35 @@
+{
+  "id": "browsh-org/browsh",
+  "name": "browsh",
+  "aliases": [],
+  "description": "It renders anything that a modern browser can; HTML5, CSS3, JS, video and even WebGL. Its main purpose is to be run on a remote server and accessed via SSH/Mosh or the in-browser HTML service in order to significantly reduce bandwidth and thus both increase browsing speeds and decrease bandwidth costs.",
+  "repo_url": "https://github.com/browsh-org/browsh",
+  "homepage": "https://www.brow.sh/",
+  "install": {},
+  "category": "Network & API",
+  "tags": [
+    "browser",
+    "web-browser"
+  ],
+  "github_stars": 18946,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "browser"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

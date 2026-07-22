@@ -1,0 +1,40 @@
+{
+  "id": "ranger/ranger",
+  "name": "ranger",
+  "aliases": [],
+  "description": "File manager with vi key bindings, curses interface with a view on the directory hierarchy, comes with a file launcher that automatically determines which program to use for opening a given file type.",
+  "repo_url": "https://github.com/ranger/ranger",
+  "homepage": "https://ranger.github.io/",
+  "install": {},
+  "category": "File Managers",
+  "tags": [
+    "awesome-list",
+    "file-manager"
+  ],
+  "github_stars": 17308,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "file-manager"
+    },
+    {
+      "id": "awesome-cli-apps",
+      "repo": "agarrharr/awesome-cli-apps",
+      "commit": "598390e9ca817ab33b7821c7a0e4af676975fc25"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

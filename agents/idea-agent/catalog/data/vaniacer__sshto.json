@@ -1,0 +1,34 @@
+{
+  "id": "vaniacer/sshto",
+  "name": "sshto",
+  "aliases": [],
+  "description": "Small bash script to manage your ssh connections. It builds menu (via dialog) from your ~/.ssh/config. It can not only connect but also to run commands, copy files, tunnel ports.",
+  "repo_url": "https://github.com/vaniacer/sshto",
+  "homepage": "",
+  "install": {},
+  "category": "Network & API",
+  "tags": [
+    "networking"
+  ],
+  "github_stars": 649,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "networking"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

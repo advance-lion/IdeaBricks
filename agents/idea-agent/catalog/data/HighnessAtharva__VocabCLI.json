@@ -1,0 +1,34 @@
+{
+  "id": "HighnessAtharva/VocabCLI",
+  "name": "VocabCLI",
+  "aliases": [],
+  "description": "Lightweight CLI that allows users to look up word definitions, examples, synonyms, and antonyms directly via the command line; it also offers advanced Text Classification and Processing via the use of Natural Language Processing and Machine Learning algorithms.",
+  "repo_url": "https://github.com/HighnessAtharva/VocabCLI",
+  "homepage": "",
+  "install": {},
+  "category": "Text & Docs",
+  "tags": [
+    "writing"
+  ],
+  "github_stars": 69,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "writing"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

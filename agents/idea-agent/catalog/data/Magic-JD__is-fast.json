@@ -1,0 +1,35 @@
+{
+  "id": "Magic-JD/is-fast",
+  "name": "is-fast",
+  "aliases": [],
+  "description": "A TUI tool designed for quick and efficient internet searches directly from the terminal, ideal for environments where you don't have easy access to a browser.",
+  "repo_url": "https://github.com/Magic-JD/is-fast",
+  "homepage": "",
+  "install": {},
+  "category": "Network & API",
+  "tags": [
+    "online",
+    "online-search-and-resources"
+  ],
+  "github_stars": 169,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "online"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

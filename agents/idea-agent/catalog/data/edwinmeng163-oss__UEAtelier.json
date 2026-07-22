@@ -1,0 +1,43 @@
+{
+  "id": "edwinmeng163-oss/UEAtelier",
+  "name": "UEAtelier",
+  "aliases": [],
+  "description": "Unreal Editor 5.6/5.7 MCP self-extension workbench - editor automation, build diagnostics, Task Atlas workflows, PIE smoke verification, scaffold pipeline",
+  "repo_url": "https://github.com/edwinmeng163-oss/UEAtelier",
+  "homepage": "https://github.com/edwinmeng163-oss/UEAtelier",
+  "install": {
+    "pip": "pip install git+https://github.com/edwinmeng163-oss/UEAtelier.git#subdirectory=Tools/UEAtelierCli"
+  },
+  "category": "Development",
+  "tags": [
+    "cli-anything",
+    "gamedev",
+    "registry",
+    "requires-deps"
+  ],
+  "github_stars": 7,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/edwinmeng163-oss/UEAtelier/blob/main/Tools/UEAtelierCli/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "gamedev"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

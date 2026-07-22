@@ -1,0 +1,43 @@
+{
+  "id": "HKUDS/CLI-Anything/godot",
+  "name": "Godot Engine",
+  "aliases": [],
+  "description": "Game engine project management, scene editing, export and GDScript execution via Godot 4 headless mode",
+  "repo_url": "https://github.com/HKUDS/CLI-Anything",
+  "homepage": "https://godotengine.org",
+  "install": {
+    "pip": "pip install git+https://github.com/HKUDS/CLI-Anything.git#subdirectory=godot/agent-harness"
+  },
+  "category": "Development",
+  "tags": [
+    "cli-anything",
+    "gamedev",
+    "registry",
+    "requires-deps"
+  ],
+  "github_stars": 45669,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/HKUDS/CLI-Anything/blob/main/skills/cli-anything-godot/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "gamedev"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

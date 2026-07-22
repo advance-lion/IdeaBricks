@@ -1,0 +1,35 @@
+{
+  "id": "wick3dr0se/pkm",
+  "name": "pkm",
+  "aliases": [],
+  "description": "A super minimal TUI package manager wrapper written in BASH v4-2+.",
+  "repo_url": "https://github.com/wick3dr0se/pkm",
+  "homepage": "",
+  "install": {},
+  "category": "Development",
+  "tags": [
+    "package-manager",
+    "package-managers"
+  ],
+  "github_stars": 63,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "package-manager"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

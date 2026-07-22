@@ -1,0 +1,43 @@
+{
+  "id": "collectivewinca/hacker-feeds-cli",
+  "name": "Hacker Feeds CLI",
+  "aliases": [],
+  "description": "CLI for GitHub Trending, Hacker News, Reddit, Product Hunt, DEV.to, Lobsters, EchoJS, and V2EX feeds",
+  "repo_url": "https://github.com/collectivewinca/hacker-feeds-cli",
+  "homepage": "https://github.com/collectivewinca/hacker-feeds-cli",
+  "install": {
+    "pip": "pip install git+https://github.com/collectivewinca/hacker-feeds-cli.git"
+  },
+  "category": "Other",
+  "tags": [
+    "cli-anything",
+    "registry",
+    "requires-deps",
+    "search"
+  ],
+  "github_stars": 3,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/collectivewinca/hacker-feeds-cli/blob/main/cli_anything/hacker_feeds_cli/skills/SKILL.md"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "search"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "nikvdp/pbproxy",
+  "name": "pbproxy",
+  "aliases": [],
+  "description": "Send your clipboard anywhere you can ssh to.",
+  "repo_url": "https://github.com/nikvdp/pbproxy",
+  "homepage": "",
+  "install": {},
+  "category": "Utilities",
+  "tags": [
+    "copy-paste",
+    "copy/paste-and-clipboard"
+  ],
+  "github_stars": 257,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "copy-paste"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

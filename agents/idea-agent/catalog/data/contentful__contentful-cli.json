@@ -1,0 +1,43 @@
+{
+  "id": "contentful/contentful-cli",
+  "name": "Contentful CLI",
+  "aliases": [],
+  "description": "Official Contentful CLI for spaces, migrations, imports, exports, seeding, and environment management",
+  "repo_url": "https://github.com/contentful/contentful-cli",
+  "homepage": "https://www.contentful.com/",
+  "install": {
+    "npm": "npm install -g contentful-cli"
+  },
+  "category": "Network & API",
+  "tags": [
+    "cli-anything",
+    "public_registry",
+    "requires-deps",
+    "web"
+  ],
+  "github_stars": 359,
+  "agent": {
+    "score": 3,
+    "friendly": true,
+    "signals": [
+      "agent-native-harness",
+      "cli-anything",
+      "curated-agent-list"
+    ],
+    "skill_url": "https://github.com/contentful/contentful-cli/tree/main/docs"
+  },
+  "sources": [
+    {
+      "id": "cli-anything",
+      "repo": "HKUDS/CLI-Anything",
+      "commit": "bc536c9bebb7c3d9f7bb2736a732609139c1acdb",
+      "upstream_category": "web"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

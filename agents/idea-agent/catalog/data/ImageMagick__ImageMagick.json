@@ -1,0 +1,34 @@
+{
+  "id": "ImageMagick/ImageMagick",
+  "name": "ImageMagick",
+  "aliases": [],
+  "description": "Software suite to create, edit, compose, or convert bitmap images; it handles many file formats (including PDF and SVG) and provides processing tools to \"resize, flip, mirror, rotate, distort, shear and transform images, adjust image colors, apply various special effects, or draw text, lines, polygons, ellipses and Bézier curves\".",
+  "repo_url": "https://github.com/ImageMagick/ImageMagick",
+  "homepage": "http://www.imagemagick.org/script/index.php",
+  "install": {},
+  "category": "Media & Graphics",
+  "tags": [
+    "graphics"
+  ],
+  "github_stars": 16989,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "toolleeo-csv",
+      "repo": "toolleeo/awesome-cli-apps-in-a-csv",
+      "commit": "226eefaa1bc32f1eea2a03c56a2a1f2615c48f5f",
+      "upstream_category": "graphics"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00"
+  }
+}

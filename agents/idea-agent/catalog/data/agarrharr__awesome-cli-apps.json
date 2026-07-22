@@ -1,0 +1,37 @@
+{
+  "id": "agarrharr/awesome-cli-apps",
+  "name": "awesome-cli-apps",
+  "aliases": [],
+  "description": "Curated list of command line applications; useful as a catalog source, not a directly executable CLI.",
+  "repo_url": "https://github.com/agarrharr/awesome-cli-apps",
+  "homepage": "",
+  "install": {},
+  "category": "AI & Agents",
+  "tags": [
+    "awesome-list",
+    "resource-list"
+  ],
+  "github_stars": 19998,
+  "agent": {
+    "score": 1,
+    "friendly": false,
+    "signals": [
+      "resource-list"
+    ],
+    "skill_url": null
+  },
+  "sources": [
+    {
+      "id": "awesome-ai-cli",
+      "repo": "luoyuctl/awesome-ai-cli",
+      "commit": "b1957619c34be84cb1d822baf419dc124daacec0"
+    }
+  ],
+  "meta": {
+    "first_seen_at": "2026-07-21",
+    "updated_at": "2026-07-21",
+    "status": "active",
+    "github_stars_updated_at": "2026-07-21T13:03:12+08:00",
+    "manual_edit": true
+  }
+}

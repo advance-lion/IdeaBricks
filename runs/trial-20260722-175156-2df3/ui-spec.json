@@ -1,0 +1,89 @@
+{
+  "run_id": "trial-20260722-175156-2df3",
+  "app_type": "food_delivery",
+  "high_fidelity_structure": "The viewport is split into a dimmed background layer and a foreground modal. The background shows a restaurant header with a promotional banner (ice cream imagery) and a horizontal scroll menu. The foreground is a bottom-sheet modal titled 'Select Pickup Method'. It contains three distinct selection cards arranged horizontally: 'Dine-in' (icon of burger/drink), 'Takeout' (icon of bag), and 'Drive-thru' (icon of car with 'Express' tag). A full-width red action button sits at the bottom of the modal.",
+  "replaced_source_assets": {
+    "brand": "QuickBite",
+    "restaurant_name": "Tech Park Bistro",
+    "promo_item": "Lychee Black Tea Ice Cream",
+    "menu_item": "Egg & Chicken Panini Combo",
+    "pickup_options": [
+      "Dine-in",
+      "Takeout",
+      "Drive-thru"
+    ]
+  },
+  "visible_state": {
+    "modal_open": true,
+    "modal_type": "pickup_selection",
+    "active_tab": "classic_menu",
+    "selected_option": null
+  },
+  "components": [
+    {
+      "id": "app-shell",
+      "type": "container",
+      "children": [
+        {
+          "id": "header",
+          "type": "component",
+          "content": "Restaurant Name & Promo Banner"
+        },
+        {
+          "id": "menu-list",
+          "type": "component",
+          "content": "Horizontal scrollable food items"
+        },
+        {
+          "id": "pickup-modal",
+          "type": "modal",
+          "content": "Overlay for pickup selection",
+          "children": [
+            {
+              "id": "modal-header",
+              "type": "text",
+              "content": "Please select pickup method"
+            },
+            {
+              "id": "pickup-options",
+              "type": "grid",
+              "columns": 3,
+              "items": [
+                "Dine-in",
+                "Takeout",
+                "Drive-thru"
+              ]
+            },
+            {
+              "id": "confirm-btn",
+              "type": "button",
+              "content": "Confirm"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "inferred_interactions": [
+    "Tap 'Dine-in', 'Takeout', or 'Drive-thru' to select a fulfillment mode",
+    "Tap 'Confirm' to close modal and update order state",
+    "Tap 'X' to dismiss modal"
+  ],
+  "design_tokens": {
+    "colors": {
+      "primary": "#E60023",
+      "background": "#FFFFFF",
+      "overlay": "rgba(0,0,0,0.5)",
+      "text": "#333333"
+    },
+    "typography": {
+      "heading": "18px Bold",
+      "body": "14px Regular"
+    },
+    "spacing": {
+      "modal_padding": "20px",
+      "card_gap": "12px"
+    }
+  },
+  "generator": "local-vlm"
+}
